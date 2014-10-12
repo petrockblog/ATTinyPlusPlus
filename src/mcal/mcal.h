@@ -8,6 +8,7 @@
 #define MCAL_H_
 
 #include <cstdint.h>
+#include <register_access.h>
 
 namespace mcal {
 
@@ -29,75 +30,35 @@ constexpr std::uint8_t bval6 = 1U << 6U;
 constexpr std::uint8_t bval7 = 1U << 7U;
 
 // Port registers
-constexpr std::uint8_t ddrb = 0x17U + sfr_offset;
-constexpr std::uint8_t portb = 0x18U + sfr_offset;
+typedef register_access<std::uint8_t, std::uint8_t, 0x17U + sfr_offset> ddrb;
+typedef register_access<std::uint8_t, std::uint8_t, 0x18U + sfr_offset> portb;
 
 // Timer registers
-constexpr std::uint8_t tifr0 = 0x38U + sfr_offset;
-constexpr std::uint8_t tccr0a = 0x2AU + sfr_offset;
-constexpr std::uint8_t tccr0b = 0x33U + sfr_offset;
-constexpr std::uint8_t tcnt0 = 0x32U + sfr_offset;
-constexpr std::uint8_t ocr0a = 0x29U + sfr_offset;
-constexpr std::uint8_t timsk = 0x39U + sfr_offset;
+typedef register_access<std::uint8_t, std::uint8_t, 0x38U + sfr_offset> tifr0;
+typedef register_access<std::uint8_t, std::uint8_t, 0x2AU + sfr_offset> tccr0a;
+typedef register_access<std::uint8_t, std::uint8_t, 0x33U + sfr_offset> tccr0b;
+typedef register_access<std::uint8_t, std::uint8_t, 0x30U + sfr_offset> tccr1;
+typedef register_access<std::uint8_t, std::uint8_t, 0x32U + sfr_offset> tcnt0;
+typedef register_access<std::uint8_t, std::uint8_t, 0x2FU + sfr_offset> tcnt1;
+typedef register_access<std::uint8_t, std::uint8_t, 0x29U + sfr_offset> ocr0a;
+
+typedef register_access<std::uint8_t, std::uint8_t, 0x39U + sfr_offset> timsk;
+#define OCIE1A  6
+#define OCIE1B  5
+#define OCIE0A  4
+#define OCIE0B  3
+#define TOIE1   2
+#define TOIE0   1
 
 // USI registers
-constexpr std::uint8_t usibr = 0x10U + sfr_offset;
-constexpr std::uint8_t usicr = 0x0dU + sfr_offset;
-constexpr std::uint8_t usidr = 0x0fU + sfr_offset;
+typedef register_access<std::uint8_t, std::uint8_t, 0x10U + sfr_offset> usibr;
+typedef register_access<std::uint8_t, std::uint8_t, 0x0dU + sfr_offset> usicr;
+typedef register_access<std::uint8_t, std::uint8_t, 0x0fU + sfr_offset> usidr;
 
 // General interrupt and pin change interrupt registers
-constexpr std::uint8_t gimsk = 0x3BU + sfr_offset;
-constexpr std::uint8_t pcmsk = 0x15U + sfr_offset;
+typedef register_access<std::uint8_t, std::uint8_t, 0x3BU + sfr_offset> gimsk;
+typedef register_access<std::uint8_t, std::uint8_t, 0x15U + sfr_offset> pcmsk;
 
-template<typename register_address_type, typename register_value_type,
-		const register_address_type address, const register_value_type value =
-				static_cast<register_value_type>(0)>
-struct register_access {
-	static void reg_set() {
-		*reinterpret_cast<volatile register_value_type*>(address) = value;
-	}
-	static void reg_and() {
-		*reinterpret_cast<volatile register_value_type*>(address) &= value;
-	}
-	static void reg_or() {
-		*reinterpret_cast<volatile register_value_type*>(address) |= value;
-	}
-	static void reg_not() {
-		*reinterpret_cast<volatile register_value_type*>(address) &=
-				register_value_type(~value);
-	}
-	static register_value_type reg_get() {
-		return *reinterpret_cast<volatile register_value_type*>(address);
-	}
-
-	template<const register_value_type mask_value>
-	static void reg_msk() {
-		*reinterpret_cast<volatile register_value_type*>(address) =
-				register_value_type(
-						register_value_type(
-								reg_get() & register_value_type(~mask_value))
-								| register_value_type(value & mask_value));
-	}
-
-	static void bit_set() {
-		*reinterpret_cast<volatile register_value_type*>(address) |=
-				static_cast<register_value_type>(1UL << value);
-	}
-	static void bit_clr() {
-		*reinterpret_cast<volatile register_value_type*>(address) &=
-				static_cast<register_value_type>(~static_cast<register_value_type>(1UL
-						<< value));
-	}
-	static void bit_not() {
-		*reinterpret_cast<volatile register_value_type*>(address) ^=
-				static_cast<register_value_type>(1UL << value);
-	}
-	static bool bit_get() {
-		return (static_cast<volatile register_value_type>(reg_get()
-				& static_cast<register_value_type>(1UL << value))
-				!= static_cast<register_value_type>(0U));
-	}
-};
 }
 }
 

@@ -1,7 +1,7 @@
 /*
  * timer.cpp
  *
- *  Created on: 08.10.2014
+ *  Created on: 12.10.2014
  *      Author: florian
  */
 
@@ -9,6 +9,13 @@
 
 namespace mcal {
 
+Timer::Timer() {
+	// TODO Auto-generated constructor stub
 
+}
+
+Timer::~Timer() {
+	// TODO Auto-generated destructor stub
+}
 
 } /* namespace mcal */
