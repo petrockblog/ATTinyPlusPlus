@@ -9,7 +9,7 @@
 #include "_cplusplus.h"
 
 #include <mcal.h>
-//#include "gpio.h"
+#include "gpio.h"
 #include "systemtick.h"
 
 int main(void) {
@@ -18,11 +18,10 @@ int main(void) {
 	mcal::Systemtick systick = mcal::Systemtick::getInstance();
 	systick.getTick();
 
+	mcal::GPIO gpio = mcal::GPIO::getInstance();
 
-//	mcal::GPIO gpio = mcal::GPIO();
-//
-//	mcal::GPIO::GPIOLevel_e btnlevel;
-//	gpio.control(mcal::GPIO::GPIODevice1, mcal::GPIO::GPIOCMD_IN, 0);
+	mcal::GPIO::GPIOLevel_e btnlevel;
+	gpio.control(mcal::GPIO::GPIODevice1, mcal::GPIO::GPIOCMD_IN, 0);
 
 //	mcal::Systemtick timer0(mcal::reg::tccr0b,
 //		     mcal::reg::tccr0b | (1 << CS00) & ~(1 << CS01) | (1 << CS02),
@@ -31,12 +30,12 @@ int main(void) {
 //		     TIMER0_OVF_vect_num);
 
 	while (1) {
-//		gpio.write(mcal::GPIO::GPIODevice0, mcal::GPIO::GPIOLEVEL_HIGH);
-//		_delay_ms(200);
-//		gpio.write(mcal::GPIO::GPIODevice0, mcal::GPIO::GPIOLEVEL_LOW);
-//		_delay_ms(200);
-//
-//		gpio.read(mcal::GPIO::GPIODevice1, btnlevel);
+		gpio.write(mcal::GPIO::GPIODevice0, mcal::GPIO::GPIOLEVEL_HIGH);
+		_delay_ms(200);
+		gpio.write(mcal::GPIO::GPIODevice0, mcal::GPIO::GPIOLEVEL_LOW);
+		_delay_ms(200);
+
+		gpio.read(mcal::GPIO::GPIODevice1, btnlevel);
 	}
 }
 

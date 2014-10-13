@@ -30,6 +30,7 @@ constexpr std::uint8_t bval6 = 1U << 6U;
 constexpr std::uint8_t bval7 = 1U << 7U;
 
 // Port registers
+typedef register_access<std::uint8_t, std::uint8_t, 0x16U + sfr_offset> pinb;
 typedef register_access<std::uint8_t, std::uint8_t, 0x17U + sfr_offset> ddrb;
 typedef register_access<std::uint8_t, std::uint8_t, 0x18U + sfr_offset> portb;
 

@@ -1,210 +1,98 @@
-///*
-// * gpio.cpp
-// *
-// *  Created on: 04.10.2014
-// *      Author: florian
-// */
-//
-//#include <gpio.h>
-//
-//namespace mcal {
-//
+/*
+ * gpio.cpp
+ *
+ *  Created on: 04.10.2014
+ *      Author: florian
+ */
+
+#include <gpio.h>
+
+namespace mcal {
+
 //GPIO::PCHandler GPIO::pinchange_handler = NULL;
-//
-//MCALRes_e GPIO::open(GPIODevice_e gpio) {
-//	MCALRes_e result = mcal::MCALRES_ERROR;
-//	switch (gpio) {
-//	case GPIODevice0:
-//		port_b0_type::set_pin_low();
-//		port_b0_type::set_direction_output();
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	case GPIODevice1:
-//		port_b1_type::set_pin_low();
-//		port_b1_type::set_direction_output();
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	case GPIODevice2:
-//		port_b2_type::set_pin_low();
-//		port_b2_type::set_direction_output();
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	case GPIODevice3:
-//		port_b3_type::set_pin_low();
-//		port_b3_type::set_direction_output();
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	case GPIODevice4:
-//		port_b4_type::set_pin_low();
-//		port_b4_type::set_direction_output();
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	case GPIODevice5:
-//		port_b5_type::set_pin_low();
-//		port_b5_type::set_direction_output();
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	default:
-//		result = mcal::MCALRES_INVPARAM;
-//		break;
-//	}
-//	return result;
-//}
-//
-//MCALRes_e GPIO::close(GPIODevice_e gpio) {
-//	return MCALRES_SUCCESS;
-//}
-//
-//MCALRes_e GPIO::read(GPIODevice_e gpio, GPIOLevel_e& target) {
-//	MCALRes_e result = mcal::MCALRES_ERROR;
-//	switch (gpio) {
-//	case GPIODevice0:
-//		port_b0_type::read_input_value() ? target = GPIOLEVEL_HIGH : target =
-//													GPIOLEVEL_LOW;
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	case GPIODevice1:
-//		port_b1_type::read_input_value() ? target = GPIOLEVEL_HIGH : target =
-//													GPIOLEVEL_LOW;
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	case GPIODevice2:
-//		port_b2_type::read_input_value() ? target = GPIOLEVEL_HIGH : target =
-//													GPIOLEVEL_LOW;
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	case GPIODevice3:
-//		port_b3_type::read_input_value() ? target = GPIOLEVEL_HIGH : target =
-//													GPIOLEVEL_LOW;
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	case GPIODevice4:
-//		port_b4_type::read_input_value() ? target = GPIOLEVEL_HIGH : target =
-//													GPIOLEVEL_LOW;
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	case GPIODevice5:
-//		port_b5_type::read_input_value() ? target = GPIOLEVEL_HIGH : target =
-//													GPIOLEVEL_LOW;
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	default:
-//		result = mcal::MCALRES_INVPARAM;
-//		break;
-//	}
-//	return result;
-//}
-//
-//MCALRes_e GPIO::write(GPIODevice_e gpio, GPIOLevel_e level) {
-//	MCALRes_e result = mcal::MCALRES_ERROR;
-//	switch (gpio) {
-//	case GPIODevice0:
-//		(level == GPIOLEVEL_LOW) ?
-//				port_b0_type::set_pin_low() : port_b0_type::set_pin_high();
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	case GPIODevice1:
-//		(level == GPIOLEVEL_LOW) ?
-//				port_b1_type::set_pin_low() : port_b1_type::set_pin_high();
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	case GPIODevice2:
-//		(level == GPIOLEVEL_LOW) ?
-//				port_b2_type::set_pin_low() : port_b2_type::set_pin_high();
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	case GPIODevice3:
-//		(level == GPIOLEVEL_LOW) ?
-//				port_b3_type::set_pin_low() : port_b3_type::set_pin_high();
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	case GPIODevice4:
-//		(level == GPIOLEVEL_LOW) ?
-//				port_b4_type::set_pin_low() : port_b4_type::set_pin_high();
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	case GPIODevice5:
-//		(level == GPIOLEVEL_LOW) ?
-//				port_b5_type::set_pin_low() : port_b5_type::set_pin_high();
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-//	default:
-//		result = mcal::MCALRES_INVPARAM;
-//		break;
-//	}
-//
-//	return result;
-//}
-//
-//MCALRes_e GPIO::control(GPIODevice_e gpio, GPIOCmd_e cmd, void* params) {
-//	MCALRes_e result = MCALRES_ERROR;
-//
-//	// TODO return result for each command
-//	switch (cmd) {
-//	case GPIOCMD_IN:
-//		switch (gpio) {
-//		case GPIODevice0:
-//			port_b0_type::set_direction_input();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice1:
-//			port_b1_type::set_direction_input();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice2:
-//			port_b2_type::set_direction_input();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice3:
-//			port_b3_type::set_direction_input();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice4:
-//			port_b4_type::set_direction_input();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice5:
-//			port_b5_type::set_direction_input();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		default:
-//			result = mcal::MCALRES_INVPARAM;
-//			break;
-//		}
-//		break;
-//
-//	case GPIOCMD_OUT:
-//		switch (gpio) {
-//		case GPIODevice0:
-//			port_b0_type::set_direction_output();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice1:
-//			port_b1_type::set_direction_output();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice2:
-//			port_b2_type::set_direction_output();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice3:
-//			port_b3_type::set_direction_output();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice4:
-//			port_b4_type::set_direction_output();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice5:
-//			port_b5_type::set_direction_output();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		default:
-//			result = mcal::MCALRES_INVPARAM;
-//			break;
-//		}
-//		break;
-//
+
+GPIO::GPIO() :
+		isOpen(0) {
+}
+
+MCALRes_e GPIO::open(GPIODevice_e gpio) {
+	MCALRes_e result = MCALRES_ERROR;
+
+	if ((gpio < GPIODevice0) | (gpio > GPIODevice5)) {
+		result = MCALRES_INVPARAM;
+	} else {
+		reg::portb::bit_clr(gpio);
+		reg::ddrb::bit_set(gpio);
+		isOpen |= (1 << gpio);
+		result = MCALRES_SUCCESS;
+	}
+
+	return result;
+}
+
+MCALRes_e GPIO::close(GPIODevice_e gpio) {
+	isOpen &= (0 << gpio);
+	return MCALRES_SUCCESS;
+}
+
+MCALRes_e GPIO::read(GPIODevice_e gpio, GPIOLevel_e& target) {
+	MCALRes_e result = MCALRES_ERROR;
+
+	if ((gpio < GPIODevice0) | (gpio > GPIODevice5)) {
+		result = MCALRES_INVPARAM;
+	} else if (~(isOpen & (1 << gpio))) {
+		result = MCALRES_ERROR;
+	} else {
+		reg::pinb::bit_get(gpio) ? target = GPIOLEVEL_HIGH : target =
+											GPIOLEVEL_LOW;
+		result = MCALRES_SUCCESS;
+	}
+
+	return result;
+}
+
+MCALRes_e GPIO::write(GPIODevice_e gpio, GPIOLevel_e level) {
+	MCALRes_e result = MCALRES_ERROR;
+
+	if ((gpio < GPIODevice0) | (gpio > GPIODevice5)) {
+		result = MCALRES_INVPARAM;
+	} else if (~(isOpen & (1 << gpio))) {
+		result = MCALRES_ERROR;
+	} else {
+		reg::portb::bit_set(gpio);
+		result = MCALRES_SUCCESS;
+	}
+
+	return result;
+}
+
+MCALRes_e GPIO::control(GPIODevice_e gpio, GPIOCmd_e cmd, void* params) {
+	MCALRes_e result = MCALRES_ERROR;
+
+	if ((gpio < GPIODevice0) | (gpio > GPIODevice5)) {
+		result = MCALRES_INVPARAM;
+	} else if (~(isOpen & (1 << gpio))) {
+		result = MCALRES_ERROR;
+	} else {
+
+		switch (cmd) {
+		case GPIOCMD_IN:
+			reg::ddrb::bit_clr(gpio);
+			result = MCALRES_SUCCESS;
+			break;
+
+		case GPIOCMD_OUT:
+			reg::ddrb::bit_set(gpio);
+			result = MCALRES_SUCCESS;
+			break;
+
+		default:
+			result = MCALRES_INVPARAM;
+			break;
+		}
+
+	}
+
 //	case GPIOCMD_IRQ_PINCHANGE_ENABLE:
 //		// turns on pin change interrupts
 //		mcal::reg::reg_access<std::uint8_t, std::uint8_t, mcal::reg::gimsk,
@@ -292,20 +180,12 @@
 //		GPIO::pinchange_handler = (PCHandler) params;
 //		result = mcal::MCALRES_SUCCESS;
 //		break;
-//
-//	default:
-//		result = MCALRES_INVPARAM;
-//		break;
-//	}
-//
-//	// enable interrupts
-//	sei();
-//
-//	return result;
+
+	return result;
+}
+
+//ISR(SIG_PIN_CHANGE) {
+//	(GPIO::pinchange_handler)();
 //}
-//
-////ISR(SIG_PIN_CHANGE) {
-////	(GPIO::pinchange_handler)();
-////}
-//
-//} /* namespace mcal */
+
+} /* namespace mcal */
