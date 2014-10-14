@@ -5,14 +5,24 @@
  *      Author: florian
  */
 
-#include <gpio.h>
+#include "gpio.h"
 
 namespace mcal {
 
-//GPIO::PCHandler GPIO::pinchange_handler = NULL;
+GPIO::PCHandler GPIO::pinchange_handler = NULL;
+
+GPIO::PinChangeInterrupt::PinChangeInterrupt(int interruptNumber,
+		GPIO *ownerGPIO) :
+		ownerGPIO(ownerGPIO) {
+	record(interruptNumber, this);
+}
+
+void GPIO::PinChangeInterrupt::serviceRoutine() {
+	(pinchange_handler)();
+}
 
 GPIO::GPIO() :
-		isOpen(0) {
+		isOpen(0), nestedPinChangeInterrupt(PCINT0_vect_num, this) {
 }
 
 MCALRes_e GPIO::open(GPIODevice_e gpio) {
@@ -86,6 +96,23 @@ MCALRes_e GPIO::control(GPIODevice_e gpio, GPIOCmd_e cmd, void* params) {
 			result = MCALRES_SUCCESS;
 			break;
 
+		case GPIOCMD_IRQ_PINCHANGE_ENABLE:
+			reg::gimsk::bit_set(INT0); // INT0: Enables interrupt on INT0
+			reg::gimsk::bit_set(PCIE); // PCIE: Enables pin change interrupt
+			reg::pcmsk::bit_set(gpio); // Selects whether pin change interrupt enabled on that pin.
+			result = MCALRES_SUCCESS;
+			break;
+
+		case GPIOCMD_IRQ_PINCHANGE_DISABLE:
+			reg::pcmsk::bit_clr(gpio); // Selects whether pin change interrupt enabled on that pin.
+			result = MCALRES_SUCCESS;
+			break;
+
+		case GPIOCMD_IRQ_PINCHANGE_HANDLER:
+			GPIO::pinchange_handler = (PCHandler) params;
+			result = mcal::MCALRES_SUCCESS;
+			break;
+
 		default:
 			result = MCALRES_INVPARAM;
 			break;
@@ -93,99 +120,8 @@ MCALRes_e GPIO::control(GPIODevice_e gpio, GPIOCmd_e cmd, void* params) {
 
 	}
 
-//	case GPIOCMD_IRQ_PINCHANGE_ENABLE:
-//		// turns on pin change interrupts
-//		mcal::reg::reg_access<std::uint8_t, std::uint8_t, mcal::reg::gimsk,
-//				5U>::bit_set();
-//
-//		// turn on pin change interrupt on specified pin
-//		switch (gpio) {
-//		case GPIODevice0:
-//			mcal::reg::reg_access<std::uint8_t, std::uint8_t,
-//					mcal::reg::pcmsk, 0U>::bit_set();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice1:
-//			mcal::reg::reg_access<std::uint8_t, std::uint8_t,
-//					mcal::reg::pcmsk, 1U>::bit_set();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice2:
-//			mcal::reg::reg_access<std::uint8_t, std::uint8_t,
-//					mcal::reg::pcmsk, 2U>::bit_set();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice3:
-//			mcal::reg::reg_access<std::uint8_t, std::uint8_t,
-//					mcal::reg::pcmsk, 3U>::bit_set();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice4:
-//			mcal::reg::reg_access<std::uint8_t, std::uint8_t,
-//					mcal::reg::pcmsk, 4U>::bit_set();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice5:
-//			mcal::reg::reg_access<std::uint8_t, std::uint8_t,
-//					mcal::reg::pcmsk, 5U>::bit_set();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		default:
-//			result = mcal::MCALRES_INVPARAM;
-//			break;
-//		}
-//		break;
-//
-//	case GPIOCMD_IRQ_PINCHANGE_DISABLE:
-//
-//		// turn on pin change interrupt on specified pin
-//		switch (gpio) {
-//		case GPIODevice0:
-//			mcal::reg::reg_access<std::uint8_t, std::uint8_t,
-//					mcal::reg::pcmsk, 0U>::bit_clr();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice1:
-//			mcal::reg::reg_access<std::uint8_t, std::uint8_t,
-//					mcal::reg::pcmsk, 1U>::bit_clr();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice2:
-//			mcal::reg::reg_access<std::uint8_t, std::uint8_t,
-//					mcal::reg::pcmsk, 2U>::bit_clr();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice3:
-//			mcal::reg::reg_access<std::uint8_t, std::uint8_t,
-//					mcal::reg::pcmsk, 3U>::bit_clr();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice4:
-//			mcal::reg::reg_access<std::uint8_t, std::uint8_t,
-//					mcal::reg::pcmsk, 4U>::bit_clr();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		case GPIODevice5:
-//			mcal::reg::reg_access<std::uint8_t, std::uint8_t,
-//					mcal::reg::pcmsk, 5U>::bit_clr();
-//			result = mcal::MCALRES_SUCCESS;
-//			break;
-//		default:
-//			result = mcal::MCALRES_INVPARAM;
-//			break;
-//		}
-//		break;
-//
-//	case GPIOCMD_IRQ_PINCHANGE_HANDLER:
-//		GPIO::pinchange_handler = (PCHandler) params;
-//		result = mcal::MCALRES_SUCCESS;
-//		break;
-
 	return result;
 }
 
-//ISR(SIG_PIN_CHANGE) {
-//	(GPIO::pinchange_handler)();
-//}
-
 } /* namespace mcal */
+

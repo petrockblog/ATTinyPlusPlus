@@ -8,6 +8,8 @@
 #ifndef INTERRUPT_H_
 #define INTERRUPT_H_
 
+#include <avr/interrupt.h>
+
 namespace mcal {
 
 class Interrupt {

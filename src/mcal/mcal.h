@@ -7,6 +7,7 @@
 #ifndef MCAL_H_
 #define MCAL_H_
 
+#include <avr/io.h>
 #include <cstdint.h>
 #include <register_access.h>
 
@@ -58,6 +59,9 @@ typedef register_access<std::uint8_t, std::uint8_t, 0x0fU + sfr_offset> usidr;
 
 // General interrupt and pin change interrupt registers
 typedef register_access<std::uint8_t, std::uint8_t, 0x3BU + sfr_offset> gimsk;
+#define INT0    6
+#define PCIE    5
+
 typedef register_access<std::uint8_t, std::uint8_t, 0x15U + sfr_offset> pcmsk;
 
 }

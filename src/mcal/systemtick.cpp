@@ -23,7 +23,7 @@ Systemtick::Systemtick() :
 		tickcount(0), nestedTimerInterrupt(TIMER0_OVF_vect_num, this) {
 
 	mcal::reg::tccr0a::reg_set(Timer::timer0_wgm_t::Timer0_CTC_OCR);
-	mcal::reg::tccr0b::reg_set(Timer::timer0_cs_t::Timer0_Prescale_Value_8);
+	mcal::reg::tccr0b::reg_set(Timer::timer0_cs_t::Timer0_Prescale_Value_64);
 	mcal::reg::ocr0a::reg_set(125 - 1);
 	mcal::reg::timsk::reg_set((1 << OCIE0A));
 	sei();

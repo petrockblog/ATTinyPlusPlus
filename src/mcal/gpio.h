@@ -8,9 +8,11 @@
 #ifndef GPIO_H_
 #define GPIO_H_
 
-#include <cstdint.h>
+#include <avr/io.h>
 #include <stddef.h>
+#include <cstdint.h>
 #include <mcal.h>
+#include <cppinterrupt.h>
 
 namespace mcal {
 
@@ -38,10 +40,6 @@ public:
 		GPIOCMD_IRQ_PINCHANGE_HANDLER
 	} GPIOCmd_e;
 
-//	// TODO make pinchange_handler private
-//	typedef void (*PCHandler)(void);
-//	static PCHandler pinchange_handler;
-
 	MCALRes_e open(GPIODevice_e gpio);
 	MCALRes_e close(GPIODevice_e gpio);
 	MCALRes_e read(GPIODevice_e gpio, GPIOLevel_e& target);
@@ -54,10 +52,23 @@ public:
 	}
 
 private:
+
 	std::uint8_t isOpen;
+
+	typedef void (*PCHandler)(void);
+	static PCHandler pinchange_handler;
 
 	GPIO();
 
+	class PinChangeInterrupt: public Interrupt {
+		GPIO *ownerGPIO;
+		void serviceRoutine();
+
+	public:
+		PinChangeInterrupt(int interruptNumber, GPIO *ownerGPIO);
+	} nestedPinChangeInterrupt;
+
+	friend class GPIO::PinChangeInterrupt;
 
 };
 

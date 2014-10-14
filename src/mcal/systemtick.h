@@ -10,7 +10,6 @@
 
 #include <cstdint.h>
 #include <avr/interrupt.h>
-#include <avr/io.h>
 #include <cppinterrupt.h>
 #include <timer.h>
 #include <mcal.h>
