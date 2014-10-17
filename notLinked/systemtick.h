@@ -19,7 +19,9 @@ namespace mcal {
 class Systemtick {
 
 private:
-	volatile uint32_t tickcount;
+	Systemtick();
+
+	volatile static uint32_t tickcount;
 
 	class TimerInterrupt: public Interrupt {
 		Systemtick *ownerTimer;
@@ -29,9 +31,7 @@ private:
 		TimerInterrupt(int interruptNumber, Systemtick *ownerTimer);
 	} nestedTimerInterrupt;
 
-	friend class Systemtick::TimerInterrupt;
-
-	Systemtick();
+	friend class TimerInterrupt;
 
 public:
 
@@ -40,7 +40,10 @@ public:
 		return systick;
 	}
 
-	uint32_t getTick() {
+	static void start();
+	static void stop();
+
+	std::uint32_t getTick() {
 		return tickcount;
 	}
 

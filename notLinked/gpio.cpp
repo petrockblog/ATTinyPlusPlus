@@ -18,12 +18,13 @@ GPIO::PinChangeInterrupt::PinChangeInterrupt(int interruptNumber,
 }
 
 void GPIO::PinChangeInterrupt::serviceRoutine() {
-	(pinchange_handler)();
+	(ownerGPIO->pinchange_handler)();
 }
 
 GPIO::GPIO() :
-		isOpen(0), nestedPinChangeInterrupt(PCINT0_vect_num, this) {
+		isOpen(0), nestedPinChangeInterrupt(2, this) {
 }
+
 
 MCALRes_e GPIO::open(GPIODevice_e gpio) {
 	MCALRes_e result = MCALRES_ERROR;
@@ -50,7 +51,7 @@ MCALRes_e GPIO::read(GPIODevice_e gpio, GPIOLevel_e& target) {
 
 	if ((gpio < GPIODevice0) | (gpio > GPIODevice5)) {
 		result = MCALRES_INVPARAM;
-	} else if (~(isOpen & (1 << gpio))) {
+	} else if ((isOpen & (1 << gpio)) == 0) {
 		result = MCALRES_ERROR;
 	} else {
 		reg::pinb::bit_get(gpio) ? target = GPIOLEVEL_HIGH : target =
@@ -64,12 +65,27 @@ MCALRes_e GPIO::read(GPIODevice_e gpio, GPIOLevel_e& target) {
 MCALRes_e GPIO::write(GPIODevice_e gpio, GPIOLevel_e level) {
 	MCALRes_e result = MCALRES_ERROR;
 
-	if ((gpio < GPIODevice0) | (gpio > GPIODevice5)) {
+	if ((gpio < GPIODevice0) || (gpio > GPIODevice5)) {
 		result = MCALRES_INVPARAM;
-	} else if (~(isOpen & (1 << gpio))) {
+	} else if ((isOpen & (1 << gpio)) == 0) {
 		result = MCALRES_ERROR;
 	} else {
-		reg::portb::bit_set(gpio);
+		level==GPIOLEVEL_HIGH ? reg::portb::bit_set(gpio) : reg::portb::bit_clr(gpio);
+		result = MCALRES_SUCCESS;
+	}
+
+	return result;
+}
+
+MCALRes_e GPIO::toggle(GPIODevice_e gpio) {
+	MCALRes_e result = MCALRES_ERROR;
+
+	if ((gpio < GPIODevice0) | (gpio > GPIODevice5)) {
+		result = MCALRES_INVPARAM;
+	} else if ((isOpen & (1 << gpio)) == 0) {
+		result = MCALRES_ERROR;
+	} else {
+		reg::portb::bit_not(gpio);
 		result = MCALRES_SUCCESS;
 	}
 
@@ -81,25 +97,25 @@ MCALRes_e GPIO::control(GPIODevice_e gpio, GPIOCmd_e cmd, void* params) {
 
 	if ((gpio < GPIODevice0) | (gpio > GPIODevice5)) {
 		result = MCALRES_INVPARAM;
-	} else if (~(isOpen & (1 << gpio))) {
+	} else if ((isOpen & (1 << gpio)) == 0) {
 		result = MCALRES_ERROR;
 	} else {
 
 		switch (cmd) {
-		case GPIOCMD_IN:
+		case GPIOCMD_DIR_IN:
 			reg::ddrb::bit_clr(gpio);
 			result = MCALRES_SUCCESS;
 			break;
 
-		case GPIOCMD_OUT:
+		case GPIOCMD_DIR_OUT:
 			reg::ddrb::bit_set(gpio);
 			result = MCALRES_SUCCESS;
 			break;
 
 		case GPIOCMD_IRQ_PINCHANGE_ENABLE:
-			reg::gimsk::bit_set(INT0); // INT0: Enables interrupt on INT0
+			reg::pcmsk::bit_set(gpio); // Selects pin change interrupt enabled on that pin
 			reg::gimsk::bit_set(PCIE); // PCIE: Enables pin change interrupt
-			reg::pcmsk::bit_set(gpio); // Selects whether pin change interrupt enabled on that pin.
+			sei();
 			result = MCALRES_SUCCESS;
 			break;
 
@@ -110,6 +126,16 @@ MCALRes_e GPIO::control(GPIODevice_e gpio, GPIOCmd_e cmd, void* params) {
 
 		case GPIOCMD_IRQ_PINCHANGE_HANDLER:
 			GPIO::pinchange_handler = (PCHandler) params;
+			result = MCALRES_SUCCESS;
+			break;
+
+		case GPIOCMD_PULLUP_ENABLE:
+			reg::portb::bit_set(gpio);
+			result = MCALRES_SUCCESS;
+			break;
+
+		case GPIOCMD_PULLUP_DISABLE:
+			reg::portb::bit_clr(gpio);
 			result = mcal::MCALRES_SUCCESS;
 			break;
 

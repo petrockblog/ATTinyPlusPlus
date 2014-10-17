@@ -9,6 +9,8 @@
 
 namespace mcal {
 
+volatile uint32_t Systemtick::tickcount = 0;
+
 Systemtick::TimerInterrupt::TimerInterrupt(int interruptNumber,
 		Systemtick *ownerTimer) :
 		ownerTimer(ownerTimer) {
@@ -16,17 +18,23 @@ Systemtick::TimerInterrupt::TimerInterrupt(int interruptNumber,
 }
 
 void Systemtick::TimerInterrupt::serviceRoutine() {
-	++ownerTimer->tickcount;
+	ownerTimer->tickcount += 1;
 }
 
 Systemtick::Systemtick() :
-		tickcount(0), nestedTimerInterrupt(TIMER0_OVF_vect_num, this) {
+		nestedTimerInterrupt(TIMER0_COMPA_vect_num, this) {
+}
 
-	mcal::reg::tccr0a::reg_set(Timer::timer0_wgm_t::Timer0_CTC_OCR);
-	mcal::reg::tccr0b::reg_set(Timer::timer0_cs_t::Timer0_Prescale_Value_64);
+void Systemtick::start() {
+	mcal::reg::tccr0a::reg_set(1 << WGM01);
+	mcal::reg::tccr0b::reg_set((1 << CS00) | (1 << CS01)); // F_CPU / 64
 	mcal::reg::ocr0a::reg_set(125 - 1);
-	mcal::reg::timsk::reg_set((1 << OCIE0A));
+	mcal::reg::timsk::bit_set(OCIE0A);
 	sei();
+}
+
+void Systemtick::stop() {
+	mcal::reg::timsk::bit_clr(OCIE0A);
 }
 
 } /* namespace mcal */
