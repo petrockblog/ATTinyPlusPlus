@@ -10,6 +10,7 @@
 namespace mcal {
 
 GPIO::PCHandler GPIO::pinchange_handler = NULL;
+uint8_t GPIO::isOpen = 0;
 
 GPIO::PinChangeInterrupt::PinChangeInterrupt(int interruptNumber,
 		GPIO *ownerGPIO) :
@@ -22,21 +23,16 @@ void GPIO::PinChangeInterrupt::serviceRoutine() {
 }
 
 GPIO::GPIO() :
-		isOpen(0), nestedPinChangeInterrupt(2, this) {
+		nestedPinChangeInterrupt(2, this) {
 }
-
 
 MCALRes_e GPIO::open(GPIODevice_e gpio) {
 	MCALRes_e result = MCALRES_ERROR;
 
-	if ((gpio < GPIODevice0) | (gpio > GPIODevice5)) {
-		result = MCALRES_INVPARAM;
-	} else {
-		reg::portb::bit_clr(gpio);
-		reg::ddrb::bit_set(gpio);
-		isOpen |= (1 << gpio);
-		result = MCALRES_SUCCESS;
-	}
+	reg::portb::bit_clr(gpio);
+	reg::ddrb::bit_set(gpio);
+	isOpen |= (1 << gpio);
+	result = MCALRES_SUCCESS;
 
 	return result;
 }
@@ -46,31 +42,26 @@ MCALRes_e GPIO::close(GPIODevice_e gpio) {
 	return MCALRES_SUCCESS;
 }
 
-MCALRes_e GPIO::read(GPIODevice_e gpio, GPIOLevel_e& target) {
-	MCALRes_e result = MCALRES_ERROR;
+GPIO::GPIOLevel_e GPIO::read(GPIODevice_e gpio) {
+	GPIOLevel_e result = GPIOLEVEL_UNAVAILABLE;
 
-	if ((gpio < GPIODevice0) | (gpio > GPIODevice5)) {
-		result = MCALRES_INVPARAM;
-	} else if ((isOpen & (1 << gpio)) == 0) {
-		result = MCALRES_ERROR;
+	// todo consider isOpen here?
+//	if ((isOpen & (1 << gpio)) > 0) {
+	if (reg::pinb::bit_get(gpio)) {
+		return GPIO::GPIOLEVEL_HIGH;
 	} else {
-		reg::pinb::bit_get(gpio) ? target = GPIOLEVEL_HIGH : target =
-											GPIOLEVEL_LOW;
-		result = MCALRES_SUCCESS;
+		return GPIO::GPIOLEVEL_LOW;
 	}
-
+//	}
 	return result;
 }
 
 MCALRes_e GPIO::write(GPIODevice_e gpio, GPIOLevel_e level) {
 	MCALRes_e result = MCALRES_ERROR;
 
-	if ((gpio < GPIODevice0) || (gpio > GPIODevice5)) {
-		result = MCALRES_INVPARAM;
-	} else if ((isOpen & (1 << gpio)) == 0) {
-		result = MCALRES_ERROR;
-	} else {
-		level==GPIOLEVEL_HIGH ? reg::portb::bit_set(gpio) : reg::portb::bit_clr(gpio);
+	if ((isOpen & (1 << gpio)) > 0) {
+		level == GPIOLEVEL_HIGH ?
+				reg::portb::bit_set(gpio) : reg::portb::bit_clr(gpio);
 		result = MCALRES_SUCCESS;
 	}
 
@@ -80,11 +71,7 @@ MCALRes_e GPIO::write(GPIODevice_e gpio, GPIOLevel_e level) {
 MCALRes_e GPIO::toggle(GPIODevice_e gpio) {
 	MCALRes_e result = MCALRES_ERROR;
 
-	if ((gpio < GPIODevice0) | (gpio > GPIODevice5)) {
-		result = MCALRES_INVPARAM;
-	} else if ((isOpen & (1 << gpio)) == 0) {
-		result = MCALRES_ERROR;
-	} else {
+	if ((isOpen & (1 << gpio)) > 0) {
 		reg::portb::bit_not(gpio);
 		result = MCALRES_SUCCESS;
 	}
@@ -95,11 +82,7 @@ MCALRes_e GPIO::toggle(GPIODevice_e gpio) {
 MCALRes_e GPIO::control(GPIODevice_e gpio, GPIOCmd_e cmd, void* params) {
 	MCALRes_e result = MCALRES_ERROR;
 
-	if ((gpio < GPIODevice0) | (gpio > GPIODevice5)) {
-		result = MCALRES_INVPARAM;
-	} else if ((isOpen & (1 << gpio)) == 0) {
-		result = MCALRES_ERROR;
-	} else {
+	if ((isOpen & (1 << gpio)) > 0) {
 
 		switch (cmd) {
 		case GPIOCMD_DIR_IN:

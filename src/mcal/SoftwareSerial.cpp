@@ -40,51 +40,17 @@ More notes:
 
 */
 
-//
-// Defines
-//
-#define true 1
-#define false 0
-#define HIGH 1
-#define LOW 0
-
-//
 // Hardcoded TX/RX
-//
-#define SERDDR  DDRB
-#define SERPORT PORTB
-#define SERPIN  PINB
-#define RXPIN   PB0
-#define TXPIN   PB1
+#define RXPIN   0
+#define TXPIN   1
+#define RXDEVICE GPIO::GPIODevice0
+#define TXDEVICE GPIO::GPIODevice1
 
 //
 // Includes
 //
-#include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include "SoftwareSerial.h"
-//
-// Globals
-//
-
-uint16_t _rx_delay_centering = 0;
-uint16_t _rx_delay_intrabit = 0;
-uint16_t _rx_delay_stopbit = 0;
-uint16_t _tx_delay = 0;
-
-uint16_t _buffer_overflow = false;
-
-// static data
-static char _receive_buffer[_SS_MAX_RX_BUFF];
-static volatile uint8_t _receive_buffer_tail;
-static volatile uint8_t _receive_buffer_head;
-//static SoftwareSerial *active_object;
-
-// private methods
-#define rx_pin_read() (SERPIN & (1<<RXPIN))
-
-//// private static method for timing
-//static inline void tunedDelay(uint16_t delay);
 
 //
 // Lookup table
@@ -97,8 +63,9 @@ typedef struct _DELAY_TABLE {
         unsigned short tx_delay;
 } DELAY_TABLE;
 
-// 16MHz
+// These delays are tuned for 8 MHz
 static const DELAY_TABLE PROGMEM table[] = {
+		// TODO adapt all baud rates for 8 MHz, possibly fine tune these values with oscilloscope/logic analyzer
                 //  baud    rxcenter   rxintra    rxstop    tx
                 { 115200, 1, 17, 17, 12, },                     // 117647 off by 2.12%, causes problems
                 { 57600, 10, 37, 37, 33, },                     // 57971 off by 0.644%, causes problems
@@ -116,166 +83,175 @@ static const DELAY_TABLE PROGMEM table[] = {
                 { 600, 1902, 3804, 3804, 3800, },
                 { 300, 3804, 7617, 7617, 7614, }, };
 
-const int XMIT_START_ADJUSTMENT = 5;
+using namespace mcal;
 
-//
-// Private methods
-//
+const int ATSerial::XMIT_START_ADJUSTMENT = 5;
+
+ uint16_t ATSerial::_rx_delay_centering = 0;
+ uint16_t ATSerial::_rx_delay_intrabit = 0;
+ uint16_t ATSerial::_rx_delay_stopbit = 0;
+ uint16_t ATSerial::_tx_delay = 0;
+ uint16_t ATSerial::_buffer_overflow = false;
+
+ char ATSerial::_receive_buffer[_SS_MAX_RX_BUFF] = { 0 };
+ volatile uint8_t ATSerial::_receive_buffer_tail = 0;
+ volatile uint8_t ATSerial::_receive_buffer_head = 0;
+
+ATSerial::ATSerial() {
+}
 
 /* static */
-inline void tunedDelay(uint16_t delay) {
-        uint8_t tmp = 0;
+inline void ATSerial::tunedDelay(uint16_t delay) {
+	uint8_t tmp = 0;
 
-        asm volatile("sbiw    %0, 0x01 \n\t"
-                        "ldi %1, 0xFF \n\t"
-                        "cpi %A0, 0xFF \n\t"
-                        "cpc %B0, %1 \n\t"
-                        "brne .-10 \n\t"
-                        : "+w" (delay), "+a" (tmp)
-                        : "0" (delay)
-        );
+	asm volatile("sbiw    %0, 0x01 \n\t"
+					"ldi %1, 0xFF \n\t"
+					"cpi %A0, 0xFF \n\t"
+					"cpc %B0, %1 \n\t"
+					"brne .-10 \n\t"
+					: "+w" (delay), "+a" (tmp)
+					: "0" (delay)
+	);
 }
 
 
 //
 // Interrupt handling, receive routine
 //
-ISR(PCINT0_vect) {
-        uint8_t d = 0;
+//ISR(PCINT0_vect) {
+void ATSerial::pinChangeHandler() {
+	uint8_t returnValue = 0;
+	GPIO gpio = GPIO::getInstance();
 
-        // If RX line is high, then we don't see any start bit
-        // so interrupt is probably not for us
-        if ( !rx_pin_read() ) {
-                // Wait approximately 1/2 of a bit width to "center" the sample
-                tunedDelay(_rx_delay_centering);
+	if ( gpio.read(RXDEVICE) == GPIO::GPIOLEVEL_LOW ) {
+			// Wait approximately 1/2 of a bit width to "center" the sample
+		ATSerial::tunedDelay(ATSerial::_rx_delay_centering);
 
-                // Read each of the 8 bits
-                for (uint8_t i = 0x1; i; i <<= 1) {
-                        tunedDelay(_rx_delay_intrabit);
-                        uint8_t noti = ~i;
-                        if (rx_pin_read())
-                                d |= i;
-                        else // else clause added to ensure function timing is ~balanced
-                                d &= noti;
-                }
+		// Read each of the 8 bits
+		for (uint8_t counter = 0x1; counter; counter <<= 1) {
+			ATSerial::tunedDelay(ATSerial::_rx_delay_intrabit);
+				uint8_t noti = ~counter;
+				if (gpio.read(RXDEVICE) == GPIO::GPIOLEVEL_HIGH)
+						returnValue |= counter;
+				else // else clause added to ensure function timing is ~balanced
+						returnValue &= noti;
+		}
 
-                // skip the stop bit
-                tunedDelay(_rx_delay_stopbit);
+		// skip the stop bit
+		ATSerial::tunedDelay(ATSerial::_rx_delay_stopbit);
 
-                // if buffer full, set the overflow flag and return
-                if (((_receive_buffer_tail + 1) & _SS_RX_BUFF_MASK) != _receive_buffer_head) {  // circular buffer
-                        // save new data in buffer: tail points to where byte goes
-                        _receive_buffer[_receive_buffer_tail] = d; // save new byte
-                        _receive_buffer_tail = (_receive_buffer_tail + 1) & _SS_RX_BUFF_MASK;  // circular buffer
-                } else {
-                        _buffer_overflow = true;
-                }
-        }
+		// if buffer full, set the overflow flag and return
+		if (((ATSerial::_receive_buffer_tail + 1) & _SS_RX_BUFF_MASK) != ATSerial::_receive_buffer_head) {  // circular buffer
+				// save new data in buffer: tail points to where byte goes
+			ATSerial::_receive_buffer[ATSerial::_receive_buffer_tail] = returnValue; // save new byte
+			ATSerial::_receive_buffer_tail = (ATSerial::_receive_buffer_tail + 1) & _SS_RX_BUFF_MASK;  // circular buffer
+		} else {
+			ATSerial::_buffer_overflow = true;
+		}
+	}
 }
 
+void ATSerial::begin(long speed) {
+	unsigned counter;
 
+	GPIO gpio = GPIO::getInstance();
+	gpio.open(RXDEVICE);
+	gpio.open(TXDEVICE);
+	gpio.control(RXDEVICE,GPIO::GPIOCMD_DIR_IN,NULL); // set RX for input
+	gpio.control(TXDEVICE,GPIO::GPIOCMD_DIR_OUT,NULL); // set TX for output
+	gpio.control(RXDEVICE, GPIO::GPIOCMD_PULLUP_ENABLE, NULL);
+	gpio.control(TXDEVICE, GPIO::GPIOCMD_PULLUP_ENABLE, NULL);
 
+	for (counter = 0; counter < sizeof(table) / sizeof(table[0]); ++counter) {
+		long baud = pgm_read_dword(&table[counter].baud);
+		if (baud == speed) {
+			_rx_delay_centering = pgm_read_word(&table[counter].rx_delay_centering);
+			_rx_delay_intrabit = pgm_read_word(&table[counter].rx_delay_intrabit);
+			_rx_delay_stopbit = pgm_read_word(&table[counter].rx_delay_stopbit);
+			_tx_delay = pgm_read_word(&table[counter].tx_delay);
+			// Set up RX interrupts, but only if we have a valid RX baud rate
 
-//
-// Public methods
-//
+			gpio.control(RXDEVICE, GPIO::GPIOCMD_IRQ_PINCHANGE_HANDLER, (void*)&ATSerial::pinChangeHandler);
+			gpio.control(RXDEVICE, GPIO::GPIOCMD_IRQ_PINCHANGE_ENABLE, 0);
+			return;
+		}
+	}
 
-void softSerialBegin(long speed) {
-        unsigned i;
-
-        _receive_buffer_head = _receive_buffer_tail = 0;
-        _buffer_overflow = false;
-        SERDDR |= (1<<TXPIN); // set TX for output
-        SERDDR &= ~(1<<RXPIN); // set RX for input
-        SERPORT |= (1<<TXPIN)|(1<<RXPIN); // assumes no inverse logic
-
-        for (i = 0; i < sizeof(table) / sizeof(table[0]); ++i) {
-                long baud = pgm_read_dword(&table[i].baud);
-                if (baud == speed) {
-                        _rx_delay_centering = pgm_read_word(&table[i].rx_delay_centering);
-                        _rx_delay_intrabit = pgm_read_word(&table[i].rx_delay_intrabit);
-                        _rx_delay_stopbit = pgm_read_word(&table[i].rx_delay_stopbit);
-                        _tx_delay = pgm_read_word(&table[i].tx_delay);
-                        // Set up RX interrupts, but only if we have a valid RX baud rate
-                        GIMSK |= (1<<PCIE);
-                        PCMSK |= (1<<RXPIN);
-                        tunedDelay(_tx_delay);
-                        sei();
-                        return;
-                }
-        }
-
-        // No valid rate found
-        // Indicate an error
+	// todo No valid rate found, Indicate an error
 }
 
-void softSerialEnd() {
-        PCMSK = 0;
+void ATSerial::end() {
+    GPIO gpio = GPIO::getInstance();
+    gpio.control(RXDEVICE, GPIO::GPIOCMD_IRQ_PINCHANGE_DISABLE, NULL);
 }
 
 // Read data from buffer
-int softSerialRead() {
-        // Empty buffer?
-        if (_receive_buffer_head == _receive_buffer_tail)
-                return -1;
+int ATSerial::read() {
+	// Empty buffer?
+	if (_receive_buffer_head == _receive_buffer_tail) {
+		return -1;
+	}
 
-        // Read from "head"
-        uint8_t d = _receive_buffer[_receive_buffer_head]; // grab next byte
-        _receive_buffer_head = (_receive_buffer_head + 1) & _SS_RX_BUFF_MASK; // circular buffer
-        return d;
+	// Read from "head"
+	uint8_t d = _receive_buffer[_receive_buffer_head]; // grab next byte
+	_receive_buffer_head = (_receive_buffer_head + 1) & _SS_RX_BUFF_MASK; // circular buffer
+	return d;
 }
 
-int softSerialAvailable() {
-        return (_receive_buffer_tail + _SS_MAX_RX_BUFF - _receive_buffer_head) & _SS_RX_BUFF_MASK; // circular buffer
+int ATSerial::bytesAvailable() {
+	return (_receive_buffer_tail + _SS_MAX_RX_BUFF - _receive_buffer_head) & _SS_RX_BUFF_MASK; // circular buffer
 }
 
-bool softSerialOverflow(void) {
-        bool ret = _buffer_overflow;
-        _buffer_overflow = false;
-        return ret;
+bool ATSerial::isOverflow(void) {
+	bool returnValue = _buffer_overflow;
+	_buffer_overflow = false;
+	return returnValue;
 }
 
-size_t softSerialWrite(uint8_t b) {
-        if (_tx_delay == 0) {
-                //setWriteError();
-                return 0;
-        }
+size_t ATSerial::write(uint8_t b) {
+    GPIO gpio = GPIO::getInstance();
 
-        uint8_t oldSREG = SREG; // store interrupt flag
-        cli();  // turn off interrupts for a clean txmit
+	if (_tx_delay == 0) {
+			//setWriteError();
+			return 0;
+	}
 
-        // Write the start bit
-        SERPORT &= ~(1<<TXPIN); // tx pin low
-        tunedDelay(_tx_delay + XMIT_START_ADJUSTMENT);
+//        uint8_t oldSREG = SREG; // store interrupt flag
+	uint8_t oldSREG = reg::sreg::reg_get();
 
-        // Write each of the 8 bits
-        for (byte mask = 0x01; mask; mask <<= 1) {
-                if (b & mask) // choose bit
-                        SERPORT |= (1<<TXPIN); // tx pin high, send 1
-                else
-                        SERPORT &= ~(1<<TXPIN); // tx pin low, send 0
+	cli();  // turn off interrupts for a clean txmit
 
-                tunedDelay(_tx_delay);
-        }
-        SERPORT |= (1<<TXPIN); // tx pin high, restore pin to natural state
+	// Write the start bit
+	gpio.write(TXDEVICE, GPIO::GPIOLEVEL_LOW);
+	tunedDelay(_tx_delay + XMIT_START_ADJUSTMENT);
 
-        //sei();
-        SREG = oldSREG; // turn interrupts back on
-        tunedDelay(_tx_delay);
+	// Write each of the 8 bits
+	for (char mask = 0x01; mask; mask <<= 1) {
+			if (b & mask) // choose bit
+				gpio.write(TXDEVICE, GPIO::GPIOLEVEL_HIGH);
+			else
+				gpio.write(TXDEVICE, GPIO::GPIOLEVEL_LOW);
+			tunedDelay(_tx_delay);
+	}
+	gpio.write(TXDEVICE, GPIO::GPIOLEVEL_HIGH);
 
-        return 1;
+//        SREG = oldSREG; // turn interrupts back on
+	reg::sreg::reg_set(oldSREG);
+	tunedDelay(_tx_delay);
+
+	return 1;
 }
 
-void softSerialFlush() {
-        uint8_t oldSREG = SREG; // store interrupt flag
+void ATSerial::flush() {
+        uint8_t oldSREG = reg::sreg::reg_get();
         cli();
-        _receive_buffer_head = _receive_buffer_tail = 0;
-        SREG = oldSREG; // restore interrupt flag
-        //sei();
+        _receive_buffer_head = 0;
+        _receive_buffer_tail = 0;
+        reg::sreg::reg_set(oldSREG);
 }
 
 
-int softSerialPeek() {
+int ATSerial::peek() {
         // Empty buffer?
         if (_receive_buffer_head == _receive_buffer_tail)
                 return -1;

@@ -62,6 +62,7 @@ typedef register_access<std::uint8_t, std::uint8_t, 0x3BU + sfr_offset> gimsk;
 #define INT0    6
 #define PCIE    5
 
+typedef register_access<std::uint8_t, std::uint8_t, 0x3fU + sfr_offset> sreg;
 typedef register_access<std::uint8_t, std::uint8_t, 0x15U + sfr_offset> pcmsk;
 
 }

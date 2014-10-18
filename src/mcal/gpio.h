@@ -30,7 +30,7 @@ public:
 	} GPIODevice_e;
 
 	typedef enum {
-		GPIOLEVEL_LOW, GPIOLEVEL_HIGH
+		GPIOLEVEL_LOW, GPIOLEVEL_HIGH, GPIOLEVEL_UNAVAILABLE
 	} GPIOLevel_e;
 
 	typedef enum {
@@ -45,7 +45,7 @@ public:
 
 	MCALRes_e open(GPIODevice_e gpio);
 	MCALRes_e close(GPIODevice_e gpio);
-	MCALRes_e read(GPIODevice_e gpio, GPIOLevel_e& target);
+	GPIOLevel_e read(GPIODevice_e gpio);
 	MCALRes_e write(GPIODevice_e gpio, GPIOLevel_e level);
 	MCALRes_e toggle(GPIODevice_e gpio);
 	MCALRes_e control(GPIODevice_e gpio, GPIOCmd_e cmd, void* params);
@@ -57,7 +57,7 @@ public:
 
 private:
 
-	std::uint8_t isOpen;
+	static std::uint8_t isOpen;
 
 	typedef void (*PCHandler)(void);
 	static PCHandler pinchange_handler;

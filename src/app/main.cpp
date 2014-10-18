@@ -1,32 +1,24 @@
 
 #include <avr/io.h>
-#include <avr/delay.h>
-#include "SoftwareSerial.h"
+//#include <avr/delay.h>
+#include <mcal.h>
+#include <gpio.h>
+#include <SoftwareSerial.h>
 
-// Timer timing for baud rates
-//
-#define OCR4800          52     // div 64
-#define OCR9600          26     // div 64
-#define OCR19200        104     // div 8
-#define OCR38400         52     // div 8
-#define OCR115200       138     // div 1
-
-// incoming buffer
-volatile char *inbuf[32];
-// outgoing buffer
-volatile char *outbuf[32];
+#include "_cplusplus.h"
 
 int main()
 {
-        softSerialBegin(19200);
-        DDRB |= (1<<PB5);
+		mcal::ATSerial serial = mcal::ATSerial();
+        serial.begin(9600);
+//        DDRB |= (1<<PB5);
         while (1) {
-                if (softSerialAvailable()) {
-                        softSerialWrite( softSerialRead()+1 );
+                if (serial.bytesAvailable()) {
+                        serial.write(serial.read() );
 //                        _delay_ms(10);
                 }
 //        	tunedDelay(50);
-        	_delay_us(50);
+//        	_delay_us(50);
         }
 }
 

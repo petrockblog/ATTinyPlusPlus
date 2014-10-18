@@ -36,8 +36,7 @@ struct register_access {
 				register_value_type(~value);
 	}
 
-	static register_value_type reg_get(const register_value_type value =
-			static_cast<register_value_type>(0)) {
+	static register_value_type reg_get() {
 		return *reinterpret_cast<volatile register_value_type*>(address);
 	}
 
