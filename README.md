@@ -1,4 +1,4 @@
 ATTinyPlusPlus
 ==============
 
-Experimantal stuff in C++for the ATTiny85
+Experimental stuff in C++ for the ATTiny85.
