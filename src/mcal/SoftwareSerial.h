@@ -53,7 +53,7 @@ class ATSerial {
 
 public:
 
-	//
+//
 // Definitions
 //
 #define _SS_MAX_RX_BUFF 64 // RX buffer size, must be (1<<n)
@@ -65,10 +65,14 @@ public:
 	bool isOverflow();
 	int peek();
 	size_t write(uint8_t byte);
+	size_t write(const char* string);
+	size_t write(const char* string, size_t size);
 	int read();
 	int bytesAvailable();
 	void flush();
 
+	// todo staic or non-static variables here?
+	// todo singleton anwenden hier?
 	static uint16_t _rx_delay_centering;
 	static uint16_t _rx_delay_intrabit;
 	static uint16_t _rx_delay_stopbit;

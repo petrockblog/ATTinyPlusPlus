@@ -29,8 +29,8 @@ GPIO::GPIO() :
 MCALRes_e GPIO::open(GPIODevice_e gpio) {
 	MCALRes_e result = MCALRES_ERROR;
 
-	reg::portb::bit_clr(gpio);
-	reg::ddrb::bit_set(gpio);
+	reg::portb::bit_clr(gpio);  // set output to low level
+	reg::ddrb::bit_set(gpio);  // initialize as output
 	isOpen |= (1 << gpio);
 	result = MCALRES_SUCCESS;
 

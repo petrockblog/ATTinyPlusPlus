@@ -36,21 +36,43 @@ typedef register_access<std::uint8_t, std::uint8_t, 0x17U + sfr_offset> ddrb;
 typedef register_access<std::uint8_t, std::uint8_t, 0x18U + sfr_offset> portb;
 
 // Timer registers
-typedef register_access<std::uint8_t, std::uint8_t, 0x38U + sfr_offset> tifr0;
+typedef register_access<std::uint8_t, std::uint8_t, 0x38U + sfr_offset> tifr;
 typedef register_access<std::uint8_t, std::uint8_t, 0x2AU + sfr_offset> tccr0a;
+#define COM0A1  7
+#define COM0A0  6
+#define COM0B1  5
+#define COM0B0  4
+#define WGM01   1
+#define WGM00   0
+
 typedef register_access<std::uint8_t, std::uint8_t, 0x33U + sfr_offset> tccr0b;
+#define FOC0A   7
+#define FOC0B   6
+#define WGM02   3
+#define CS02    2
+#define CS01    1
+#define CS00    0
+
 typedef register_access<std::uint8_t, std::uint8_t, 0x30U + sfr_offset> tccr1;
+#define CTC1    7
+#define PWM1A   6
+#define COM1A1  5
+#define COM1A0  4
+#define CS13    3
+#define CS12    2
+#define CS11    1
+#define CS10    0
+
 typedef register_access<std::uint8_t, std::uint8_t, 0x32U + sfr_offset> tcnt0;
 typedef register_access<std::uint8_t, std::uint8_t, 0x2FU + sfr_offset> tcnt1;
+typedef register_access<std::uint8_t, std::uint8_t, 0x28U + sfr_offset> ocr0b;
 typedef register_access<std::uint8_t, std::uint8_t, 0x29U + sfr_offset> ocr0a;
+typedef register_access<std::uint8_t, std::uint8_t, 0x2EU + sfr_offset> ocr1a;
+typedef register_access<std::uint8_t, std::uint8_t, 0x2BU + sfr_offset> ocr1b;
+typedef register_access<std::uint8_t, std::uint8_t, 0x2DU + sfr_offset> ocr1c;
+typedef register_access<std::uint8_t, std::uint8_t, 0x2CU + sfr_offset> gtccr;
 
 typedef register_access<std::uint8_t, std::uint8_t, 0x39U + sfr_offset> timsk;
-#define OCIE1A  6
-#define OCIE1B  5
-#define OCIE0A  4
-#define OCIE0B  3
-#define TOIE1   2
-#define TOIE0   1
 
 // USI registers
 typedef register_access<std::uint8_t, std::uint8_t, 0x10U + sfr_offset> usibr;
@@ -59,8 +81,6 @@ typedef register_access<std::uint8_t, std::uint8_t, 0x0fU + sfr_offset> usidr;
 
 // General interrupt and pin change interrupt registers
 typedef register_access<std::uint8_t, std::uint8_t, 0x3BU + sfr_offset> gimsk;
-#define INT0    6
-#define PCIE    5
 
 typedef register_access<std::uint8_t, std::uint8_t, 0x3fU + sfr_offset> sreg;
 typedef register_access<std::uint8_t, std::uint8_t, 0x15U + sfr_offset> pcmsk;

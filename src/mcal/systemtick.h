@@ -8,11 +8,8 @@
 #ifndef SYSTEMTICK_H_
 #define SYSTEMTICK_H_
 
-#include <cstdint.h>
-#include <avr/interrupt.h>
-#include <cppinterrupt.h>
 #include <timer.h>
-#include <mcal.h>
+#include <cppinterrupt.h>
 
 namespace mcal {
 
