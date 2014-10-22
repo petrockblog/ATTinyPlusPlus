@@ -35,6 +35,31 @@ typedef register_access<std::uint8_t, std::uint8_t, 0x16U + sfr_offset> pinb;
 typedef register_access<std::uint8_t, std::uint8_t, 0x17U + sfr_offset> ddrb;
 typedef register_access<std::uint8_t, std::uint8_t, 0x18U + sfr_offset> portb;
 
+// ADC registers
+typedef register_access<std::uint16_t, std::uint16_t, 0x04U + sfr_offset> adc;
+typedef register_access<std::uint8_t, std::uint8_t, 0x04U + sfr_offset> adcl;
+typedef register_access<std::uint8_t, std::uint8_t, 0x05U + sfr_offset> adch;
+
+typedef register_access<std::uint8_t, std::uint8_t, 0x06U + sfr_offset> adcsra;
+#define ADEN    7
+#define ADSC    6
+#define ADATE   5
+#define ADIF    4
+#define ADIE    3
+#define ADPS2   2
+#define ADPS1   1
+#define ADPS0   0
+
+typedef register_access<std::uint8_t, std::uint8_t, 0x07U + sfr_offset> admux;
+#define REFS1   7
+#define REFS0   6
+#define ADLAR   5
+#define REFS2   4
+#define MUX3    3
+#define MUX2    2
+#define MUX1    1
+#define MUX0    0
+
 // Timer registers
 typedef register_access<std::uint8_t, std::uint8_t, 0x38U + sfr_offset> tifr;
 typedef register_access<std::uint8_t, std::uint8_t, 0x2AU + sfr_offset> tccr0a;
@@ -81,7 +106,6 @@ typedef register_access<std::uint8_t, std::uint8_t, 0x0fU + sfr_offset> usidr;
 
 // General interrupt and pin change interrupt registers
 typedef register_access<std::uint8_t, std::uint8_t, 0x3BU + sfr_offset> gimsk;
-
 typedef register_access<std::uint8_t, std::uint8_t, 0x3fU + sfr_offset> sreg;
 typedef register_access<std::uint8_t, std::uint8_t, 0x15U + sfr_offset> pcmsk;
 
