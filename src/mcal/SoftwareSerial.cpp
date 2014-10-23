@@ -65,16 +65,16 @@ typedef struct _DELAY_TABLE {
 
 // These delays are tuned for 8 MHz
 static const DELAY_TABLE PROGMEM table[] = {
-// TODO adapt all baud rates for 8 MHz, possibly fine tune these values with oscilloscope/logic analyzer
+// TODO possibly fine tune these values with oscilloscope/logic analyzer
 //  baud    rxcenter   rxintra    rxstop    tx
 		{ 115200, 1, 8, 8, 6 },          // 117647 off by 2.12%, causes problems
 		{ 57600, 5, 18, 18, 16 },        // 57971 off by 0.644%, causes problems
 		{ 38400, 12, 28, 28, 27 },
 		{ 31250, 15, 35, 35, 34 },
 		{ 28800, 34, 77, 77, 74 },
-		{ 19200, 26, 52, 52, 50 },
+		{ 19200, 26, 52, 52, 50 }, // this works very reliable
 		{ 14400, 37, 78, 78, 76 },
-		{ 9600, 52, 104, 104, 102 },
+		{ 9600, 52, 104, 104, 102 }, // this works very reliable
 		{ 4800, 116, 236, 236, 235 },
 		{ 2400, 235, 475, 475, 473 },
 		{ 1200, 947, 1902, 1902, 1899 },

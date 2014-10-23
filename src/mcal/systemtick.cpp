@@ -32,16 +32,10 @@ void Systemtick::start() {
 	Timer::Timer0_SetOutputCompareMatchA(125 - 1);
 	Timer::Timer0_EnableOutputCompareInterruptA();
 	sei();
-//	mcal::reg::tccr0a::reg_set(1 << WGM01);
-//	mcal::reg::tccr0b::reg_set((1 << CS00) | (1 << CS01)); // F_CPU / 64
-//	mcal::reg::ocr0a::reg_set(125 - 1);
-//	mcal::reg::timsk::bit_set(OCIE0A);
-//	sei();
 }
 
 void Systemtick::stop() {
-//	Timer::Timer0_
-	mcal::reg::timsk::bit_clr(OCIE0A);
+	mcal::reg::timsk::bit_clr(mcal::bits::ocie0a);
 }
 
 } /* namespace mcal */

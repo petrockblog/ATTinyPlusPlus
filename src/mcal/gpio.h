@@ -9,7 +9,6 @@
 #define GPIO_H_
 
 #include <cstdint.h>
-#include <avr/interrupt.h>
 #include <cppinterrupt.h>
 #include <mcal.h>
 #include <stddef.h>

@@ -42,7 +42,6 @@
 #ifndef SoftwareSerial_h
 #define SoftwareSerial_h
 
-#include <inttypes.h>
 #include <stddef.h>
 #include <gpio.h>
 

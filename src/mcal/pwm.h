@@ -8,7 +8,6 @@
 #ifndef PWM_H_
 #define PWM_H_
 
-#include <avr/interrupt.h>
 #include <mcal.h>
 #include <gpio.h>
 #include <timer.h>

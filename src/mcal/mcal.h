@@ -7,7 +7,6 @@
 #ifndef MCAL_H_
 #define MCAL_H_
 
-#include <avr/io.h>
 #include <cstdint.h>
 #include <register_access.h>
 
@@ -62,6 +61,13 @@ typedef register_access<std::uint8_t, std::uint8_t, 0x07U + sfr_offset> admux;
 
 // Timer registers
 typedef register_access<std::uint8_t, std::uint8_t, 0x38U + sfr_offset> tifr;
+#define OCF1A   6
+#define OCF1B   5
+#define OCF0A   4
+#define OCF0B   3
+#define TOV1    2
+#define TOV0    1
+
 typedef register_access<std::uint8_t, std::uint8_t, 0x2AU + sfr_offset> tccr0a;
 #define COM0A1  7
 #define COM0A0  6
@@ -96,8 +102,22 @@ typedef register_access<std::uint8_t, std::uint8_t, 0x2EU + sfr_offset> ocr1a;
 typedef register_access<std::uint8_t, std::uint8_t, 0x2BU + sfr_offset> ocr1b;
 typedef register_access<std::uint8_t, std::uint8_t, 0x2DU + sfr_offset> ocr1c;
 typedef register_access<std::uint8_t, std::uint8_t, 0x2CU + sfr_offset> gtccr;
+#define TSM     7
+#define PWM1B   6
+#define COM1B1  5
+#define COM1B0  4
+#define FOC1B   3
+#define FOC1A   2
+#define PSR1    1
+#define PSR0    0
 
 typedef register_access<std::uint8_t, std::uint8_t, 0x39U + sfr_offset> timsk;
+#define OCIE1A  6
+#define OCIE1B  5
+#define OCIE0A  4
+#define OCIE0B  3
+#define TOIE1   2
+#define TOIE0   1
 
 // USI registers
 typedef register_access<std::uint8_t, std::uint8_t, 0x10U + sfr_offset> usibr;
@@ -106,10 +126,81 @@ typedef register_access<std::uint8_t, std::uint8_t, 0x0fU + sfr_offset> usidr;
 
 // General interrupt and pin change interrupt registers
 typedef register_access<std::uint8_t, std::uint8_t, 0x3BU + sfr_offset> gimsk;
+#define INT0    6
+#define PCIE    5
+
 typedef register_access<std::uint8_t, std::uint8_t, 0x3fU + sfr_offset> sreg;
 typedef register_access<std::uint8_t, std::uint8_t, 0x15U + sfr_offset> pcmsk;
 
 }
+
+namespace bits {
+
+// todo add all other bits here
+constexpr uint8_t ocie0a = 4;
+
+}
+
+namespace irq {
+
+# define sei()  __asm__ __volatile__ ("sei" ::: "memory")
+# define cli()  __asm__ __volatile__ ("cli" ::: "memory")
+
+/* Interrupt vectors */
+/* Interrupt vector 0 is the reset vector. */
+/* External Interrupt 0 */
+//#define INT0_vect_num	        1
+const std::uint8_t int0_vect_num = 1;
+
+/* Pin change Interrupt Request 0 */
+#define PCINT0_vect_num			2
+
+/* Timer/Counter1 Compare Match 1A */
+#define TIM1_COMPA_vect_num		3
+#define TIMER1_COMPA_vect_num	3
+
+/* Timer/Counter1 Overflow */
+#define TIM1_OVF_vect_num		4
+#define TIMER1_OVF_vect_num		4
+
+/* Timer/Counter0 Overflow */
+#define TIM0_OVF_vect_num		5
+#define TIMER0_OVF_vect_num		5
+
+/* EEPROM Ready */
+#define EE_RDY_vect_num			6
+
+/* Analog comparator */
+#define ANA_COMP_vect_num		7
+
+/* ADC Conversion ready */
+#define ADC_vect_num    		8
+
+/* Timer/Counter1 Compare Match B */
+#define TIM1_COMPB_vect_num  	9
+#define TIMER1_COMPB_vect_num	9
+
+/* Timer/Counter0 Compare Match A */
+#define TIM0_COMPA_vect_num		10
+#define TIMER0_COMPA_vect_num	10
+
+/* Timer/Counter0 Compare Match B */
+#define TIM0_COMPB_vect_num		11
+#define TIMER0_COMPB_vect_num	11
+
+/* Watchdog Time-out */
+#define WDT_vect_num			12
+
+/* USI START */
+#define USI_START_vect_num		13
+
+/* USI Overflow */
+#define USI_OVF_vect_num		14
+
+#define _VECTORS_SIZE 30
+
+}
+
 }
 
 #endif /* MCAL_H_ */
