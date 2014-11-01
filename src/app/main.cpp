@@ -1,22 +1,72 @@
 #include <util/delay.h>
-#include <stdio.h>
 #include <mcal.h>
-#include <gpio.h>
-#include <systemtick.h>
+#include <digitalio_attiny85.h>
+#include <logicLED.h>
+#include <systemtick_attiny85.h>
+#include <MomentaryButton.h>
 #include <SoftwareSerial.h>
-#include <pwm.h>
-#include <adconverter.h>
+//#include <pwm.h>
+//#include <adconverter.h>
 
-#include <avr/eeprom.h>
+//#include <avr/eeprom.h>
 
-#include "_cplusplus.h"
+void testGPIO() {
 
+	static bool isInitialized = false;
+	mcal::DigitalIO &gpio = mcal::ATTiny85GPIO::getInstance();
+
+	if (~isInitialized) {
+		gpio.open(0);
+		isInitialized = true;
+	}
+	gpio.write(0, mcal::DigitalIO::DIOLEVEL_HIGH);
+	_delay_ms(500);
+	gpio.write(0, mcal::DigitalIO::DIOLEVEL_LOW);
+	_delay_ms(500);
+	gpio.toggle(0);
+	_delay_ms(500);
+	gpio.toggle(0);
+	_delay_ms(500);
+}
+
+void testLED() {
+	mcal::DigitalIO &gpio = mcal::ATTiny85GPIO::getInstance();
+	hal::LogicLED led1(0, gpio);
+	hal::LogicLED led2(1, gpio);
+
+	led1.set(hal::LogicLED::LED_HIGH);
+	led2.set(hal::LogicLED::LED_LOW);
+	_delay_ms(500);
+	led1.set(hal::LogicLED::LED_LOW);
+	led2.set(hal::LogicLED::LED_HIGH);
+	_delay_ms(500);
+	led1.toggle();
+	led2.toggle();
+	_delay_ms(500);
+	led1.toggle();
+	led2.toggle();
+	_delay_ms(500);
+
+}
 
 int main() {
 
-//	uint32_t lastChange;
+	mcal::Systemtick &systick = mcal::ATTiny85Systemtick::getInstance();
+	systick.start();
+
+	mcal::DigitalIO &gpio = mcal::ATTiny85GPIO::getInstance();
+	hal::LogicLED led0(0, gpio);
+	hal::LogicLED led3(3, gpio);
+	hal::MomentaryButton mombtn(4, gpio);
+	hal::Button &btn = mombtn;
+
+	mcal::ATSerial serial = mcal::ATSerial();
+	serial.begin(19200);
+
+
+	//	uint32_t lastChange;
 //	uint16_t adcValue;
-	char charBuffer[50];
+//	char charBuffer[50];
 //	const uint8_t sineValues[255] = { 131, 134, 137, 140, 143, 146, 149, 152,
 //			156, 159, 162, 165, 168, 171, 174, 176, 179, 182, 185, 188, 191,
 //			193, 196, 199, 201, 204, 206, 209, 211, 213, 216, 218, 220, 222,
@@ -35,15 +85,8 @@ int main() {
 //			23, 25, 27, 29, 31, 33, 35, 37, 39, 42, 44, 46, 49, 51, 54, 56, 59,
 //			62, 64, 67, 70, 73, 76, 79, 81, 84, 87, 90, 93, 96, 99, 103, 106,
 //			109, 112, 115, 118, 121, 124, 128 };
-	uint16_t index = 0;
+//	uint16_t index = 0;
 //	uint32_t ledInterval = 500;
-
-//	mcal::Systemtick systick = mcal::Systemtick::getInstance();
-//	systick.start();
-//	lastChange = systick.getTick();
-
-	mcal::ATSerial serial = mcal::ATSerial();
-	serial.begin(19200);
 
 //	mcal::PWM::open(mcal::PWM::PWMDevice0);
 //	mcal::PWM::open(mcal::PWM::PWMDevice1);
@@ -58,6 +101,24 @@ int main() {
 //	gpio.control(mcal::GPIO::GPIODevice5, mcal::GPIO::GPIOCMD_DIR_IN, NULL);
 
 	while (1) {
+
+//		testGPIO();
+
+//		testLED();
+
+//		if (systick.getTick() - lastChange > 500) {
+//			led.toggle();
+//			lastChange = systick.getTick();
+//		}
+
+
+//		if (btn.isPressed()) {
+		btn.updateState();
+		if (btn.isPressed()) {
+			led3.set(hal::LogicLED::LED_HIGH);
+		} else {
+			led3.set(hal::LogicLED::LED_LOW);
+		}
 
 //		mcal::PWM::getInstance().write(mcal::PWM::PWMDevice1,
 //				sineValues[index]);
@@ -81,6 +142,7 @@ int main() {
 		if (serial.bytesAvailable()) {
 			serial.write(serial.read());
 		}
+
 	}
 
 	return 0;

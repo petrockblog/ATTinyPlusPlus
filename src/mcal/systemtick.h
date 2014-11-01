@@ -1,51 +1,34 @@
 /*
- * timer.h
+ * systemtick.h
  *
- *  Created on: 08.10.2014
+ *  Created on: 25.10.2014
  *      Author: florian
  */
 
 #ifndef SYSTEMTICK_H_
 #define SYSTEMTICK_H_
 
-#include <timer.h>
-#include <cppinterrupt.h>
+#include <cstdint.h>
 
 namespace mcal {
 
 class Systemtick {
 
-private:
-	Systemtick();
-
-	volatile static uint32_t tickcount;
-
-	class TimerInterrupt: public Interrupt {
-		Systemtick *ownerTimer;
-		void serviceRoutine();
-
-	public:
-		TimerInterrupt(int interruptNumber, Systemtick *ownerTimer);
-	} nestedTimerInterrupt;
-
-	friend class TimerInterrupt;
-
 public:
 
-	static Systemtick& getInstance() {
-		static Systemtick systick;
-		return systick;
-	}
+	typedef volatile uint32_t systick_t;
 
-	static void start();
-	static void stop();
+	virtual void start() = 0;
+	virtual void stop() = 0;
 
-	std::uint32_t getTick() {
-		return tickcount;
+	virtual systick_t getTick() = 0;
+	virtual systick_t getTickPeriod() = 0;
+
+	virtual ~Systemtick() {
 	}
 
 };
 
 } /* namespace mcal */
 
-#endif /* TIMER_H_ */
+#endif /* SYSTEMTICK_H_ */

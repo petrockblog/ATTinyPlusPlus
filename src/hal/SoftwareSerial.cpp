@@ -43,14 +43,15 @@
 // Hardcoded TX/RX
 #define RXPIN   0
 #define TXPIN   1
-#define RXDEVICE GPIO::GPIODevice0
-#define TXDEVICE GPIO::GPIODevice1
+#define RXDEVICE 0
+#define TXDEVICE 1
 
 //
 // Includes
 //
 #include <avr/pgmspace.h>
 #include "SoftwareSerial.h"
+#include <mcal.h>
 
 //
 // Lookup table
@@ -118,9 +119,9 @@ inline void ATSerial::tunedDelay(uint16_t delay) {
 //
 void ATSerial::pinChangeHandler() {
 	uint8_t returnValue = 0;
-	GPIO gpio = GPIO::getInstance();
+	DigitalIO &gpio = ATTiny85GPIO::getInstance();
 
-	if (gpio.read(RXDEVICE) == GPIO::GPIOLEVEL_LOW ) {
+	if (gpio.read(RXDEVICE) == DigitalIO::DIOLEVEL_LOW ) {
 		// Wait approximately 1/2 of a bit width to "center" the sample
 		ATSerial::tunedDelay(ATSerial::_rx_delay_centering);
 
@@ -128,7 +129,7 @@ void ATSerial::pinChangeHandler() {
 		for (uint8_t counter = 0x1; counter; counter <<= 1) {
 			ATSerial::tunedDelay(ATSerial::_rx_delay_intrabit);
 			uint8_t noti = ~counter;
-			if (gpio.read(RXDEVICE) == GPIO::GPIOLEVEL_HIGH)
+			if (gpio.read(RXDEVICE) == DigitalIO::DIOLEVEL_HIGH)
 			returnValue |= counter;
 			else // else clause added to ensure function timing is ~balanced
 			returnValue &= noti;
@@ -151,13 +152,13 @@ void ATSerial::pinChangeHandler() {
 void ATSerial::begin(long speed) {
 	unsigned counter;
 
-	GPIO gpio = GPIO::getInstance();
+	DigitalIO &gpio = ATTiny85GPIO::getInstance();
 	gpio.open(RXDEVICE);
 	gpio.open(TXDEVICE);
-	gpio.control(RXDEVICE,GPIO::GPIOCMD_DIR_IN,NULL); // set RX for input
-	gpio.control(TXDEVICE,GPIO::GPIOCMD_DIR_OUT,NULL); // set TX for output
-	gpio.control(RXDEVICE, GPIO::GPIOCMD_PULLUP_ENABLE, NULL);
-	gpio.control(TXDEVICE, GPIO::GPIOCMD_PULLUP_ENABLE, NULL);
+	gpio.control(RXDEVICE,DigitalIO::DIOCMD_DIR_IN,NULL); // set RX for input
+	gpio.control(TXDEVICE,DigitalIO::DIOCMD_DIR_OUT,NULL); // set TX for output
+	gpio.control(RXDEVICE, DigitalIO::DIOCMD_PULLUP_ENABLE, NULL);
+	gpio.control(TXDEVICE, DigitalIO::DIOCMD_PULLUP_ENABLE, NULL);
 
 	for (counter = 0; counter < sizeof(table) / sizeof(table[0]); ++counter) {
 		long baud = pgm_read_dword(&table[counter].baud);
@@ -170,8 +171,8 @@ void ATSerial::begin(long speed) {
 			_tx_delay = pgm_read_word(&table[counter].tx_delay);
 			// Set up RX interrupts, but only if we have a valid RX baud rate
 
-			gpio.control(RXDEVICE, GPIO::GPIOCMD_IRQ_PINCHANGE_HANDLER, (void*)&ATSerial::pinChangeHandler);
-			gpio.control(RXDEVICE, GPIO::GPIOCMD_IRQ_PINCHANGE_ENABLE, 0);
+			gpio.control(RXDEVICE, DigitalIO::DIOCMD_IRQ_PINCHANGE_HANDLER, (void*)&ATSerial::pinChangeHandler);
+			gpio.control(RXDEVICE, DigitalIO::DIOCMD_IRQ_PINCHANGE_ENABLE, 0);
 			return;
 		}
 	}
@@ -180,8 +181,8 @@ void ATSerial::begin(long speed) {
 }
 
 void ATSerial::end() {
-	GPIO gpio = GPIO::getInstance();
-	gpio.control(RXDEVICE, GPIO::GPIOCMD_IRQ_PINCHANGE_DISABLE, NULL);
+	DigitalIO& gpio = ATTiny85GPIO::getInstance();
+	gpio.control(RXDEVICE, DigitalIO::DIOCMD_IRQ_PINCHANGE_DISABLE, NULL);
 }
 
 // Read data from buffer
@@ -209,7 +210,7 @@ bool ATSerial::isOverflow(void) {
 }
 
 size_t ATSerial::write(uint8_t b) {
-	GPIO gpio = GPIO::getInstance();
+	DigitalIO &gpio = ATTiny85GPIO::getInstance();
 
 	if (_tx_delay == 0) {
 		//setWriteError();
@@ -223,18 +224,18 @@ size_t ATSerial::write(uint8_t b) {
 	// turn off interrupts for a clean txmit
 
 	// Write the start bit
-	gpio.write(TXDEVICE, GPIO::GPIOLEVEL_LOW);
+	gpio.write(TXDEVICE, DigitalIO::DIOLEVEL_LOW);
 	tunedDelay(_tx_delay + XMIT_START_ADJUSTMENT);
 
 	// Write each of the 8 bits
 	for (char mask = 0x01; mask; mask <<= 1) {
 		if (b & mask) // choose bit
-			gpio.write(TXDEVICE, GPIO::GPIOLEVEL_HIGH);
+			gpio.write(TXDEVICE, DigitalIO::DIOLEVEL_HIGH);
 			else
-			gpio.write(TXDEVICE, GPIO::GPIOLEVEL_LOW);
+			gpio.write(TXDEVICE, DigitalIO::DIOLEVEL_LOW);
 			tunedDelay(_tx_delay);
 		}
-	gpio.write(TXDEVICE, GPIO::GPIOLEVEL_HIGH);
+	gpio.write(TXDEVICE, DigitalIO::DIOLEVEL_HIGH);
 
 	// turn interrupts back on
 	reg::sreg::reg_set(oldSREG);

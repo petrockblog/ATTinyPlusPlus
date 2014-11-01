@@ -9,7 +9,7 @@
 #define PWM_H_
 
 #include <mcal.h>
-#include <gpio.h>
+#include <digitalio.h>
 #include <timer.h>
 
 namespace mcal {

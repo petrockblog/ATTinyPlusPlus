@@ -43,8 +43,7 @@
 #define SoftwareSerial_h
 
 #include <stddef.h>
-#include <gpio.h>
-
+#include <digitalio_attiny85.h>
 
 namespace mcal {
 
@@ -70,7 +69,7 @@ public:
 	int bytesAvailable();
 	void flush();
 
-	// todo staic or non-static variables here?
+	// todo static or non-static variables here?
 	// todo singleton anwenden hier?
 	static uint16_t _rx_delay_centering;
 	static uint16_t _rx_delay_intrabit;
