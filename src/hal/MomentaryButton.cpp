@@ -19,6 +19,10 @@ Button::ButtonInfos_s MomentaryButton::getButtonInfos() const {
 	return infos;
 }
 
+Button::ButtonState_e MomentaryButton::getButtonState() const {
+	return infos.state;
+}
+
 bool MomentaryButton::isPressed() const {
 	return infos.state == BUTTON_PRESSED;
 }

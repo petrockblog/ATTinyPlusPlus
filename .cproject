@@ -72,8 +72,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/attiny/src/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/attiny/src/lib/STL}&quot;"/>
 								</option>
-								<option id="de.innot.avreclipse.cppcompiler.option.otherflags.1682200509" name="Other flags" superClass="de.innot.avreclipse.cppcompiler.option.otherflags" value="-std=c++0x -Weffc++" valueType="string"/>
-								<option id="de.innot.avreclipse.cppcompiler.option.optimize.packstruct.1222767519" superClass="de.innot.avreclipse.cppcompiler.option.optimize.packstruct" value="false" valueType="boolean"/>
+								<option id="de.innot.avreclipse.cppcompiler.option.otherflags.1682200509" name="Other flags" superClass="de.innot.avreclipse.cppcompiler.option.otherflags" value="-std=c++0x" valueType="string"/>
+								<option id="de.innot.avreclipse.cppcompiler.option.optimize.packstruct.1222767519" name="Pack structs (-fpack-struct)" superClass="de.innot.avreclipse.cppcompiler.option.optimize.packstruct" value="false" valueType="boolean"/>
 								<inputType id="de.innot.avreclipse.cppcompiler.input.1357322893" superClass="de.innot.avreclipse.cppcompiler.input"/>
 							</tool>
 							<tool id="de.innot.avreclipse.tool.linker.winavr.app.debug.1586913997" name="AVR C Linker" superClass="de.innot.avreclipse.tool.linker.winavr.app.debug"/>
@@ -94,7 +94,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="hal|notLinked/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="hal|notLinked/|tests/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -196,4 +196,16 @@
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
+		<buildTargets>
+			<target name="ATTinyPlusPLus_Tests" path="tests" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>make</buildCommand>
+				<buildArguments/>
+				<buildTarget>ATTinyPlusPLus_Tests</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>true</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+		</buildTargets>
+	</storageModule>
 </cproject>

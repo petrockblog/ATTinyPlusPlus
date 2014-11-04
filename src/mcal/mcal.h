@@ -31,8 +31,28 @@ constexpr std::uint8_t bval7 = 1U << 7U;
 
 // Port registers
 typedef register_access<std::uint8_t, std::uint8_t, 0x16U + sfr_offset> pinb;
+#define PINB5   5
+#define PINB4   4
+#define PINB3   3
+#define PINB2   2
+#define PINB1   1
+#define PINB0   0
+
 typedef register_access<std::uint8_t, std::uint8_t, 0x17U + sfr_offset> ddrb;
+#define DDB5    5
+#define DDB4    4
+#define DDB3    3
+#define DDB2    2
+#define DDB1    1
+#define DDB0    0
+
 typedef register_access<std::uint8_t, std::uint8_t, 0x18U + sfr_offset> portb;
+#define PB0 0
+#define PB1 1
+#define PB2 2
+#define PB3 3
+#define PB4 4
+#define PB5 5
 
 // ADC registers
 typedef register_access<std::uint16_t, std::uint16_t, 0x04U + sfr_offset> adc;
@@ -120,8 +140,27 @@ typedef register_access<std::uint8_t, std::uint8_t, 0x39U + sfr_offset> timsk;
 #define TOIE0   1
 
 // USI registers
-typedef register_access<std::uint8_t, std::uint8_t, 0x10U + sfr_offset> usibr;
 typedef register_access<std::uint8_t, std::uint8_t, 0x0dU + sfr_offset> usicr;
+#define USISIE  7
+#define USIOIE  6
+#define USIWM1  5
+#define USIWM0  4
+#define USICS1  3
+#define USICS0  2
+#define USICLK  1
+#define USITC   0
+
+typedef register_access<std::uint8_t, std::uint8_t, 0x0eU + sfr_offset> usisr;
+#define USISIF  7
+#define USIOIF  6
+#define USIPF   5
+#define USIDC   4
+#define USICNT3 3
+#define USICNT2 2
+#define USICNT1 1
+#define USICNT0 0
+
+typedef register_access<std::uint8_t, std::uint8_t, 0x10U + sfr_offset> usibr;
 typedef register_access<std::uint8_t, std::uint8_t, 0x0fU + sfr_offset> usidr;
 
 // General interrupt and pin change interrupt registers

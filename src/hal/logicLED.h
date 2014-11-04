@@ -9,7 +9,7 @@
 #define LOGICLED_H_
 
 #include <LED.h>
-#include <gpio.h>
+#include <digitalio.h>
 
 namespace hal {
 
@@ -22,7 +22,7 @@ public:
 	virtual void toggle(void);
 
 private:
-	mcal::DigitalIO &gpio;
+	mcal::DigitalIO &dio;
 
 };
 

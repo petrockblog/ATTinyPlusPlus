@@ -22,6 +22,7 @@ public:
 	MomentaryButton(uint8_t channel, mcal::DigitalIO& gpio);
 
 	virtual Button::ButtonInfos_s getButtonInfos() const;
+	virtual ButtonState_e getButtonState() const;
 	virtual bool isPressed() const;
 	virtual void updateState();
 	virtual mcal::Systemtick::systick_t getLastEventTick() const;

@@ -5,48 +5,76 @@
 #include <systemtick_attiny85.h>
 #include <MomentaryButton.h>
 #include <SoftwareSerial.h>
+#include "Powerswitch.h"
+#include "USITWISlave.h"
 //#include <pwm.h>
 //#include <adconverter.h>
 
-//#include <avr/eeprom.h>
+#define I2C_SLAVE_ADDRESS 0x4 // the 7-bit address (remember to change this when adapting this example)
+// Get this from https://github.com/rambo/TinyWire
+// The default buffer size, Can't recall the scope of defines right now
+#ifndef TWI_RX_BUFFER_SIZE
+#define TWI_RX_BUFFER_SIZE ( 16 )
+#endif
 
-void testGPIO() {
+volatile uint8_t i2c_regs[] = { 0xDE, 0xAD, 0xBE, 0xEF, };
+// Tracks the current register pointer position
+volatile uint8_t reg_position;
+const char reg_size = sizeof(i2c_regs);
 
-	static bool isInitialized = false;
-	mcal::DigitalIO &gpio = mcal::ATTiny85GPIO::getInstance();
-
-	if (~isInitialized) {
-		gpio.open(0);
-		isInitialized = true;
+/**
+ * This is called for each read request we receive, never put more than one byte of data (with TinyWireS.send) to the
+ * send-buffer when using this callback
+ */
+void requestEvent() {
+	mcal::USITWISlave::getInstance().send(i2c_regs[reg_position]);
+	// Increment the reg position on each read, and loop back to zero
+	reg_position++;
+	if (reg_position >= reg_size) {
+		reg_position = 0;
 	}
-	gpio.write(0, mcal::DigitalIO::DIOLEVEL_HIGH);
-	_delay_ms(500);
-	gpio.write(0, mcal::DigitalIO::DIOLEVEL_LOW);
-	_delay_ms(500);
-	gpio.toggle(0);
-	_delay_ms(500);
-	gpio.toggle(0);
-	_delay_ms(500);
 }
 
-void testLED() {
-	mcal::DigitalIO &gpio = mcal::ATTiny85GPIO::getInstance();
-	hal::LogicLED led1(0, gpio);
-	hal::LogicLED led2(1, gpio);
+// TODO: Either update this to use something smarter for timing or remove it alltogether
+void blinkn(uint8_t blinks) {
+//	digitalWrite(3, HIGH);
+//	while (blinks--) {
+//		digitalWrite(3, LOW);
+//		tws_delay(50);
+//		digitalWrite(3, HIGH);
+//		tws_delay(100);
+//	}
+}
 
-	led1.set(hal::LogicLED::LED_HIGH);
-	led2.set(hal::LogicLED::LED_LOW);
-	_delay_ms(500);
-	led1.set(hal::LogicLED::LED_LOW);
-	led2.set(hal::LogicLED::LED_HIGH);
-	_delay_ms(500);
-	led1.toggle();
-	led2.toggle();
-	_delay_ms(500);
-	led1.toggle();
-	led2.toggle();
-	_delay_ms(500);
+/**
+ * The I2C data received -handler
+ *
+ * This needs to complete before the next incoming transaction (start, data, restart/stop) on the bus does
+ * so be quick, set flags for long running tasks to be called from the mainloop instead of running them directly,
+ */
+void receiveEvent(uint8_t howMany) {
+	if (howMany < 1) {
+		// Sanity-check
+		return;
+	}
+	if (howMany > TWI_RX_BUFFER_SIZE) {
+		// Also insane number
+		return;
+	}
 
+	reg_position = mcal::USITWISlave::getInstance().receive();
+	howMany--;
+	if (!howMany) {
+		// This write was only to set the buffer for next read
+		return;
+	}
+	while (howMany--) {
+		i2c_regs[reg_position] = mcal::USITWISlave::getInstance().receive();
+		reg_position++;
+		if (reg_position >= reg_size) {
+			reg_position = 0;
+		}
+	}
 }
 
 int main() {
@@ -63,6 +91,16 @@ int main() {
 	mcal::ATSerial serial = mcal::ATSerial();
 	serial.begin(19200);
 
+	mcal::USITWISlave::getInstance().begin(0x04);
+	mcal::USITWISlave::getInstance().onReceive(receiveEvent);
+	mcal::USITWISlave::getInstance().onRequest(requestEvent);
+
+	hal::MomentaryButton powerButton = hal::MomentaryButton(0, gpio);
+	hal::MomentaryButton rpiPower = hal::MomentaryButton(1, gpio);
+	hal::LogicLED powerSwitch(2, gpio);
+	app::Powerswitch powerswitch = app::Powerswitch(powerButton, rpiPower,
+			powerSwitch);
+	powerswitch.update();
 
 	//	uint32_t lastChange;
 //	uint16_t adcValue;
@@ -111,7 +149,6 @@ int main() {
 //			lastChange = systick.getTick();
 //		}
 
-
 //		if (btn.isPressed()) {
 		btn.updateState();
 		if (btn.isPressed()) {
@@ -139,9 +176,9 @@ int main() {
 //		adcValue = mcal::ADConverter::getInstance().read(mcal::ADConverter::ADCDevice1);
 
 //		sprintf(charBuffer,"%d, ",adcValue);
-		if (serial.bytesAvailable()) {
-			serial.write(serial.read());
-		}
+//		if (serial.bytesAvailable()) {
+//			serial.write(serial.read());
+//		}
 
 	}
 

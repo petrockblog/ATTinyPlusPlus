@@ -10,7 +10,7 @@
 namespace hal {
 
 LogicLED::LogicLED(uint8_t channel, mcal::DigitalIO &gpio) :
-		LED(channel), gpio(gpio) {
+		LED(channel), dio(gpio) {
 	gpio.open(channel);
 	gpio.control(channel, mcal::DigitalIO::DIOCMD_DIR_OUT);
 	gpio.write(channel, mcal::DigitalIO::DIOLEVEL_LOW);
@@ -19,14 +19,14 @@ LogicLED::LogicLED(uint8_t channel, mcal::DigitalIO &gpio) :
 
 void LogicLED::set(LED::LEDLevel_e level) {
 	if (level == LED_LOW) {
-		gpio.write(channel, mcal::DigitalIO::DIOLEVEL_LOW);
+		dio.write(channel, mcal::DigitalIO::DIOLEVEL_LOW);
 	} else {
-		gpio.write(channel, mcal::DigitalIO::DIOLEVEL_HIGH);
+		dio.write(channel, mcal::DigitalIO::DIOLEVEL_HIGH);
 	}
 }
 
 void LogicLED::toggle(void) {
-	gpio.toggle(channel);
+	dio.toggle(channel);
 }
 
 } /* namespace hal */
