@@ -279,12 +279,11 @@ void USITWISlave::onRequest(void (*function)(void)) {
 	usi_onRequestPtr = function;
 }
 
-void USITWISlave::TinyWireS_stop_check() {
+void USITWISlave::stop_check() {
 	if (!usi_onReceiverPtr) {
 		// no onReceive callback, nothing to do...
 		return;
 	}
-//    if (!(USISR & ( 1 << USIPF )))
 	if (!(reg::usisr::reg_get() & (1 << USIPF))) {
 		// Stop not detected
 		return;
@@ -297,12 +296,12 @@ void USITWISlave::TinyWireS_stop_check() {
 	usi_onReceiverPtr(amount);
 }
 
-// Implement a delay loop that checks for the stop bit (basically direct copy of the stock arduino implementation from wiring.c)
-void USITWISlave::tws_delay(unsigned long ms) {
-	uint16_t start = (uint16_t) micros();
+// Implement a delay loop that checks for the stop bit
+void USITWISlave::tws_delay(Systemtick::systick_t ms, Systemtick& systick) {
+	Systemtick::systick_t start = systick.getTick();
 	while (ms > 0) {
-		TinyWireS_stop_check();
-		if (((uint16_t) micros() - start) >= 1000) {
+		stop_check();
+		if ((systick.getTick() - start) >= 1000) {
 			ms--;
 			start += 1000;
 		}

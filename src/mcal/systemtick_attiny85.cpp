@@ -11,7 +11,9 @@ ATTiny85Systemtick::TimerInterrupt::TimerInterrupt(int interruptNumber,
 }
 
 void ATTiny85Systemtick::TimerInterrupt::serviceRoutine() {
+	cli();
 	ownerTimer->tickcount += 1;
+	sei();
 }
 
 ATTiny85Systemtick::ATTiny85Systemtick() :

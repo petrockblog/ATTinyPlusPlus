@@ -17,7 +17,7 @@
 
 namespace mcal {
 
-class ATTiny85GPIO: public DigitalIO {
+class ATTiny85DigitalIO: public DigitalIO {
 
 public:
 
@@ -25,19 +25,19 @@ public:
 	virtual DIOLevel_e read(uint8_t gpio);
 	virtual void write(uint8_t gpio, DIOLevel_e level);
 	virtual void toggle(uint8_t gpio);
-	virtual void control(uint8_t gpio, GPIOCmd_e cmd, void* params = nullptr);
+	virtual void control(uint8_t gpio, DIOCmd_e cmd, void* params = nullptr);
 
-	static ATTiny85GPIO& getInstance() {
-		static ATTiny85GPIO instance = ATTiny85GPIO();
+	static ATTiny85DigitalIO& getInstance() {
+		static ATTiny85DigitalIO instance = ATTiny85DigitalIO();
 		return instance;
 	}
 
-	~ATTiny85GPIO() {
+	~ATTiny85DigitalIO() {
 	}
 
 private:
 
-	ATTiny85GPIO();
+	ATTiny85DigitalIO();
 
 	static std::uint8_t isOpen;
 
@@ -45,14 +45,14 @@ private:
 	static PCHandler pinchange_handler;
 
 	class PinChangeInterrupt: public Interrupt {
-		ATTiny85GPIO *ownerGPIO;
+		ATTiny85DigitalIO *ownerGPIO;
 		void serviceRoutine();
 
 	public:
-		PinChangeInterrupt(int interruptNumber, ATTiny85GPIO *ownerGPIO);
+		PinChangeInterrupt(int interruptNumber, ATTiny85DigitalIO *ownerGPIO);
 	} nestedPinChangeInterrupt;
 
-	friend class ATTiny85GPIO::PinChangeInterrupt;
+	friend class ATTiny85DigitalIO::PinChangeInterrupt;
 
 };
 

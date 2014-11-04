@@ -28,7 +28,7 @@ public:
 		DIOCMD_IRQ_PINCHANGE_HANDLER,
 		DIOCMD_PULLUP_ENABLE,
 		DIOCMD_PULLUP_DISABLE
-	} GPIOCmd_e;
+	} DIOCmd_e;
 
 	virtual ~DigitalIO() {
 	}
@@ -37,7 +37,7 @@ public:
 	virtual DIOLevel_e read(uint8_t gpio) = 0;
 	virtual void write(uint8_t gpio, DIOLevel_e level) = 0;
 	virtual void toggle(uint8_t gpio) = 0;
-	virtual void control(uint8_t gpio, GPIOCmd_e cmd,
+	virtual void control(uint8_t gpio, DIOCmd_e cmd,
 			void* params = nullptr) = 0;
 
 };

@@ -182,8 +182,8 @@ constexpr uint8_t ocie0a = 4;
 
 namespace irq {
 
-# define sei()  __asm__ __volatile__ ("sei" ::: "memory")
-# define cli()  __asm__ __volatile__ ("cli" ::: "memory")
+#define sei()  __asm__ __volatile__ ("sei" ::: "memory")
+#define cli()  __asm__ __volatile__ ("cli" ::: "memory")
 
 /* Interrupt vectors */
 /* Interrupt vector 0 is the reset vector. */

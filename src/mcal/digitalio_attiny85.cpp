@@ -9,51 +9,51 @@
 
 namespace mcal {
 
-ATTiny85GPIO::PCHandler ATTiny85GPIO::pinchange_handler = NULL;
-uint8_t ATTiny85GPIO::isOpen = 0;
+ATTiny85DigitalIO::PCHandler ATTiny85DigitalIO::pinchange_handler = NULL;
+uint8_t ATTiny85DigitalIO::isOpen = 0;
 
-ATTiny85GPIO::PinChangeInterrupt::PinChangeInterrupt(int interruptNumber,
-		ATTiny85GPIO *ownerGPIO) :
+ATTiny85DigitalIO::PinChangeInterrupt::PinChangeInterrupt(int interruptNumber,
+		ATTiny85DigitalIO *ownerGPIO) :
 		ownerGPIO(ownerGPIO) {
 	record(interruptNumber, this);
 }
 
-void ATTiny85GPIO::PinChangeInterrupt::serviceRoutine() {
+void ATTiny85DigitalIO::PinChangeInterrupt::serviceRoutine() {
 	(ownerGPIO->pinchange_handler)();
 }
 
-ATTiny85GPIO::ATTiny85GPIO() :
+ATTiny85DigitalIO::ATTiny85DigitalIO() :
 		nestedPinChangeInterrupt(2, this) {
 }
 
-void ATTiny85GPIO::open(uint8_t gpio) {
+void ATTiny85DigitalIO::open(uint8_t gpio) {
 	reg::portb::bit_clr(gpio);  // set output to low level
 	reg::ddrb::bit_set(gpio);  // initialize as output
 	isOpen |= (1 << gpio);
 }
 
-ATTiny85GPIO::DIOLevel_e ATTiny85GPIO::read(uint8_t gpio) {
+ATTiny85DigitalIO::DIOLevel_e ATTiny85DigitalIO::read(uint8_t gpio) {
 	if (reg::pinb::bit_get(gpio)) {
-		return ATTiny85GPIO::DIOLEVEL_HIGH;
+		return ATTiny85DigitalIO::DIOLEVEL_HIGH;
 	} else {
-		return ATTiny85GPIO::DIOLEVEL_LOW;
+		return ATTiny85DigitalIO::DIOLEVEL_LOW;
 	}
 }
 
-void ATTiny85GPIO::write(uint8_t gpio, DIOLevel_e level) {
+void ATTiny85DigitalIO::write(uint8_t gpio, DIOLevel_e level) {
 	if ((isOpen & (1 << gpio)) > 0) {
 		level == DIOLEVEL_HIGH ?
 				reg::portb::bit_set(gpio) : reg::portb::bit_clr(gpio);
 	}
 }
 
-void ATTiny85GPIO::toggle(uint8_t gpio) {
+void ATTiny85DigitalIO::toggle(uint8_t gpio) {
 	if ((isOpen & (1 << gpio)) > 0) {
 		reg::portb::bit_not(gpio);
 	}
 }
 
-void ATTiny85GPIO::control(uint8_t gpio, GPIOCmd_e cmd, void* params) {
+void ATTiny85DigitalIO::control(uint8_t gpio, DIOCmd_e cmd, void* params) {
 	if ((isOpen & (1 << gpio)) > 0) {
 
 		switch (cmd) {
@@ -77,7 +77,7 @@ void ATTiny85GPIO::control(uint8_t gpio, GPIOCmd_e cmd, void* params) {
 
 		case DIOCMD_IRQ_PINCHANGE_HANDLER:
 			if (params != nullptr) {
-				ATTiny85GPIO::pinchange_handler = (PCHandler) params;
+				ATTiny85DigitalIO::pinchange_handler = (PCHandler) params;
 			}
 			break;
 

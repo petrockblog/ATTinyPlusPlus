@@ -26,7 +26,7 @@ public:
 	virtual void start();
 	virtual void stop();
 
-	virtual systick_t getTick() {
+	inline virtual systick_t getTick() {
 		return tickcount;
 	}
 

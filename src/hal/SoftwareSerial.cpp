@@ -119,7 +119,7 @@ inline void ATSerial::tunedDelay(uint16_t delay) {
 //
 void ATSerial::pinChangeHandler() {
 	uint8_t returnValue = 0;
-	DigitalIO &gpio = ATTiny85GPIO::getInstance();
+	DigitalIO &gpio = ATTiny85DigitalIO::getInstance();
 
 	if (gpio.read(RXDEVICE) == DigitalIO::DIOLEVEL_LOW ) {
 		// Wait approximately 1/2 of a bit width to "center" the sample
@@ -152,7 +152,7 @@ void ATSerial::pinChangeHandler() {
 void ATSerial::begin(long speed) {
 	unsigned counter;
 
-	DigitalIO &gpio = ATTiny85GPIO::getInstance();
+	DigitalIO &gpio = ATTiny85DigitalIO::getInstance();
 	gpio.open(RXDEVICE);
 	gpio.open(TXDEVICE);
 	gpio.control(RXDEVICE,DigitalIO::DIOCMD_DIR_IN,NULL); // set RX for input
@@ -181,7 +181,7 @@ void ATSerial::begin(long speed) {
 }
 
 void ATSerial::end() {
-	DigitalIO& gpio = ATTiny85GPIO::getInstance();
+	DigitalIO& gpio = ATTiny85DigitalIO::getInstance();
 	gpio.control(RXDEVICE, DigitalIO::DIOCMD_IRQ_PINCHANGE_DISABLE, NULL);
 }
 
@@ -210,7 +210,7 @@ bool ATSerial::isOverflow(void) {
 }
 
 size_t ATSerial::write(uint8_t b) {
-	DigitalIO &gpio = ATTiny85GPIO::getInstance();
+	DigitalIO &gpio = ATTiny85DigitalIO::getInstance();
 
 	if (_tx_delay == 0) {
 		//setWriteError();

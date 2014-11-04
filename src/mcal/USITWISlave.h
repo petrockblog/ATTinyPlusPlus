@@ -10,6 +10,7 @@
 
 #include <cstdint.h>
 #include <cppinterrupt.h>
+#include <systemtick.h>
 #include <mcal.h>
 
 /********************************************************************************
@@ -53,6 +54,8 @@ public:
 	void onReceive(void (*)(uint8_t));
 	void onRequest(void (*)(void));
 
+	void stop_check();
+
 	static USITWISlave& getInstance() {
 		static USITWISlave instance;
 		return instance;
@@ -60,6 +63,7 @@ public:
 
 private:
 	USITWISlave();
+
 	typedef enum {
 		USI_SLAVE_CHECK_ADDRESS = 0x00,
 		USI_SLAVE_SEND_DATA = 0x01,
@@ -105,9 +109,8 @@ private:
 	friend class USIStartInterrupt;
 	friend class USIOverflowInterrupt;
 
-	void TinyWireS_stop_check();
 	// Implement a delay loop that checks for the stop bit (basically direct copy of the stock arduino implementation from wiring.c)
-	void tws_delay(unsigned long);
+	void tws_delay(Systemtick::systick_t ms, Systemtick& systick);
 
 	inline void flushTwiBuffers(void) {
 		rxTail = 0;

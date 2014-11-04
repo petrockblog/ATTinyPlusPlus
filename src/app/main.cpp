@@ -7,8 +7,8 @@
 #include <SoftwareSerial.h>
 #include "Powerswitch.h"
 #include "USITWISlave.h"
-//#include <pwm.h>
-//#include <adconverter.h>
+#include "pwm.h"
+#include <adconverter.h>
 
 #define I2C_SLAVE_ADDRESS 0x4 // the 7-bit address (remember to change this when adapting this example)
 // Get this from https://github.com/rambo/TinyWire
@@ -33,17 +33,6 @@ void requestEvent() {
 	if (reg_position >= reg_size) {
 		reg_position = 0;
 	}
-}
-
-// TODO: Either update this to use something smarter for timing or remove it alltogether
-void blinkn(uint8_t blinks) {
-//	digitalWrite(3, HIGH);
-//	while (blinks--) {
-//		digitalWrite(3, LOW);
-//		tws_delay(50);
-//		digitalWrite(3, HIGH);
-//		tws_delay(100);
-//	}
 }
 
 /**
@@ -79,25 +68,22 @@ void receiveEvent(uint8_t howMany) {
 
 int main() {
 
+	// initialize system tick
 	mcal::Systemtick &systick = mcal::ATTiny85Systemtick::getInstance();
 	systick.start();
 
-	mcal::DigitalIO &gpio = mcal::ATTiny85GPIO::getInstance();
-	hal::LogicLED led0(0, gpio);
-	hal::LogicLED led3(3, gpio);
-	hal::MomentaryButton mombtn(4, gpio);
-	hal::Button &btn = mombtn;
+	mcal::USITWISlave twiSlave = mcal::USITWISlave::getInstance();
+	twiSlave.begin(I2C_SLAVE_ADDRESS);
+	twiSlave.onReceive(receiveEvent);
+	twiSlave.onRequest(requestEvent);
 
-	mcal::ATSerial serial = mcal::ATSerial();
-	serial.begin(19200);
-
-	mcal::USITWISlave::getInstance().begin(0x04);
-	mcal::USITWISlave::getInstance().onReceive(receiveEvent);
-	mcal::USITWISlave::getInstance().onRequest(requestEvent);
+	// initialize peripherals and power switch
+	mcal::DigitalIO &gpio = mcal::ATTiny85DigitalIO::getInstance();
 
 	hal::MomentaryButton powerButton = hal::MomentaryButton(0, gpio);
 	hal::MomentaryButton rpiPower = hal::MomentaryButton(1, gpio);
 	hal::LogicLED powerSwitch(2, gpio);
+
 	app::Powerswitch powerswitch = app::Powerswitch(powerButton, rpiPower,
 			powerSwitch);
 	powerswitch.update();
@@ -130,56 +116,13 @@ int main() {
 //	mcal::PWM::open(mcal::PWM::PWMDevice1);
 //	mcal::PWM::getInstance().open(mcal::PWM::PWMDevice1);
 
-//	mcal::GPIO gpio = mcal::GPIO::getInstance();
-//	gpio.open(mcal::GPIO::GPIODevice3);
-//	gpio.control(mcal::GPIO::GPIODevice3, mcal::GPIO::GPIOCMD_DIR_IN, NULL);
-//	gpio.open(mcal::GPIO::GPIODevice4);
-//	gpio.control(mcal::GPIO::GPIODevice4, mcal::GPIO::GPIOCMD_DIR_IN, NULL);
-//	gpio.open(mcal::GPIO::GPIODevice5);
-//	gpio.control(mcal::GPIO::GPIODevice5, mcal::GPIO::GPIOCMD_DIR_IN, NULL);
-
 	while (1) {
-
-//		testGPIO();
-
-//		testLED();
-
-//		if (systick.getTick() - lastChange > 500) {
-//			led.toggle();
-//			lastChange = systick.getTick();
-//		}
-
-//		if (btn.isPressed()) {
-		btn.updateState();
-		if (btn.isPressed()) {
-			led3.set(hal::LogicLED::LED_HIGH);
-		} else {
-			led3.set(hal::LogicLED::LED_LOW);
-		}
-
-//		mcal::PWM::getInstance().write(mcal::PWM::PWMDevice1,
-//				sineValues[index]);
-//		index = (index + 1) % 255;
-
-//		_delay_ms(3);
-
-// toggle LED with interval LEDINTERVAL
-//		if (systick.getTick() - lastChange > ledInterval) {
-//			gpio.toggle(mcal::GPIO::GPIODevice3);
-//			lastChange = systick.getTick();
-
-//			if (gpio.read(mcal::GPIO::GPIODevice4)==mcal::GPIO::GPIOLEVEL_HIGH) {
-//				serial.write("Hello World!\r");
-//			}
-//		}
-
-//		adcValue = mcal::ADConverter::getInstance().read(mcal::ADConverter::ADCDevice1);
-
-//		sprintf(charBuffer,"%d, ",adcValue);
-//		if (serial.bytesAvailable()) {
-//			serial.write(serial.read());
-//		}
-
+		/**
+		 * This is the only way we can detect stop condition (http://www.avrfreaks.net/index.php?name=PNphpBB2&file=viewtopic&p=984716&sid=82e9dc7299a8243b86cf7969dd41b5b5#984716)
+		 * it needs to be called in a very tight loop in order not to miss any (REMINDER: Do *not* use delay() anywhere, use tws_delay() instead).
+		 * It will call the function registered via TinyWireS.onReceive(); if there is data in the buffer on stop.
+		 */
+		twiSlave.stop_check();
 	}
 
 	return 0;
