@@ -12,9 +12,9 @@ namespace mcal {
 ATTiny85PWM::ATTiny85PWM() {
 }
 
-void ATTiny85PWM::open(uint8_t device) {
+void ATTiny85PWM::open(uint8_t channel) {
 	DigitalIO& dio = ATTiny85DigitalIO::getInstance();
-	switch (device) {
+	switch (channel) {
 	case 0: // PB0
 		dio.open(0);
 		dio.control(0, DigitalIO::DIOCMD_DIR_OUT, 0);
@@ -60,8 +60,8 @@ void ATTiny85PWM::open(uint8_t device) {
 	}
 }
 
-void ATTiny85PWM::write(uint8_t device, uint8_t value) {
-	switch (device) {
+void ATTiny85PWM::write(uint8_t channel, uint8_t value) {
+	switch (channel) {
 	case 0:
 		Timer::Timer0_SetOutputCompareMatchA(value);
 		break;

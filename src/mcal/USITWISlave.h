@@ -13,6 +13,8 @@
 #include <systemtick.h>
 #include <mcal.h>
 
+#define I2C_SLAVE_ADDRESS 0x4 // the 7-bit address
+
 /********************************************************************************
 
  driver buffer definitions
@@ -54,7 +56,8 @@ public:
 	void onReceive(void (*)(uint8_t));
 	void onRequest(void (*)(void));
 
-	void stop_check();
+	// Implement a delay loop that checks for the stop bit (basically direct copy of the stock arduino implementation from wiring.c)
+	void tws_delay(Systemtick::systick_t ms, Systemtick& systick);
 
 	static USITWISlave& getInstance() {
 		static USITWISlave instance;
@@ -109,8 +112,7 @@ private:
 	friend class USIStartInterrupt;
 	friend class USIOverflowInterrupt;
 
-	// Implement a delay loop that checks for the stop bit (basically direct copy of the stock arduino implementation from wiring.c)
-	void tws_delay(Systemtick::systick_t ms, Systemtick& systick);
+	void stop_check();
 
 	inline void flushTwiBuffers(void) {
 		rxTail = 0;

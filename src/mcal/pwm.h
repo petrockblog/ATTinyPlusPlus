@@ -15,8 +15,8 @@ public:
 	virtual ~PWM() {
 	}
 
-	virtual void open(uint8_t device) = 0;
-	virtual void write(uint8_t device, uint8_t value) = 0;
+	virtual void open(uint8_t channel) = 0;
+	virtual void write(uint8_t channel, uint8_t value) = 0;
 };
 
 } /* namespace app */

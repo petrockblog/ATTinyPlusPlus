@@ -279,6 +279,20 @@ void USITWISlave::onRequest(void (*function)(void)) {
 	usi_onRequestPtr = function;
 }
 
+// Implement a delay loop that checks for the stop bit
+void USITWISlave::tws_delay(Systemtick::systick_t ms, Systemtick& systick) {
+	Systemtick::systick_t start = systick.getTick();
+	while (systick.getTick() - start < ms) {
+	}
+//	while (ms > 0) {
+//		stop_check();
+//		if ((systick.getTick() - start) >= 1000) {
+//			ms--;
+//			start += 1000;
+//		}
+//	}
+}
+
 void USITWISlave::stop_check() {
 	if (!usi_onReceiverPtr) {
 		// no onReceive callback, nothing to do...
@@ -294,18 +308,6 @@ void USITWISlave::stop_check() {
 		return;
 	}
 	usi_onReceiverPtr(amount);
-}
-
-// Implement a delay loop that checks for the stop bit
-void USITWISlave::tws_delay(Systemtick::systick_t ms, Systemtick& systick) {
-	Systemtick::systick_t start = systick.getTick();
-	while (ms > 0) {
-		stop_check();
-		if ((systick.getTick() - start) >= 1000) {
-			ms--;
-			start += 1000;
-		}
-	}
 }
 
 } /* namespace app */
