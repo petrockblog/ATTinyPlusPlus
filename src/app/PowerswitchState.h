@@ -9,23 +9,34 @@
 #define POWERSWITCHSTATE_H_
 
 #include "button.h"
+#include "PWMLed.h"
 #include "Powerswitch.h"
 
 namespace app {
+
+constexpr hal::PWMLed::PWMLEDParams_s patternOff = { 0, 0, 0 };
+constexpr hal::PWMLed::PWMLEDParams_s patternBoot = { 200, 0, 30 };
+constexpr hal::PWMLed::PWMLEDParams_s patternOn = { 200, 0, 0 };
+constexpr hal::PWMLed::PWMLEDParams_s patternShutdown = { 200, 0, 15 };
 
 class Powerswitch;
 
 class PowerswitchState {
 public:
-	PowerswitchState();
 	virtual ~PowerswitchState();
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,
 			hal::Button::ButtonState_e rpiPowerState) = 0;
+protected:
+	PowerswitchState(hal::PWMLed::PWMLEDParams_s pattern);
+	const hal::PWMLed::PWMLEDParams_s ledPattern;
 };
 
 class PowerswitchStateOff: public PowerswitchState {
 public:
+	PowerswitchStateOff() :
+			PowerswitchState(patternOff) {
+	}
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,
 			hal::Button::ButtonState_e rpiPowerState);
@@ -34,6 +45,9 @@ public:
 
 class PowerswitchStateBoot: public PowerswitchState {
 public:
+	PowerswitchStateBoot() :
+			PowerswitchState(patternBoot) {
+	}
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,
 			hal::Button::ButtonState_e rpiPowerState);
@@ -42,6 +56,9 @@ public:
 
 class PowerswitchStateOn: public PowerswitchState {
 public:
+	PowerswitchStateOn() :
+			PowerswitchState(patternOn) {
+	}
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,
 			hal::Button::ButtonState_e rpiPowerState);
@@ -50,6 +67,9 @@ public:
 
 class PowerswitchStateShutdown: public PowerswitchState {
 public:
+	PowerswitchStateShutdown() :
+			PowerswitchState(patternShutdown) {
+	}
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,
 			hal::Button::ButtonState_e rpiPowerState);

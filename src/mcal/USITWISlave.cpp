@@ -226,7 +226,7 @@ void USITWISlave::begin(uint8_t ownAddress) { // initialize I2C lib
 	// clear all interrupt flags and reset overflow counter
 	reg::usisr::reg_set(
 			(1 << USISIF) | (1 << USIOIF) | (1 << USIPF) | (1 << USIDC));
-
+	sei();
 }
 
 void USITWISlave::send(uint8_t data) {
@@ -283,6 +283,7 @@ void USITWISlave::onRequest(void (*function)(void)) {
 void USITWISlave::tws_delay(Systemtick::systick_t ms, Systemtick& systick) {
 	Systemtick::systick_t start = systick.getTick();
 	while (systick.getTick() - start < ms) {
+		stop_check();
 	}
 //	while (ms > 0) {
 //		stop_check();

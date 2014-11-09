@@ -15,7 +15,7 @@ LIBS=-lCppUTest -L$(LIBCPPUTEST_LIBDIR)
 all $(TARGET): $(BUILDDIR)/AllTests.o
 	cd app && $(MAKE) $@
 	cd hal && $(MAKE) $@
-	@echo " Linking..."; $(CC) $(LIBS) ./build/AllTests.o ./build/app/rpiswitch_tests.o ./build/hal/PWMLed_tests.o -o $(TARGET)
+	@echo " Linking..."; $(CC) $(LIBS) ./build/AllTests.o ./build/app/rpiswitch_tests.o ./build/hal/PWMLed_tests.o ./build/hal/PWMLed.o -o $(TARGET)
 	./$(TARGET) -c -v
 
 clean:

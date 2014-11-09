@@ -10,6 +10,7 @@
 
 #include "button.h"
 #include "LED.h"
+#include "PWMLed.h"
 #include "PowerswitchState.h"
 
 namespace app {
@@ -27,7 +28,8 @@ public:
 	friend class PowerswitchStateOn;
 	friend class PowerswitchStateShutdown;
 
-	Powerswitch(hal::Button &btn, hal::Button &rpiPower, hal::LED& powerSwitch);
+	Powerswitch(hal::Button &btn, hal::Button &rpiPower, hal::LED& powerSwitch,
+			hal::PWMLed& led);
 	virtual ~Powerswitch();
 
 	void update();
@@ -42,11 +44,15 @@ private:
 	PowerswitchState* currentState;
 
 	hal::Button &button;
-	hal::Button &rpiPower;
+	hal::Button &rpiStatus;
 	hal::LED &powerSwitch;
+	hal::PWMLed &pwmLED;
 
 	void setSwitch(hal::LED::LEDLevel_e level);
 	void setState(PowerswitchState *newState);
+	void setLEDPattern(const hal::PWMLed::PWMLEDParams_s& pattern) {
+		pwmLED.setConfiguration(pattern);
+	}
 
 	inline PowerswitchState* getStateOff() {
 		return (PowerswitchState *) stateOff;

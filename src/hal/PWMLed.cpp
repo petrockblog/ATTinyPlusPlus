@@ -5,7 +5,7 @@
  *      Author: florian
  */
 
-#include <PWMLed.h>
+#include "PWMLed.h"
 
 namespace hal {
 
@@ -22,6 +22,13 @@ PWMLed::PWMLed(uint8_t channel, mcal::PWM& pwm, uint8_t amplitude,
 	initialize();
 }
 
+PWMLed::PWMLed(uint8_t channel, mcal::PWM& pwm, PWMLEDParams_s& params) :
+		channel(channel), pwm(pwm), amplitude(params.amplitude), delayTime(
+				params.delayTime), rampupTime(params.rampupTime), currentState(
+				0), slope(0) {
+	initialize();
+}
+
 PWMLed::~PWMLed() {
 }
 
@@ -31,18 +38,34 @@ void PWMLed::initialize() {
 }
 
 void PWMLed::setAmplitude(uint8_t amplitude) {
-	this->amplitude = amplitude;
-	updateSlope();
+	if (this->amplitude != amplitude) {
+		this->amplitude = amplitude;
+		updateSlope();
+	}
 }
 
 void PWMLed::setDelayTime(uint16_t delayTime) {
-	this->delayTime = delayTime;
-	updateSlope();
+	if (this->delayTime != delayTime) {
+		this->delayTime = delayTime;
+		updateSlope();
+	}
 }
 
 void PWMLed::setRampupTime(uint16_t rampupTime) {
-	this->rampupTime = rampupTime;
-	updateSlope();
+	if (this->rampupTime != rampupTime) {
+		this->rampupTime = rampupTime;
+		updateSlope();
+	}
+}
+
+void PWMLed::setConfiguration(const PWMLEDParams_s& params) {
+	if ((amplitude != params.amplitude) || (delayTime != params.delayTime)
+			|| (rampupTime != params.rampupTime)) {
+		this->amplitude = params.amplitude;
+		this->delayTime = params.delayTime;
+		this->rampupTime = params.rampupTime;
+		updateSlope();
+	}
 }
 
 void PWMLed::update() {
@@ -50,16 +73,21 @@ void PWMLed::update() {
 
 	currentState = (currentState + 1) % (delayTime + rampupTime + rampupTime);
 
-	if (currentState < delayTime) {
-		pwm.write(channel, 0);
-	} else if ((currentState >= delayTime)
-			&& (currentState < delayTime + rampupTime)) {
-		newLevel = fixedpt_mul(slope,
-				fixedpt_fromint(currentState - delayTime));
-	} else {
+	if (0 == slope) {
 		newLevel = fixedpt_fromint(amplitude);
-		newLevel = fixedpt_add(newLevel,
-				fixedpt_mul(fixedpt_mul(slope,fixedpt_fromint(-1)), fixedpt_fromint(currentState - delayTime - rampupTime)));
+	} else {
+		if (currentState < delayTime) {
+			pwm.write(channel, 0);
+		} else if ((currentState >= delayTime)
+				&& (currentState < delayTime + rampupTime)) {
+			newLevel = fixedpt_mul(slope,
+					fixedpt_fromint(currentState - delayTime));
+		} else {
+			newLevel = fixedpt_fromint(amplitude);
+			newLevel =
+					fixedpt_add(newLevel,
+							fixedpt_mul(-slope, fixedpt_fromint(currentState - delayTime - rampupTime)));
+		}
 	}
 	if (newLevel < 0) {
 		newLevel = 0;
@@ -70,8 +98,12 @@ void PWMLed::update() {
 }
 
 void PWMLed::updateSlope() {
-	slope = fixedpt_div(fixedpt_fromint(amplitude),
-			fixedpt_sub(fixedpt_fromint(rampupTime), FIXEDPT_ONE));
+	if (rampupTime > 0) {
+		slope = fixedpt_div(fixedpt_fromint(amplitude),
+				fixedpt_fromint(rampupTime));
+	} else {
+		slope = 0;
+	}
 }
 
 } /* namespace hal */

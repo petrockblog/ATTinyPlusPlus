@@ -10,21 +10,28 @@
 
 #include "cstdint.h"
 #include "pwm.h"
-#include "systemtick.h"
 #include "fixedptc.h"
 
 namespace hal {
 
 class PWMLed {
 public:
+	typedef struct {
+		uint8_t amplitude;
+		uint16_t delayTime;
+		uint16_t rampupTime;
+	} PWMLEDParams_s;
+
 	PWMLed(uint8_t channel, mcal::PWM& pwm);
-	PWMLed(uint8_t channel, mcal::PWM& pwm, uint8_t amplitude, uint16_t delayTime,
-			uint16_t rampupTime);
+	PWMLed(uint8_t channel, mcal::PWM& pwm, uint8_t amplitude,
+			uint16_t delayTime, uint16_t rampupTime);
+	PWMLed(uint8_t channel, mcal::PWM& pwm, PWMLEDParams_s& params);
 	virtual ~PWMLed();
 
 	void setAmplitude(uint8_t amplitude);
 	void setDelayTime(uint16_t delayTime);
 	void setRampupTime(uint16_t rampupTime);
+	void setConfiguration(const PWMLEDParams_s& params);
 	void update();
 
 protected:

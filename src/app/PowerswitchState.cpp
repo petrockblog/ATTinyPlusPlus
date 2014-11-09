@@ -9,7 +9,8 @@
 
 namespace app {
 
-PowerswitchState::PowerswitchState() {
+PowerswitchState::PowerswitchState(hal::PWMLed::PWMLEDParams_s pattern) :
+		ledPattern(pattern) {
 }
 
 PowerswitchState::~PowerswitchState() {
@@ -18,6 +19,7 @@ PowerswitchState::~PowerswitchState() {
 void PowerswitchStateOff::step(Powerswitch& powerSwitch,
 		hal::Button::ButtonState_e btnState,
 		hal::Button::ButtonState_e rpiPowerState) {
+	powerSwitch.setLEDPattern(this->ledPattern);
 	if (btnState == hal::Button::BUTTON_RELEASED
 			&& rpiPowerState == hal::Button::BUTTON_RELEASED) {
 		powerSwitch.setSwitch(hal::LED::LED_LOW);
@@ -47,6 +49,7 @@ PowerswitchStateOff::~PowerswitchStateOff() {
 void PowerswitchStateBoot::step(Powerswitch& powerSwitch,
 		hal::Button::ButtonState_e btnState,
 		hal::Button::ButtonState_e rpiPowerState) {
+	powerSwitch.setLEDPattern(this->ledPattern);
 	if (btnState == hal::Button::BUTTON_RELEASED
 			&& rpiPowerState == hal::Button::BUTTON_RELEASED) {
 		powerSwitch.setSwitch(hal::LED::LED_HIGH);
@@ -76,6 +79,7 @@ PowerswitchStateBoot::~PowerswitchStateBoot() {
 void PowerswitchStateOn::step(Powerswitch& powerSwitch,
 		hal::Button::ButtonState_e btnState,
 		hal::Button::ButtonState_e rpiPowerState) {
+	powerSwitch.setLEDPattern(this->ledPattern);
 	if (btnState == hal::Button::BUTTON_RELEASED
 			&& rpiPowerState == hal::Button::BUTTON_RELEASED) {
 		powerSwitch.setSwitch(hal::LED::LED_LOW);
@@ -105,6 +109,7 @@ PowerswitchStateOn::~PowerswitchStateOn() {
 void PowerswitchStateShutdown::step(Powerswitch& powerSwitch,
 		hal::Button::ButtonState_e btnState,
 		hal::Button::ButtonState_e rpiPowerState) {
+	powerSwitch.setLEDPattern(this->ledPattern);
 	if (btnState == hal::Button::BUTTON_RELEASED
 			&& rpiPowerState == hal::Button::BUTTON_RELEASED) {
 		powerSwitch.setSwitch(hal::LED::LED_LOW);

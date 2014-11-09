@@ -10,11 +10,13 @@
 namespace app {
 
 Powerswitch::Powerswitch(hal::Button &btn, hal::Button &rpiPower,
-		hal::LED& powerSwitch) :
+		hal::LED& powerSwitch, hal::PWMLed& led) :
 		stateOff(new PowerswitchStateOff()), stateBoot(
-				new PowerswitchStateBoot()), stateOn(new PowerswitchStateOn()), stateShutdown(
-				new PowerswitchStateShutdown()), currentState(stateOff), button(
-				btn), rpiPower(rpiPower), powerSwitch(powerSwitch) {
+				new PowerswitchStateBoot()), stateOn(
+				new PowerswitchStateOn()), stateShutdown(
+				new PowerswitchStateShutdown()), currentState(
+				stateOff), button(btn), rpiStatus(rpiPower), powerSwitch(
+				powerSwitch), pwmLED(led) {
 }
 
 Powerswitch::~Powerswitch() {
@@ -22,7 +24,7 @@ Powerswitch::~Powerswitch() {
 
 void Powerswitch::update() {
 	currentState->step(*this, button.getButtonState(),
-			rpiPower.getButtonState());
+			rpiStatus.getButtonState());
 }
 
 void Powerswitch::setSwitch(hal::LED::LEDLevel_e level) {
