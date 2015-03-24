@@ -135,13 +135,14 @@
 								<option id="de.innot.avreclipse.cppcompiler.option.debug.level.73560844" name="Generate Debugging Info" superClass="de.innot.avreclipse.cppcompiler.option.debug.level" value="de.innot.avreclipse.cppcompiler.option.debug.level.none" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.cppcompiler.option.optimize.1403119945" name="Optimization Level" superClass="de.innot.avreclipse.cppcompiler.option.optimize" value="de.innot.avreclipse.cppcompiler.optimize.size" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.cppcompiler.option.incpath.454393660" name="Include Paths (-I)" superClass="de.innot.avreclipse.cppcompiler.option.incpath" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/attiny/src/app}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/attiny/src/lib}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/attiny/src/mcal}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/attiny/src/sys}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/attiny/src/hal}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/attiny/src/sys}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/attiny/src/mcal}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/attiny/src/lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/attiny/src/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/attiny/src/lib/STL}&quot;"/>
 								</option>
+								<option id="de.innot.avreclipse.cppcompiler.option.otherflags.1026359607" superClass="de.innot.avreclipse.cppcompiler.option.otherflags" value="-std=c++0x" valueType="string"/>
 								<inputType id="de.innot.avreclipse.cppcompiler.input.2033717620" superClass="de.innot.avreclipse.cppcompiler.input"/>
 							</tool>
 							<tool id="de.innot.avreclipse.tool.linker.winavr.app.release.1910621903" name="AVR C Linker" superClass="de.innot.avreclipse.tool.linker.winavr.app.release"/>
@@ -160,7 +161,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/hal|hal" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="notLinked|src/hal|hal" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hal"/>
 					</sourceEntries>
 				</configuration>

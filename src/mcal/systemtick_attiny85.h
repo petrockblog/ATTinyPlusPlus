@@ -34,7 +34,7 @@ public:
 
 private:
 
-	systick_t tickcount;
+	volatile systick_t tickcount;
 
 	ATTiny85Systemtick();
 

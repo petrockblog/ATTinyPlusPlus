@@ -31,6 +31,8 @@ SIZEDUMMY :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+src/sys \
 src/mcal \
+src/hal \
 src/app \
 

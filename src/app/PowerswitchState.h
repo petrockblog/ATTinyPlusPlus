@@ -15,9 +15,9 @@
 namespace app {
 
 constexpr hal::PWMLed::PWMLEDParams_s patternOff = { 0, 0, 0 };
-constexpr hal::PWMLed::PWMLEDParams_s patternBoot = { 200, 0, 30 };
-constexpr hal::PWMLed::PWMLEDParams_s patternOn = { 200, 0, 0 };
-constexpr hal::PWMLed::PWMLEDParams_s patternShutdown = { 200, 0, 15 };
+constexpr hal::PWMLed::PWMLEDParams_s patternBoot = { 128, 20, 60 };
+constexpr hal::PWMLed::PWMLEDParams_s patternOn = { 128, 0, 0 };
+constexpr hal::PWMLed::PWMLEDParams_s patternShutdown = { 128, 10, 30 };
 
 class Powerswitch;
 
@@ -35,7 +35,7 @@ protected:
 class PowerswitchStateOff: public PowerswitchState {
 public:
 	PowerswitchStateOff() :
-			PowerswitchState(patternOff) {
+		PowerswitchState(patternOff) {
 	}
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,
@@ -46,7 +46,7 @@ public:
 class PowerswitchStateBoot: public PowerswitchState {
 public:
 	PowerswitchStateBoot() :
-			PowerswitchState(patternBoot) {
+		PowerswitchState(patternBoot) {
 	}
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,
@@ -57,7 +57,7 @@ public:
 class PowerswitchStateOn: public PowerswitchState {
 public:
 	PowerswitchStateOn() :
-			PowerswitchState(patternOn) {
+		PowerswitchState(patternOn) {
 	}
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,
@@ -68,7 +68,7 @@ public:
 class PowerswitchStateShutdown: public PowerswitchState {
 public:
 	PowerswitchStateShutdown() :
-			PowerswitchState(patternShutdown) {
+		PowerswitchState(patternShutdown) {
 	}
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,

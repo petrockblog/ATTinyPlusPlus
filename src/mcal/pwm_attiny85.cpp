@@ -13,6 +13,7 @@ ATTiny85PWM::ATTiny85PWM() {
 }
 
 void ATTiny85PWM::open(uint8_t channel) {
+	cli();
 	DigitalIO& dio = ATTiny85DigitalIO::getInstance();
 	switch (channel) {
 	case 0: // PB0
@@ -40,7 +41,7 @@ void ATTiny85PWM::open(uint8_t channel) {
 		Timer::Timer1_SetWaveformGenerationMode(Timer::Timer1_CTC_OCR);
 		Timer::Timer1_ClockSelect(Timer::Timer1_Prescale_Value_8);
 		break;
-	case 2: // PB4
+	case 4: // PB4
 		dio.open(4);
 		dio.control(4, DigitalIO::DIOCMD_DIR_OUT, 0);
 
@@ -58,9 +59,11 @@ void ATTiny85PWM::open(uint8_t channel) {
 	default:
 		break;
 	}
+	sei();
 }
 
 void ATTiny85PWM::write(uint8_t channel, uint8_t value) {
+	cli();
 	switch (channel) {
 	case 0:
 		Timer::Timer0_SetOutputCompareMatchA(value);
@@ -74,6 +77,7 @@ void ATTiny85PWM::write(uint8_t channel, uint8_t value) {
 	default:
 		break;
 	}
+	sei();
 }
 
 }

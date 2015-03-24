@@ -16,7 +16,7 @@ class Systemtick {
 
 public:
 
-	typedef volatile uint32_t systick_t;
+	typedef uint32_t systick_t;
 
 	virtual void start() = 0;
 	virtual void stop() = 0;

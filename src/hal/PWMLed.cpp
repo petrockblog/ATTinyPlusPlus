@@ -59,8 +59,9 @@ void PWMLed::setRampupTime(uint16_t rampupTime) {
 }
 
 void PWMLed::setConfiguration(const PWMLEDParams_s& params) {
-	if ((amplitude != params.amplitude) || (delayTime != params.delayTime)
-			|| (rampupTime != params.rampupTime)) {
+	if ((this->amplitude != params.amplitude)
+			|| (this->delayTime != params.delayTime)
+			|| (this->rampupTime != params.rampupTime)) {
 		this->amplitude = params.amplitude;
 		this->delayTime = params.delayTime;
 		this->rampupTime = params.rampupTime;
@@ -104,6 +105,7 @@ void PWMLed::updateSlope() {
 	} else {
 		slope = 0;
 	}
+	currentState = 0;
 }
 
 } /* namespace hal */

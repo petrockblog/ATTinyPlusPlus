@@ -11,6 +11,7 @@
 #include "button.h"
 #include "LED.h"
 #include "PWMLed.h"
+//#include "LEDController.h"
 #include "PowerswitchState.h"
 
 namespace app {
@@ -28,46 +29,57 @@ public:
 	friend class PowerswitchStateOn;
 	friend class PowerswitchStateShutdown;
 
-	Powerswitch(hal::Button &btn, hal::Button &rpiPower, hal::LED& powerSwitch,
-			hal::PWMLed& led);
+	typedef enum {
+		SHUTDOWN_TRUE, SHUTDOWN_FALSE
+	} shutdown_e;
+
+//	Powerswitch(hal::Button &btn, hal::Button &fromRPi, hal::LED& powerSwitch,
+//			hal::LED &led, hal::LED &toRPi);
+	Powerswitch(hal::Button &btn, hal::Button &fromRPi, hal::LED& powerSwitch,
+			hal::PWMLed &led, hal::LED &toRPi);
 	virtual ~Powerswitch();
 
 	void update();
 
 private:
 
+	PowerswitchState* currentState;
+
 	PowerswitchStateOff *stateOff;
 	PowerswitchStateBoot *stateBoot;
 	PowerswitchStateOn *stateOn;
 	PowerswitchStateShutdown *stateShutdown;
 
-	PowerswitchState* currentState;
-
 	hal::Button &button;
-	hal::Button &rpiStatus;
+	hal::Button &fromRPi;
 	hal::LED &powerSwitch;
+	hal::LED &toRPi;
+//	hal::LED &signalLED;
 	hal::PWMLed &pwmLED;
+//	LEDController ledcontroller;
 
 	void setSwitch(hal::LED::LEDLevel_e level);
+	void setShutdownSignal(shutdown_e doShutdown);
 	void setState(PowerswitchState *newState);
+//	void setLEDPattern(uint8_t index);
 	void setLEDPattern(const hal::PWMLed::PWMLEDParams_s& pattern) {
 		pwmLED.setConfiguration(pattern);
 	}
 
-	inline PowerswitchState* getStateOff() {
-		return (PowerswitchState *) stateOff;
+	inline PowerswitchStateOff* getStateOff() {
+		return stateOff;
 	}
 
-	inline PowerswitchState* getStateBoot() {
-		return (PowerswitchState *) stateBoot;
+	inline PowerswitchStateBoot* getStateBoot() {
+		return stateBoot;
 	}
 
-	inline PowerswitchState* getStateOn() {
-		return (PowerswitchState *) stateOn;
+	inline PowerswitchStateOn* getStateOn() {
+		return stateOn;
 	}
 
-	inline PowerswitchState* getStateShutdown() {
-		return (PowerswitchState *) stateShutdown;
+	inline PowerswitchStateShutdown* getStateShutdown() {
+		return stateShutdown;
 	}
 
 };

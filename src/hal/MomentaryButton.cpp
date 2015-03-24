@@ -9,10 +9,20 @@
 
 namespace hal {
 
-MomentaryButton::MomentaryButton(uint8_t channel, mcal::DigitalIO& gpio) :
+MomentaryButton::MomentaryButton(uint8_t channel, mcal::DigitalIO& gpio,
+		activelevel_e pullup) :
 		hal::Button(channel), gpio(gpio) {
 	gpio.open(channel);
 	gpio.control(channel, mcal::DigitalIO::DIOCMD_DIR_IN);
+	if (pullup == MomentaryButton::ACTIVELEVEL_LOW) {
+		gpio.control(channel, mcal::DigitalIO::DIOCMD_PULLUP_ENABLE);
+		logicHigh = mcal::DigitalIO::DIOLEVEL_LOW;
+		logicLow = mcal::DigitalIO::DIOLEVEL_HIGH;
+	} else {
+		gpio.control(channel, mcal::DigitalIO::DIOCMD_PULLUP_DISABLE);
+		logicHigh = mcal::DigitalIO::DIOLEVEL_HIGH;
+		logicLow = mcal::DigitalIO::DIOLEVEL_LOW;
+	}
 }
 
 Button::ButtonInfos_s MomentaryButton::getButtonInfos() const {
@@ -32,11 +42,12 @@ void MomentaryButton::updateState() {
 
 	if (currentTickCount - infos.eventTime
 			>= MomentaryButton::DEBOUNCETIMEINMS) {
-		if ((gpio.read(channel) == mcal::DigitalIO::DIOLEVEL_HIGH)
+		// button is implemented with active low
+		if ((gpio.read(channel) == logicHigh)
 				&& (infos.state == BUTTON_RELEASED)) {
 			infos.state = BUTTON_PRESSED;
 			infos.eventTime = currentTickCount;
-		} else if ((gpio.read(channel) == mcal::DigitalIO::DIOLEVEL_LOW)
+		} else if ((gpio.read(channel) == logicLow)
 				&& (infos.state == BUTTON_PRESSED)) {
 			infos.state = BUTTON_RELEASED;
 			infos.eventTime = currentTickCount;
