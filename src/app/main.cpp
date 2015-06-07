@@ -8,7 +8,7 @@
 #include "Powerswitch.h"
 
 namespace {
-const mcal::Systemtick::systick_t LOOPDELAY = 15;
+const mcal::Systemtick::systick_t LOOPDELAY = 15u;
 }
 
 int main() {
@@ -19,38 +19,39 @@ int main() {
 
 	mcal::DigitalIO &gpio = mcal::ATTiny85DigitalIO::getInstance();
 
-	hal::MomentaryButton fromRPi = hal::MomentaryButton(3, gpio,
-			hal::MomentaryButton::ACTIVELEVEL_HIGH);
-	hal::MomentaryButton powerButton = hal::MomentaryButton(0, gpio,
-			hal::MomentaryButton::ACTIVELEVEL_LOW);
-	hal::LogicLED mosfetswitch = hal::LogicLED(4, gpio);
-	hal::LogicLED toRPi = hal::LogicLED(2, gpio);
+	hal::MomentaryButton fromRPi = hal::MomentaryButton(3u, gpio,
+			    										hal::MomentaryButton::ACTIVELEVEL_HIGH);
+	hal::MomentaryButton powerButton = hal::MomentaryButton(0u, gpio,
+															hal::MomentaryButton::ACTIVELEVEL_LOW);
+	hal::LogicLED mosfetswitch = hal::LogicLED(4u, gpio);
+	hal::LogicLED toRPi = hal::LogicLED(2u, gpio);
 
-//	hal::LogicLED signalLED = hal::LogicLED(1, gpio);
 	mcal::PWM& pwm = mcal::ATTiny85PWM::getInstance();
 	// PWM channel 2 uses PB4
-	hal::PWMLed pwmLed = hal::PWMLed(1, pwm, 0, 0, 0);
+	hal::PWMLed pwmLed = hal::PWMLed(1u, pwm, 0u, 0u, 0u);
 
-//	app::Powerswitch powerswitch = app::Powerswitch(powerButton, fromRPi,
-//			mosfetswitch, signalLED, toRPi);
-	app::Powerswitch powerswitch = app::Powerswitch(powerButton, fromRPi,
-			mosfetswitch, pwmLed, toRPi);
+	app::Powerswitch powerswitch = app::Powerswitch(powerButton,
+													fromRPi,
+													mosfetswitch,
+													pwmLed,
+													toRPi);
 
-	while (1) {
+	while (true) {
 		mcal::Systemtick::systick_t start = systick.getTick();
 
+		// update HAL components
 		powerButton.updateState();
 		fromRPi.updateState();
 		pwmLed.update();
 
+		// update application component
 		powerswitch.update();
 
 		// delay to keep a constant loop rate
 		while (systick.getTick() - start < LOOPDELAY) {
 		}
-
 	}
 
-	return 0;
+	return 0;  // never reached
 }
 

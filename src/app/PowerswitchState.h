@@ -11,6 +11,7 @@
 #include "button.h"
 #include "PWMLed.h"
 #include "Powerswitch.h"
+#include "systemtick_attiny85.h"
 
 namespace app {
 
@@ -27,6 +28,7 @@ public:
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,
 			hal::Button::ButtonState_e rpiPowerState) = 0;
+	virtual void onEnter() { };
 protected:
 	PowerswitchState(hal::PWMLed::PWMLEDParams_s pattern);
 	const hal::PWMLed::PWMLEDParams_s ledPattern;
@@ -35,12 +37,17 @@ protected:
 class PowerswitchStateOff: public PowerswitchState {
 public:
 	PowerswitchStateOff() :
-		PowerswitchState(patternOff) {
+		PowerswitchState(patternOff),
+		onEnterTick(0u) {
 	}
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,
 			hal::Button::ButtonState_e rpiPowerState);
 	virtual ~PowerswitchStateOff();
+	virtual void onEnter();
+private:
+	mcal::Systemtick::systick_t onEnterTick;
+	static const mcal::Systemtick::systick_t OFFSTATEDELAY = 1000u;
 };
 
 class PowerswitchStateBoot: public PowerswitchState {
