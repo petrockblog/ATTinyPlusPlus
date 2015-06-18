@@ -20,11 +20,11 @@ void ATTiny85PWM::open(uint8_t channel) {
 		dio.open(0);
 		dio.control(0, DigitalIO::DIOCMD_DIR_OUT, 0);
 
-		Timer::Timer0_SetToPowerup();
+		Timer::Timer0_SetWaveformGenerationMode(Timer::Timer0_Phase_Correct_PWM_FF);
 		Timer::Timer0_ClockSelect(Timer::Timer0_Prescale_Value_8);
-		Timer::Timer0_SetWaveformGenerationMode(Timer::Timer0_CTC_OCR);
-		Timer::Timer0_SetCompareOutputModeA(Timer::Timer0_Toggle);
-		Timer::Timer0_SetOutputCompareMatchA(10);
+
+		Timer::Timer0_SetCompareOutputModeA(Timer::Timer0_Clear);
+		Timer::Timer0_SetOutputCompareMatchA(0);
 		break;
 	case 1: // PB1
 		dio.open(1);

@@ -21,14 +21,14 @@ int main() {
 
 	hal::MomentaryButton fromRPi = hal::MomentaryButton(3u, gpio,
 			    										hal::MomentaryButton::ACTIVELEVEL_HIGH);
-	hal::MomentaryButton powerButton = hal::MomentaryButton(0u, gpio,
+	hal::MomentaryButton powerButton = hal::MomentaryButton(1u, gpio,
 															hal::MomentaryButton::ACTIVELEVEL_LOW);
 	hal::LogicLED mosfetswitch = hal::LogicLED(4u, gpio);
 	hal::LogicLED toRPi = hal::LogicLED(2u, gpio);
 
 	mcal::PWM& pwm = mcal::ATTiny85PWM::getInstance();
 	// PWM channel 2 uses PB4
-	hal::PWMLed pwmLed = hal::PWMLed(1u, pwm, 0u, 0u, 0u);
+	hal::PWMLed pwmLed = hal::PWMLed(0u, pwm, 0u, 0u, 0u);
 
 	app::Powerswitch powerswitch = app::Powerswitch(powerButton,
 													fromRPi,
