@@ -1,0 +1,23 @@
+#!/bin/sh
+if [ "$1" != nocheck ]; then
+if [ "$(whoami)" != root ]; then
+echo "$0 must be run as root, use \"sudo $0\""
+exit 1
+fi
+fi
+echo "Are you sure you want to uninstall CrossPack for AVR Development 20131216?"
+echo "[y/N]"
+read answer
+if echo "$answer" | egrep -i 'y|yes' >/dev/null; then
+echo "Starting uninstall."
+if cd "/usr/local/CrossPack-AVR-20131216/.."; then
+rm -f "CrossPack-AVR"
+fi
+rm -rf "/usr/local/CrossPack-AVR-20131216"
+        rm -rf "/etc/paths.d/50-at.obdev.CrossPack-AVR"
+rm -f "/Applications/CrossPack-AVR-Manual.html"
+rm -rf "/Library/Receipts/CrossPack-AVR.pkg"
+echo "CrossPack for AVR Development is now removed."
+else
+echo "Uninstall aborted."
+fi
