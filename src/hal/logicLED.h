@@ -8,8 +8,8 @@
 #ifndef LOGICLED_H_
 #define LOGICLED_H_
 
-#include <LED.h>
-#include <digitalio.h>
+#include "hal/LED.h"
+#include "mcal/digitalio.h"
 
 namespace hal {
 

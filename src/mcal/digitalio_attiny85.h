@@ -8,12 +8,12 @@
 #ifndef ATTINY85GPIO_H_
 #define ATTINY85GPIO_H_
 
-#include <cstdint.h>
-#include <cppinterrupt.h>
-#include <mcal.h>
 #include <stddef.h>
 
-#include <digitalio.h>
+#include "lib/STL/cstdint.h"
+#include "mcal/cppinterrupt.h"
+#include "mcal/mcal.h"
+#include "mcal/digitalio.h"
 
 namespace mcal {
 

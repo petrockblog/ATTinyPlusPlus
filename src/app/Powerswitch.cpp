@@ -5,7 +5,7 @@
  *      Author: florian
  */
 
-#include "Powerswitch.h"
+#include "app/Powerswitch.h"
 
 namespace app {
 

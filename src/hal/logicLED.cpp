@@ -5,7 +5,7 @@
  *      Author: florian
  */
 
-#include <LogicLED.h>
+#include "hal/LogicLED.h"
 
 namespace hal {
 

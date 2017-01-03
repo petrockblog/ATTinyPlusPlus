@@ -8,9 +8,9 @@
 #ifndef SYSTEMTICK_ATTINY85_H_
 #define SYSTEMTICK_ATTINY85_H_
 
-#include <systemtick.h>
-#include <timer.h>
-#include <cppinterrupt.h>
+#include "mcal/systemtick.h"
+#include "mcal/timer.h"
+#include "mcal/cppinterrupt.h"
 
 namespace mcal {
 

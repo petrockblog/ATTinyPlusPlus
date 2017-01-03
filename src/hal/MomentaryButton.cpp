@@ -5,7 +5,7 @@
  *      Author: florian
  */
 
-#include <MomentaryButton.h>
+#include "hal/MomentaryButton.h"
 
 namespace hal {
 

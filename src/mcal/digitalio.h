@@ -8,7 +8,7 @@
 #ifndef GPIO_H_
 #define GPIO_H_
 
-#include <cstdint.h>
+#include "lib/STL/cstdint.h"
 
 namespace mcal {
 

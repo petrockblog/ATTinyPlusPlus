@@ -8,8 +8,8 @@
 #ifndef BUTTON_H_
 #define BUTTON_H_
 
-#include <cstdint.h>
-#include <systemtick.h>
+#include "lib/STL/cstdint.h"
+#include "mcal/systemtick.h"
 
 namespace hal {
 

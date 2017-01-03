@@ -5,7 +5,7 @@
  *      Author: florian
  */
 
-#include <pwm_attiny85.h>
+#include "mcal/pwm_attiny85.h"
 
 namespace mcal {
 

@@ -5,7 +5,7 @@
  *      Author: florian
  */
 
-#include "cppinterrupt.h"
+#include "mcal/cppinterrupt.h"
 
 namespace mcal {
 

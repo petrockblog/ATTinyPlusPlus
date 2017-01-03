@@ -5,7 +5,7 @@
  *      Author: florian
  */
 
-#include <adconverter.h>
+#include "mcal/adconverter.h"
 
 namespace mcal {
 

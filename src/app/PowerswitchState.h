@@ -8,10 +8,10 @@
 #ifndef POWERSWITCHSTATE_H_
 #define POWERSWITCHSTATE_H_
 
-#include "button.h"
-#include "PWMLed.h"
-#include "Powerswitch.h"
-#include "systemtick_attiny85.h"
+#include "hal/button.h"
+#include "hal/PWMLed.h"
+#include "app/Powerswitch.h"
+#include "mcal/systemtick_attiny85.h"
 
 namespace app {
 

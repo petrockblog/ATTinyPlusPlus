@@ -1,11 +1,12 @@
 #include <util/delay.h>
-#include <mcal.h>
-#include "digitalio_attiny85.h"
-#include "logicLED.h"
-#include "systemtick_attiny85.h"
-#include "MomentaryButton.h"
-#include "pwm_attiny85.h"
-#include "Powerswitch.h"
+
+#include "mcal/mcal.h"
+#include "mcal/digitalio_attiny85.h"
+#include "hal/logicLED.h"
+#include "mcal/systemtick_attiny85.h"
+#include "hal/MomentaryButton.h"
+#include "mcal/pwm_attiny85.h"
+#include "app/Powerswitch.h"
 
 namespace {
 const mcal::Systemtick::systick_t LOOPDELAY = 15u;

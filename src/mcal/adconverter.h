@@ -8,7 +8,7 @@
 #ifndef ADC_H_
 #define ADC_H_
 
-#include <mcal.h>
+#include "mcal/mcal.h"
 
 /*
  From the '84 and '85 datasheets... By default, the successive approximation

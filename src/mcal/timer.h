@@ -8,7 +8,7 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
-#include <mcal.h>
+#include "mcal/mcal.h"
 
 namespace mcal {
 

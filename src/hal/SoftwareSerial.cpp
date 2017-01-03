@@ -50,8 +50,8 @@
 // Includes
 //
 #include <avr/pgmspace.h>
-#include "SoftwareSerial.h"
-#include <mcal.h>
+#include "hal/SoftwareSerial.h"
+#include "mcal/mcal.h"
 
 //
 // Lookup table

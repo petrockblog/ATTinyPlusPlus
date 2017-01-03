@@ -8,9 +8,9 @@
 #ifndef PWMLED_H_
 #define PWMLED_H_
 
-#include "cstdint.h"
-#include "pwm.h"
-#include "fixedptc.h"
+#include "lib/STL/cstdint.h"
+#include "mcal/pwm.h"
+#include "lib/fixedptc.h"
 
 namespace hal {
 

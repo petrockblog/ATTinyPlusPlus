@@ -7,8 +7,8 @@
 #ifndef MCAL_H_
 #define MCAL_H_
 
-#include <cstdint.h>
-#include <register_access.h>
+#include "lib/STL/cstdint.h"
+#include "mcal/register_access.h"
 
 namespace mcal {
 

@@ -8,7 +8,7 @@
 #ifndef SYSTEMTICK_H_
 #define SYSTEMTICK_H_
 
-#include <cstdint.h>
+#include "lib/STL/cstdint.h"
 
 namespace mcal {
 

@@ -8,10 +8,10 @@
 #ifndef USITWISLAVE_H_
 #define USITWISLAVE_H_
 
-#include <cstdint.h>
-#include <cppinterrupt.h>
-#include <systemtick.h>
-#include <mcal.h>
+#include "lib/STL/cstdint.h"
+#include "mcal/cppinterrupt.h"
+#include "mcal/systemtick.h"
+#include "mcal/mcal.h"
 
 #define I2C_SLAVE_ADDRESS 0x40 // the 7-bit address
 

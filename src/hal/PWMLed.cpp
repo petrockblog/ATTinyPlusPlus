@@ -5,7 +5,7 @@
  *      Author: florian
  */
 
-#include "PWMLed.h"
+#include "hal/PWMLed.h"
 
 namespace hal {
 

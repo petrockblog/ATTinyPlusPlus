@@ -5,8 +5,8 @@
  *      Author: florian
  */
 
-#include <USITWISlave.h>
-#include "mcal.h"
+#include "mcal/USITWISlave.h"
+#include "mcal/mcal.h"
 
 namespace mcal {
 

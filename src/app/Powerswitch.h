@@ -8,10 +8,10 @@
 #ifndef POWERSWITCH_H_
 #define POWERSWITCH_H_
 
-#include "button.h"
-#include "LED.h"
-#include "PWMLed.h"
-#include "PowerswitchState.h"
+#include "hal/button.h"
+#include "hal/LED.h"
+#include "hal/PWMLed.h"
+#include "app/PowerswitchState.h"
 
 namespace app {
 

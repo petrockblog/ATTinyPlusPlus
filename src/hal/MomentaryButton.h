@@ -8,9 +8,9 @@
 #ifndef MOMENTARYBUTTON_H_
 #define MOMENTARYBUTTON_H_
 
-#include <button.h>
-#include <digitalio.h>
-#include <systemtick_attiny85.h>
+#include "hal/button.h"
+#include "mcal/digitalio.h"
+#include "mcal/systemtick_attiny85.h"
 
 namespace hal {
 
