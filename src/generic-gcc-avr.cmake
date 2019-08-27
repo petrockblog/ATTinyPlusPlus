@@ -247,7 +247,8 @@ function(add_avr_executable EXECUTABLE_NAME)
       ${AVR_UPLOADTOOL} -p ${AVR_MCU} -c ${AVR_PROGRAMMER} -P ${AVR_UPLOADTOOL_PORT}
          -U lfuse:w:${AVR_L_FUSE}:m
          -U hfuse:w:${AVR_H_FUSE}:m
-         COMMENT "Setup: High Fuse: ${AVR_H_FUSE} Low Fuse: ${AVR_L_FUSE}"
+         -U efuse:w:${AVR_E_FUSE}:m
+         COMMENT "Setup: High Fuse: ${AVR_H_FUSE}, Low Fuse: ${AVR_L_FUSE}, Extended Fuse: ${AVR_E_FUSE}"
    )
 
    # get oscillator calibration

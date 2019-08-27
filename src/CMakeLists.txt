@@ -20,8 +20,8 @@ cmake_minimum_required(VERSION 2.8)
 # tools to beused for programming the AVR
 ##########################################################################
 set(AVR_UPLOADTOOL avrdude)
-set(AVR_PROGRAMMER avrispmkII)
-set(AVR_UPLOADTOOL_PORT usb)
+set(AVR_PROGRAMMER stk500v2)
+set(AVR_UPLOADTOOL_PORT /dev/tty.SLAB_USBtoUART)
 
 ##########################################################################
 # AVR and fuses needs to be set
@@ -29,6 +29,7 @@ set(AVR_UPLOADTOOL_PORT usb)
 set(AVR_MCU attiny85)
 set(AVR_H_FUSE 0xdf)
 set(AVR_L_FUSE 0xe2)
+set(AVR_E_FUSE 0xff)
 
 ### END TOOLCHAIN SETUP AREA #############################################
 
@@ -49,6 +50,7 @@ message(STATUS "Current uploadtool options are: ${AVR_UPLOADTOOL_OPTIONS}")
 message(STATUS "Current MCU is set to: ${AVR_MCU}")
 message(STATUS "Current H_FUSE is set to: ${AVR_H_FUSE}")
 message(STATUS "Current L_FUSE is set to: ${AVR_L_FUSE}")
+message(STATUS "Current E_FUSE is set to: ${AVR_E_FUSE}")
 
 ##########################################################################
 # set build type
