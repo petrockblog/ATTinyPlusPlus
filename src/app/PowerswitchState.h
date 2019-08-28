@@ -22,6 +22,31 @@ constexpr hal::PWMLed::PWMLEDParams_s patternShutdown = { 128, 10, 30 };
 
 class Powerswitch;
 
+/**
+ * The following state machine is implemented here. Note that the syntax is
+ * PlantUML:
+ *
+ * @startuml
+ *
+ * skinparam monochrome true
+ * skinparam componentStyle uml2
+ *
+ * [*] --> Off
+ *
+ * Off --> Boot : else
+ * Off -> Off : Btn:false, Pwr:false
+ *
+ * Boot --> On : else
+ * Boot -> Boot : Pwr:false
+ *
+ * On --> Shutdown : else
+ * On -> On : Btn:true, Pwr:true
+ *
+ * Shutdown --> Shutdown : Pwr:true
+ * Shutdown -> Off : else
+ *
+ * @enduml
+ */
 class PowerswitchState {
 public:
 	virtual ~PowerswitchState();
