@@ -26,11 +26,11 @@ public:
 	virtual void start();
 	virtual void stop();
 
-	inline virtual systick_t getTick() {
+	inline virtual systick_t getTick() const {
 		return tickcount;
 	}
 
-	virtual systick_t getTickPeriod();
+	virtual systick_t getTickPeriod() const;
 
 private:
 

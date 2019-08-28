@@ -2,8 +2,6 @@
 
 namespace mcal {
 
-//volatile uint32_t Systemtick::tickcount = 0;
-
 ATTiny85Systemtick::TimerInterrupt::TimerInterrupt(int interruptNumber,
 		ATTiny85Systemtick *ownerTimer) :
 		ownerTimer(ownerTimer) {
@@ -33,7 +31,7 @@ void ATTiny85Systemtick::stop() {
 	mcal::reg::timsk::bit_clr(mcal::bits::ocie0a);
 }
 
-Systemtick::systick_t ATTiny85Systemtick::getTickPeriod() {
+Systemtick::systick_t ATTiny85Systemtick::getTickPeriod() const {
 	return 1;
 }
 
