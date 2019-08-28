@@ -49,11 +49,11 @@ class Powerswitch;
  */
 class PowerswitchState {
 public:
-	virtual ~PowerswitchState();
+	virtual ~PowerswitchState() = default;
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,
 			hal::Button::ButtonState_e rpiPowerState) = 0;
-	virtual void onEnter() { };
+	virtual void onEnter(Powerswitch& powerSwitch) = 0;
 protected:
 	PowerswitchState(hal::PWMLed::PWMLEDParams_s pattern);
 	const hal::PWMLed::PWMLEDParams_s ledPattern;
@@ -65,11 +65,12 @@ public:
 		PowerswitchState(patternOff),
 		onEnterTick(0u) {
 	}
+    virtual void onEnter(Powerswitch& powerSwitch);
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,
 			hal::Button::ButtonState_e rpiPowerState);
-	virtual ~PowerswitchStateOff();
-	virtual void onEnter();
+	virtual ~PowerswitchStateOff() = default;
+
 private:
 	mcal::Systemtick::systick_t onEnterTick;
 	static const mcal::Systemtick::systick_t OFFSTATEDELAY = 1000u;
@@ -83,7 +84,8 @@ public:
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,
 			hal::Button::ButtonState_e rpiPowerState);
-	virtual ~PowerswitchStateBoot();
+	virtual ~PowerswitchStateBoot() = default;
+	virtual void onEnter(Powerswitch& powerSwitch);
 };
 
 class PowerswitchStateOn: public PowerswitchState {
@@ -94,7 +96,8 @@ public:
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,
 			hal::Button::ButtonState_e rpiPowerState);
-	virtual ~PowerswitchStateOn();
+	virtual ~PowerswitchStateOn() = default;
+	virtual void onEnter(Powerswitch& powerSwitch);
 };
 
 class PowerswitchStateShutdown: public PowerswitchState {
@@ -105,7 +108,8 @@ public:
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,
 			hal::Button::ButtonState_e rpiPowerState);
-	virtual ~PowerswitchStateShutdown();
+	virtual ~PowerswitchStateShutdown() = default;
+	virtual void onEnter(Powerswitch& powerSwitch);
 };
 
 } /* namespace app */

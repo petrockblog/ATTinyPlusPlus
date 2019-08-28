@@ -42,7 +42,7 @@ void Powerswitch::setShutdownSignal(shutdown_e doShutdown) {
 
 void Powerswitch::setState(PowerswitchState *newState) {
 	currentState = newState;
-	currentState->onEnter();
+	currentState->onEnter(*this);
 }
 
 } /* namespace app */

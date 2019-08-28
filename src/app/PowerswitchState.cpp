@@ -13,15 +13,17 @@ PowerswitchState::PowerswitchState(hal::PWMLed::PWMLEDParams_s pattern) :
 		ledPattern(pattern) {
 }
 
-PowerswitchState::~PowerswitchState() {
+void PowerswitchStateOff::onEnter(Powerswitch& powerSwitch) {
+  onEnterTick = mcal::ATTiny85Systemtick::getInstance().getTick();
+  powerSwitch.setLEDPattern(this->ledPattern);
+  powerSwitch.setSwitch(hal::LED::LED_HIGH);
+  powerSwitch.setShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
 }
 
 void PowerswitchStateOff::step(Powerswitch& powerSwitch,
 		hal::Button::ButtonState_e btnState,
 		hal::Button::ButtonState_e rpiPowerState) {
-	powerSwitch.setLEDPattern(this->ledPattern);
-	powerSwitch.setSwitch(hal::LED::LED_HIGH);
-	powerSwitch.setShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
+
 	if (btnState == hal::Button::BUTTON_RELEASED
 			&& rpiPowerState == hal::Button::BUTTON_RELEASED)
 	{
@@ -50,19 +52,17 @@ void PowerswitchStateOff::step(Powerswitch& powerSwitch,
 	}
 }
 
-PowerswitchStateOff::~PowerswitchStateOff() {
-}
 
-void PowerswitchStateOff::onEnter() {
-	onEnterTick = mcal::ATTiny85Systemtick::getInstance().getTick();
+void PowerswitchStateBoot::onEnter(Powerswitch& powerSwitch) {
+  powerSwitch.setLEDPattern(this->ledPattern);
+  powerSwitch.setSwitch(hal::LED::LED_LOW);
+  powerSwitch.setShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
 }
 
 void PowerswitchStateBoot::step(Powerswitch& powerSwitch,
 		hal::Button::ButtonState_e btnState,
 		hal::Button::ButtonState_e rpiPowerState) {
-	powerSwitch.setLEDPattern(this->ledPattern);
-	powerSwitch.setSwitch(hal::LED::LED_LOW);
-	powerSwitch.setShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
+
 	if (btnState == hal::Button::BUTTON_RELEASED
 			&& rpiPowerState == hal::Button::BUTTON_RELEASED) {
 		powerSwitch.setState(powerSwitch.getStateBoot());
@@ -78,15 +78,16 @@ void PowerswitchStateBoot::step(Powerswitch& powerSwitch,
 	}
 }
 
-PowerswitchStateBoot::~PowerswitchStateBoot() {
+void PowerswitchStateOn::onEnter(Powerswitch& powerSwitch) {
+  powerSwitch.setLEDPattern(this->ledPattern);
+  powerSwitch.setSwitch(hal::LED::LED_LOW);
+  powerSwitch.setShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
 }
 
 void PowerswitchStateOn::step(Powerswitch& powerSwitch,
 		hal::Button::ButtonState_e btnState,
 		hal::Button::ButtonState_e rpiPowerState) {
-	powerSwitch.setLEDPattern(this->ledPattern);
-	powerSwitch.setSwitch(hal::LED::LED_LOW);
-	powerSwitch.setShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
+
 	if (btnState == hal::Button::BUTTON_RELEASED
 			&& rpiPowerState == hal::Button::BUTTON_RELEASED) {
 		powerSwitch.setState(powerSwitch.getStateShutdown());
@@ -102,15 +103,16 @@ void PowerswitchStateOn::step(Powerswitch& powerSwitch,
 	}
 }
 
-PowerswitchStateOn::~PowerswitchStateOn() {
+void PowerswitchStateShutdown::onEnter(Powerswitch& powerSwitch) {
+  powerSwitch.setLEDPattern(this->ledPattern);
+  powerSwitch.setSwitch(hal::LED::LED_LOW);
+  powerSwitch.setShutdownSignal(Powerswitch::SHUTDOWN_TRUE);
 }
 
 void PowerswitchStateShutdown::step(Powerswitch& powerSwitch,
 		hal::Button::ButtonState_e btnState,
 		hal::Button::ButtonState_e rpiPowerState) {
-	powerSwitch.setLEDPattern(this->ledPattern);
-	powerSwitch.setSwitch(hal::LED::LED_LOW);
-	powerSwitch.setShutdownSignal(Powerswitch::SHUTDOWN_TRUE);
+
 	if (btnState == hal::Button::BUTTON_RELEASED
 			&& rpiPowerState == hal::Button::BUTTON_RELEASED) {
 		powerSwitch.setState(powerSwitch.getStateOff());
@@ -124,9 +126,6 @@ void PowerswitchStateShutdown::step(Powerswitch& powerSwitch,
 			&& rpiPowerState == hal::Button::BUTTON_PRESSED) {
 		powerSwitch.setState(powerSwitch.getStateShutdown());
 	}
-}
-
-PowerswitchStateShutdown::~PowerswitchStateShutdown() {
 }
 
 } /* namespace app */
