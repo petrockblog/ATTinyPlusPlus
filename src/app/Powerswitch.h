@@ -28,9 +28,9 @@ public:
 	friend class PowerswitchStateOn;
 	friend class PowerswitchStateShutdown;
 
-	typedef enum {
+	enum shutdown_e {
 		SHUTDOWN_TRUE, SHUTDOWN_FALSE
-	} shutdown_e;
+	};
 
 	Powerswitch(hal::Button &btn, hal::Button &fromRPi, hal::LED& powerSwitch,
 			hal::PWMLed &led, hal::LED &toRPi);

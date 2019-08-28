@@ -65,7 +65,7 @@ public:
 		PowerswitchState(patternOff),
 		onEnterTick(0u) {
 	}
-    virtual void onEnter(Powerswitch& powerSwitch);
+    virtual void onEnter(Powerswitch& powerSwitch) override ;
 	virtual void step(Powerswitch& powerSwitch,
 			hal::Button::ButtonState_e btnState,
 			hal::Button::ButtonState_e rpiPowerState);
@@ -85,7 +85,7 @@ public:
 			hal::Button::ButtonState_e btnState,
 			hal::Button::ButtonState_e rpiPowerState);
 	virtual ~PowerswitchStateBoot() = default;
-	virtual void onEnter(Powerswitch& powerSwitch);
+	virtual void onEnter(Powerswitch& powerSwitch) override ;
 };
 
 class PowerswitchStateOn: public PowerswitchState {
@@ -97,7 +97,7 @@ public:
 			hal::Button::ButtonState_e btnState,
 			hal::Button::ButtonState_e rpiPowerState);
 	virtual ~PowerswitchStateOn() = default;
-	virtual void onEnter(Powerswitch& powerSwitch);
+	virtual void onEnter(Powerswitch& powerSwitch) override ;
 };
 
 class PowerswitchStateShutdown: public PowerswitchState {
@@ -109,7 +109,7 @@ public:
 			hal::Button::ButtonState_e btnState,
 			hal::Button::ButtonState_e rpiPowerState);
 	virtual ~PowerswitchStateShutdown() = default;
-	virtual void onEnter(Powerswitch& powerSwitch);
+	virtual void onEnter(Powerswitch& powerSwitch) override ;
 };
 
 } /* namespace app */

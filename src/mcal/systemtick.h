@@ -17,15 +17,6 @@ class Systemtick {
  public:
   typedef uint32_t systick_t;
 
-  systick_t tickDifferenceToNow(systick_t tickCount) const {
-    const systick_t currentTick = getTick();
-    if (currentTick >= tickCount) {
-      return currentTick - tickCount;
-    } else {  // overflow occurred
-      return 0xFFFFFFFF - tickCount + currentTick;
-    }
-  };
-
   virtual void start() = 0;
   virtual void stop() = 0;
 

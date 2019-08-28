@@ -5,6 +5,7 @@
  *      Author: florian
  */
 
+#include <util/delay.h>
 #include "app/Powerswitch.h"
 
 namespace app {
@@ -22,10 +23,9 @@ Powerswitch::~Powerswitch() {
 }
 
 void Powerswitch::update() {
-	if (currentState != nullptr) {
-		currentState->step(*this, button.getButtonState(),
-				fromRPi.getButtonState());
-	}
+      if (currentState != nullptr) {
+        currentState->step(*this, button.getButtonState(), fromRPi.getButtonState());
+      }
 }
 
 void Powerswitch::setSwitch(hal::LED::LEDLevel_e level) {
