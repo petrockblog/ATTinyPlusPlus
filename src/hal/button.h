@@ -16,17 +16,17 @@ namespace hal {
 class Button {
 public:
 
-	typedef enum {
+	enum ButtonState_e {
 		BUTTON_PRESSED, BUTTON_RELEASED
-	} ButtonState_e;
+	};
 
-	typedef struct {
+	struct ButtonInfos_s {
 		ButtonState_e state;
 		mcal::Systemtick::systick_t eventTime;
-	} ButtonInfos_s;
+	};
 
 	Button(uint8_t channel) :
-			channel(channel), infos( { BUTTON_RELEASED, 0 }) {
+        channel_(channel), infos_({BUTTON_RELEASED, 0 }) {
 	}
 
 	virtual ~Button() {
@@ -39,8 +39,8 @@ public:
 	virtual mcal::Systemtick::systick_t getLastEventTick() const = 0;
 
 protected:
-	uint8_t channel;
-	ButtonInfos_s infos;
+	uint8_t channel_;
+	ButtonInfos_s infos_;
 
 };
 

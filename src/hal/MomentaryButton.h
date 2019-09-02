@@ -8,6 +8,7 @@
 #ifndef MOMENTARYBUTTON_H_
 #define MOMENTARYBUTTON_H_
 
+#include <stdint.h>
 #include "hal/button.h"
 #include "mcal/digitalio.h"
 #include "mcal/systemtick_attiny85.h"
@@ -17,25 +18,27 @@ namespace hal {
 class MomentaryButton: public Button {
 public:
 
-	typedef enum {
+	enum activelevel_e {
 		ACTIVELEVEL_LOW, ACTIVELEVEL_HIGH
-	} activelevel_e;
-
-	static const uint8_t DEBOUNCETIMEINMS = 100;
+	};
 
 	MomentaryButton(uint8_t channel, mcal::DigitalIO& gpio,
 			activelevel_e pullup);
 
 	virtual Button::ButtonInfos_s getButtonInfos() const;
 	virtual ButtonState_e getButtonState() const;
-	virtual bool isPressed() const;
-	virtual void updateState();
+	virtual bool isPressed() const override;
+	virtual void updateState() override ;
 	virtual mcal::Systemtick::systick_t getLastEventTick() const;
 
 private:
+  static const unsigned int BUTTONRELEASESTABLE = 0x8000;
+  static const int BUTTONPRESSSTABLE = 0x7FFF;
+
 	mcal::DigitalIO &gpio;
-	mcal::DigitalIO::DIOLevel_e logicHigh;
-	mcal::DigitalIO::DIOLevel_e logicLow;
+	mcal::DigitalIO::DIOLevel_e logicHigh_;
+	mcal::DigitalIO::DIOLevel_e logicLow_;
+	std::uint32_t inputHistory_;
 
 };
 
