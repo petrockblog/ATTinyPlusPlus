@@ -16,9 +16,9 @@
 namespace app {
 
 constexpr hal::PWMLed::PWMLEDParams_s patternOff = { 0, 0, 0 };
-constexpr hal::PWMLed::PWMLEDParams_s patternBoot = { 128, 20, 60 };
-constexpr hal::PWMLed::PWMLEDParams_s patternOn = { 128, 0, 0 };
-constexpr hal::PWMLed::PWMLEDParams_s patternShutdown = { 128, 10, 30 };
+constexpr hal::PWMLed::PWMLEDParams_s patternBoot = { 120, 20, 60 };
+constexpr hal::PWMLed::PWMLEDParams_s patternOn = { 120, 0, 0 };
+constexpr hal::PWMLed::PWMLEDParams_s patternShutdown = { 120, 10, 30 };
 
 class Powerswitch;
 
