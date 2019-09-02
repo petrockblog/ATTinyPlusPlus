@@ -40,13 +40,17 @@ int main() {
   while (true) {
     mcal::Systemtick::systick_t start = systick.getTick();
 
-    // update HAL components
+    // update input button states every 1 ms.
     powerButton.updateState();
     fromRPi.updateState();
-    pwmLed.update();
 
     // update application component
     powerswitch.update();
+
+    if ((start % 15u) == 0) {
+      // update PWM output every 15 ms
+      pwmLed.update();
+    }
 
     // delay to keep a constant loop rate
     while (systick.getTick() - start < LOOPDELAY_MS) {
