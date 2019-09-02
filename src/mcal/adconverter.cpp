@@ -19,9 +19,9 @@ ADConverter::ADConverter() {
 uint16_t ADConverter::read(ADCDevice_e device) {
 	// todo check SetInputChannel method
 //	ADC_SetInputChannel(ADC_Input_ADC1);
-//	ADMUX &= 0xF0;                    //Clear the older channel that was read
+//	ADMUX &= 0xF0;                    //Clear the older channel_ that was read
 	reg::admux::reg_and(0xF0);
-//	ADMUX |= device;                //Defines the new ADC channel to be read
+//	ADMUX |= device;                //Defines the new ADC channel_ to be read
 	reg::admux::reg_or(device);
 	ADC_StartConversion();
 	while (ADC_ConversionInProgress()) {

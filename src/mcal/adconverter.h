@@ -125,11 +125,11 @@ private:
 	__attribute__((always_inline)) static inline void ADC_SetInputChannel(
 			adc_ic_t ic) {
 //		ADMUX = (ADMUX & ~MASK4(MUX3, MUX2, MUX1, MUX0)) | (ic << MUX0);
-		reg::admux::reg_and(0xF0);                    //Clear the older channel that was read
+		reg::admux::reg_and(0xF0);                    //Clear the older channel_ that was read
 		reg::admux::bit_set(ic);
 
-//		ADMUX &= 0xF0;                    //Clear the older channel that was read
-//		ADMUX |= device;                //Defines the new ADC channel to be read
+//		ADMUX &= 0xF0;                    //Clear the older channel_ that was read
+//		ADMUX |= device;                //Defines the new ADC channel_ to be read
 
 	}
 

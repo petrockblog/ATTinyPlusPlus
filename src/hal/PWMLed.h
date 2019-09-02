@@ -16,11 +16,11 @@ namespace hal {
 
 class PWMLed {
 public:
-	typedef struct {
+	struct PWMLEDParams_s{
 		uint8_t amplitude;
 		uint16_t delayTime;
 		uint16_t rampupTime;
-	} PWMLEDParams_s;
+	};
 
 	PWMLed(uint8_t channel, mcal::PWM& pwm);
 	PWMLed(uint8_t channel, mcal::PWM& pwm, uint8_t amplitude,
