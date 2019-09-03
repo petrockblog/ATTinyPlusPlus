@@ -44,17 +44,17 @@ void MomentaryButton::UpdateState() {
   const mcal::DigitalIO::DIOLevel_e currentButtonLevel = gpio.read(channel_);
   input_history_ = (input_history_ << 1u);
   if (currentButtonLevel == logic_high_) {
-    input_history_ |= 0x1;
+    input_history_ |= 0x1u;
   }
 
-  const mcal::Systemtick::systick_t currentTickCount =
-      mcal::ATTiny85Systemtick::getInstance().getTick();
+//  const mcal::Systemtick::systick_t currentTickCount =
+//      mcal::ATTiny85Systemtick::getInstance().getTick();
   if (input_history_ == kButtonReleaseStable) {
     infos_.state_ = BUTTON_RELEASED;
-    infos_.event_time_ = currentTickCount;
+//    infos_.event_time_ = currentTickCount;
   } else if (input_history_ == kButtonPressStable) {
     infos_.state_ = BUTTON_PRESSED;
-    infos_.event_time_ = currentTickCount;
+ //   infos_.event_time_ = currentTickCount;
   }
 
 //
@@ -77,5 +77,8 @@ void MomentaryButton::UpdateState() {
 mcal::Systemtick::systick_t MomentaryButton::GetLastEventTick() const {
   return infos_.event_time_;
 }
+//mcal::Systemtick::systick_t MomentaryButton::getLastEventTick() const {
+//  return infos_.eventTime;
+//}
 
 } /* namespace hal */

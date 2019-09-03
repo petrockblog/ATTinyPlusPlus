@@ -29,7 +29,7 @@ public:
 	ButtonState GetButtonState() const override;
 	bool IsPressed() const override;
 	void UpdateState() override ;
-	mcal::Systemtick::systick_t GetLastEventTick() const override;
+//	mcal::Systemtick::systick_t GetLastEventTick() const override;
 
 private:
   static constexpr unsigned int kButtonReleaseStable = 0x8000;

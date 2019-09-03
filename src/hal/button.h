@@ -35,7 +35,7 @@ public:
 	virtual ButtonState GetButtonState() const = 0;
 	virtual bool IsPressed() const = 0;
 	virtual void UpdateState() = 0;
-	virtual mcal::Systemtick::systick_t GetLastEventTick() const = 0;
+//	virtual mcal::Systemtick::systick_t GetLastEventTick() const = 0;
 
 protected:
 	uint8_t channel_;
