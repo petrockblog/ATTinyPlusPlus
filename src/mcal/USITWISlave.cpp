@@ -26,17 +26,17 @@ void USITWISlave::USIStartInterrupt::serviceRoutine() {
 	 USI_RECEIVE_CALLBACK();
 	 */
 
-	// set default starting conditions for new TWI package
+	// Set default starting conditions for new TWI package
 	owner->overflowState = USI_SLAVE_CHECK_ADDRESS;
 
-	// set SDA as input
+	// Set SDA as input
 	reg::ddrb::reg_and(~(1 << PB0));
 
 	// wait for SCL to go low to ensure the Start Condition has completed (the
 	// start detector will hold SCL low ) - if a Stop Condition arises then leave
 	// the interrupt to prevent waiting forever - don't use USISR to test for Stop
 	// Condition as in Application Note AVR312 because the Stop Condition Flag is
-	// going to be set from the last TWI sequence
+	// going to be Set from the last TWI sequence
 	while (
 	// SCL his high
 	(reg::pinb::reg_get() & (1 << PINB2)) &&
@@ -51,12 +51,12 @@ void USITWISlave::USIStartInterrupt::serviceRoutine() {
 				(1 << USISIE) |
 				// enable Overflow Interrupt
 						(1 << USIOIE) |
-						// set USI in Two-wire mode, hold SCL low on USI Counter overflow
+						// Set USI in Two-wire mode, hold SCL low on USI Counter overflow
 						(1 << USIWM1) | (1 << USIWM0) |
 						// Shift Register Clock Source = External, positive edge
 						// 4-Bit Counter Source = external, both edges
 						(1 << USICS1) | (0 << USICS0) | (0 << USICLK) |
-						// no toggle clock-port pin
+						// no Toggle clock-port pin
 						(0 << USITC));
 
 	} else {
@@ -66,12 +66,12 @@ void USITWISlave::USIStartInterrupt::serviceRoutine() {
 				(1 << USISIE) |
 				// disable Overflow Interrupt
 						(0 << USIOIE) |
-						// set USI in Two-wire mode, no USI Counter overflow hold
+						// Set USI in Two-wire mode, no USI Counter overflow hold
 						(1 << USIWM1) | (0 << USIWM0) |
 						// Shift Register Clock Source = external, positive edge
 						// 4-Bit Counter Source = external, both edges
 						(1 << USICS1) | (0 << USICS0) | (0 << USICLK) |
-						// no toggle clock-port pin
+						// no Toggle clock-port pin
 						(0 << USITC));
 
 	} // end if
@@ -79,7 +79,7 @@ void USITWISlave::USIStartInterrupt::serviceRoutine() {
 	reg::usisr::reg_set( // clear interrupt flags - resetting the Start Condition Flag will
 			// release SCL
 			(1 << USISIF) | (1 << USIOIF) | (1 << USIPF) | (1 << USIDC) |
-			// set USI to sample 8 bits (count 16 external SCL pin toggles)
+			// Set USI to sample 8 bits (count 16 external SCL pin toggles)
 					(0x0 << USICNT0));
 }
 
@@ -123,7 +123,7 @@ void USITWISlave::USIOverflowInterrupt::serviceRoutine() {
 		/* no break */
 		// from here we just drop straight into USI_SLAVE_SEND_DATA if the
 		// master sent an ACK
-		// copy data from buffer to USIDR and set USI to shift byte
+		// copy data from buffer to USIDR and Set USI to shift byte
 		// next USI_SLAVE_REQUEST_REPLY_FROM_SEND_DATA
 	case USI_SLAVE_SEND_DATA:
 		owner->usi_request_callback();
@@ -141,14 +141,14 @@ void USITWISlave::USIOverflowInterrupt::serviceRoutine() {
 		owner->set_usi_to_send_data();
 		break;
 
-		// set USI to sample reply from master
+		// Set USI to sample reply from master
 		// next USI_SLAVE_CHECK_REPLY_FROM_SEND_DATA
 	case USI_SLAVE_REQUEST_REPLY_FROM_SEND_DATA:
 		owner->overflowState = USI_SLAVE_CHECK_REPLY_FROM_SEND_DATA;
 		owner->set_usi_to_read_ack();
 		break;
 
-		// Master read data mode: set USI to sample data from master, next
+		// Master read data mode: Set USI to sample data from master, next
 		// USI_SLAVE_GET_DATA_AND_SEND_ACK
 	case USI_SLAVE_REQUEST_DATA:
 		owner->overflowState = USI_SLAVE_GET_DATA_AND_SEND_ACK;
@@ -187,7 +187,7 @@ USITWISlave::USITWISlave() :
 USITWISlave::~USITWISlave() {
 }
 
-void USITWISlave::begin(uint8_t ownAddress) { // initialize I2C lib
+void USITWISlave::begin(uint8_t ownAddress) { // Initialize I2C lib
 
 	flushTwiBuffers();
 
@@ -195,16 +195,16 @@ void USITWISlave::begin(uint8_t ownAddress) { // initialize I2C lib
 
 	// In Two Wire mode (USIWM1, USIWM0 = 1X), the slave USI will pull SCL
 	// low when a start condition is detected or a counter overflow (only
-	// for USIWM1, USIWM0 = 11).  This inserts a wait state.  SCL is released
+	// for USIWM1, USIWM0 = 11).  This inserts a wait state_.  SCL is released
 	// by the ISRs (USI_START_vect and USI_OVERFLOW_vect).
 
 	// Set SCL and SDA as output
 	reg::ddrb::reg_or((1 << PB2) | (1 << PB0));
 
-	// set SCL high
+	// Set SCL high
 	reg::portb::reg_or(1 << PB2);
 
-	// set SDA high
+	// Set SDA high
 	reg::portb::reg_or(1 << PB0);
 
 	// Set SDA as input
@@ -215,12 +215,12 @@ void USITWISlave::begin(uint8_t ownAddress) { // initialize I2C lib
 			(1 << USISIE) |
 			// disable Overflow Interrupt
 					(0 << USIOIE) |
-					// set USI in Two-wire mode, no USI Counter overflow hold
+					// Set USI in Two-wire mode, no USI Counter overflow hold
 					(1 << USIWM1) | (0 << USIWM0) |
 					// Shift Register Clock Source = external, positive edge
 					// 4-Bit Counter Source = external, both edges
 					(1 << USICS1) | (0 << USICS0) | (0 << USICLK) |
-					// no toggle clock-port pin
+					// no Toggle clock-port pin
 					(0 << USITC));
 
 	// clear all interrupt flags and reset overflow counter

@@ -25,20 +25,20 @@ public:
 	MomentaryButton(uint8_t channel, mcal::DigitalIO& gpio,
 			activelevel_e pullup);
 
-	Button::ButtonInfos_s getButtonInfos() const override;
-	ButtonState_e getButtonState() const override;
-	bool isPressed() const override;
-	void updateState() override ;
-	mcal::Systemtick::systick_t getLastEventTick() const override;
+	Button::ButtonInfos GetButtonInfos() const override;
+	ButtonState GetButtonState() const override;
+	bool IsPressed() const override;
+	void UpdateState() override ;
+	mcal::Systemtick::systick_t GetLastEventTick() const override;
 
 private:
-  static const unsigned int BUTTONRELEASESTABLE = 0x8000;
-  static const int BUTTONPRESSSTABLE = 0x7FFF;
+  static constexpr unsigned int kButtonReleaseStable = 0x8000;
+  static constexpr int kButtonPressStable = 0x7FFF;
 
 	mcal::DigitalIO &gpio;
-	mcal::DigitalIO::DIOLevel_e logicHigh_;
-	mcal::DigitalIO::DIOLevel_e logicLow_;
-	std::uint32_t inputHistory_;
+	mcal::DigitalIO::DIOLevel_e logic_high_;
+	mcal::DigitalIO::DIOLevel_e logic_low_;
+	std::uint32_t input_history_;
 
 };
 

@@ -10,137 +10,137 @@
 namespace app {
 
 PowerswitchState::PowerswitchState(hal::PWMLed::PWMLEDParams_s pattern) :
-    ledPattern(pattern) {
+    led_pattern_(pattern) {
 }
 
-void PowerswitchStateOff::onEnter(Powerswitch &powerSwitch) {
-  onEnterTick = mcal::ATTiny85Systemtick::getInstance().getTick();
-  powerSwitch.setLEDPattern(this->ledPattern);
-  powerSwitch.setSwitch(hal::LED::LED_HIGH);
-  powerSwitch.setShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
+void PowerswitchStateOff::OnEnter(Powerswitch &power_switch) {
+  on_enter_tick_ = mcal::ATTiny85Systemtick::getInstance().getTick();
+  power_switch.SetLedPattern(this->led_pattern_);
+  power_switch.SetSwitch(hal::Led::LED_HIGH);
+  power_switch.SetShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
 }
 
-void PowerswitchStateOff::step(Powerswitch &powerSwitch,
-                               hal::Button::ButtonState_e btnState,
-                               hal::Button::ButtonState_e rpiPowerState) {
+void PowerswitchStateOff::Step(Powerswitch &power_switch,
+                               hal::Button::ButtonState btn_state,
+                               hal::Button::ButtonState rpi_power_state) {
 
-  if ((btnState == hal::Button::BUTTON_PRESSED) || (rpiPowerState == hal::Button::BUTTON_PRESSED)) {
-    powerSwitch.setState(powerSwitch.getStateBoot());
+  if ((btn_state == hal::Button::BUTTON_PRESSED) || (rpi_power_state == hal::Button::BUTTON_PRESSED)) {
+    power_switch.SetState(power_switch.GetStateBoot());
   }
 
 //
-//	if (btnState == hal::Button::BUTTON_RELEASED
-//			&& rpiPowerState == hal::Button::BUTTON_RELEASED)
+//	if (btn_state == hal::Button::BUTTON_RELEASED
+//			&& rpi_power_state == hal::Button::BUTTON_RELEASED)
 //	{
-//		powerSwitch.setState(powerSwitch.getStateOff());
+//		power_switch_.SetState(power_switch_.GetStateOff());
 //	}
-//	else if ((btnState == hal::Button::BUTTON_PRESSED)
-//			&& (rpiPowerState == hal::Button::BUTTON_RELEASED)
-//			&& (mcal::ATTiny85Systemtick::getInstance().getTick() - onEnterTick
+//	else if ((btn_state == hal::Button::BUTTON_PRESSED)
+//			&& (rpi_power_state == hal::Button::BUTTON_RELEASED)
+//			&& (mcal::ATTiny85Systemtick::getInstance().getTick() - on_enter_tick_
 //					>= OFFSTATEDELAY))
 //	{
-//		powerSwitch.setState(powerSwitch.getStateBoot());
+//		power_switch_.SetState(power_switch_.GetStateBoot());
 //	}
-//	else if ((btnState == hal::Button::BUTTON_RELEASED)
-//			&& (rpiPowerState == hal::Button::BUTTON_PRESSED)
-//			&& (mcal::ATTiny85Systemtick::getInstance().getTick() - onEnterTick
+//	else if ((btn_state == hal::Button::BUTTON_RELEASED)
+//			&& (rpi_power_state == hal::Button::BUTTON_PRESSED)
+//			&& (mcal::ATTiny85Systemtick::getInstance().getTick() - on_enter_tick_
 //					>= OFFSTATEDELAY))
 //	{
-//		powerSwitch.setState(powerSwitch.getStateBoot());
+//		power_switch_.SetState(power_switch_.GetStateBoot());
 //	}
-//	else if ((btnState == hal::Button::BUTTON_PRESSED)
-//			&& (rpiPowerState == hal::Button::BUTTON_PRESSED)
-//			&& (mcal::ATTiny85Systemtick::getInstance().getTick() - onEnterTick
+//	else if ((btn_state == hal::Button::BUTTON_PRESSED)
+//			&& (rpi_power_state == hal::Button::BUTTON_PRESSED)
+//			&& (mcal::ATTiny85Systemtick::getInstance().getTick() - on_enter_tick_
 //					>= OFFSTATEDELAY))
 //	{
-//		powerSwitch.setState(powerSwitch.getStateBoot());
+//		power_switch_.SetState(power_switch_.GetStateBoot());
 //	}
 }
 
-void PowerswitchStateBoot::onEnter(Powerswitch &powerSwitch) {
-  powerSwitch.setLEDPattern(this->ledPattern);
-  powerSwitch.setSwitch(hal::LED::LED_LOW);
-  powerSwitch.setShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
+void PowerswitchStateBoot::OnEnter(Powerswitch &power_switch) {
+  power_switch.SetLedPattern(this->led_pattern_);
+  power_switch.SetSwitch(hal::Led::LED_LOW);
+  power_switch.SetShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
 }
 
-void PowerswitchStateBoot::step(Powerswitch &powerSwitch,
-                                hal::Button::ButtonState_e btnState,
-                                hal::Button::ButtonState_e rpiPowerState) {
+void PowerswitchStateBoot::Step(Powerswitch &power_switch,
+                                hal::Button::ButtonState btn_state,
+                                hal::Button::ButtonState rpi_power_state) {
 
-  if (rpiPowerState == hal::Button::BUTTON_PRESSED) {
-    powerSwitch.setState(powerSwitch.getStateOn());
+  if (rpi_power_state == hal::Button::BUTTON_PRESSED) {
+    power_switch.SetState(power_switch.GetStateOn());
   }
 
-//	if (btnState == hal::Button::BUTTON_RELEASED
-//			&& rpiPowerState == hal::Button::BUTTON_RELEASED) {
-//		powerSwitch.setState(powerSwitch.getStateBoot());
-//	} else if (btnState == hal::Button::BUTTON_PRESSED
-//			&& rpiPowerState == hal::Button::BUTTON_RELEASED) {
-//		powerSwitch.setState(powerSwitch.getStateBoot());
-//	} else if (btnState == hal::Button::BUTTON_RELEASED
-//			&& rpiPowerState == hal::Button::BUTTON_PRESSED) {
-//		powerSwitch.setState(powerSwitch.getStateOn());
-//	} else if (btnState == hal::Button::BUTTON_PRESSED
-//			&& rpiPowerState == hal::Button::BUTTON_PRESSED) {
-//		powerSwitch.setState(powerSwitch.getStateOn());
+//	if (btn_state == hal::Button::BUTTON_RELEASED
+//			&& rpi_power_state == hal::Button::BUTTON_RELEASED) {
+//		power_switch_.SetState(power_switch_.GetStateBoot());
+//	} else if (btn_state == hal::Button::BUTTON_PRESSED
+//			&& rpi_power_state == hal::Button::BUTTON_RELEASED) {
+//		power_switch_.SetState(power_switch_.GetStateBoot());
+//	} else if (btn_state == hal::Button::BUTTON_RELEASED
+//			&& rpi_power_state == hal::Button::BUTTON_PRESSED) {
+//		power_switch_.SetState(power_switch_.GetStateOn());
+//	} else if (btn_state == hal::Button::BUTTON_PRESSED
+//			&& rpi_power_state == hal::Button::BUTTON_PRESSED) {
+//		power_switch_.SetState(power_switch_.GetStateOn());
 //	}
 }
 
-void PowerswitchStateOn::onEnter(Powerswitch &powerSwitch) {
-  powerSwitch.setLEDPattern(this->ledPattern);
-  powerSwitch.setSwitch(hal::LED::LED_LOW);
-  powerSwitch.setShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
+void PowerswitchStateOn::OnEnter(Powerswitch &power_switch) {
+  power_switch.SetLedPattern(this->led_pattern_);
+  power_switch.SetSwitch(hal::Led::LED_LOW);
+  power_switch.SetShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
 }
 
-void PowerswitchStateOn::step(Powerswitch &powerSwitch,
-                              hal::Button::ButtonState_e btnState,
-                              hal::Button::ButtonState_e rpiPowerState) {
+void PowerswitchStateOn::Step(Powerswitch &power_switch,
+                              hal::Button::ButtonState btn_state,
+                              hal::Button::ButtonState rpi_power_state) {
 
-  if ((btnState == hal::Button::BUTTON_RELEASED) || (rpiPowerState == hal::Button::BUTTON_RELEASED)) {
-    powerSwitch.setState(powerSwitch.getStateShutdown());
+  if ((btn_state == hal::Button::BUTTON_RELEASED) || (rpi_power_state == hal::Button::BUTTON_RELEASED)) {
+    power_switch.SetState(power_switch.GetStateShutdown());
   }
 
-//	if (btnState == hal::Button::BUTTON_RELEASED
-//			&& rpiPowerState == hal::Button::BUTTON_RELEASED) {
-//		powerSwitch.setState(powerSwitch.getStateShutdown());
-//	} else if (btnState == hal::Button::BUTTON_PRESSED
-//			&& rpiPowerState == hal::Button::BUTTON_RELEASED) {
-//		powerSwitch.setState(powerSwitch.getStateShutdown());
-//	} else if (btnState == hal::Button::BUTTON_RELEASED
-//			&& rpiPowerState == hal::Button::BUTTON_PRESSED) {
-//		powerSwitch.setState(powerSwitch.getStateShutdown());
-//	} else if (btnState == hal::Button::BUTTON_PRESSED
-//			&& rpiPowerState == hal::Button::BUTTON_PRESSED) {
-//		powerSwitch.setState(powerSwitch.getStateOn());
+//	if (btn_state == hal::Button::BUTTON_RELEASED
+//			&& rpi_power_state == hal::Button::BUTTON_RELEASED) {
+//		power_switch_.SetState(power_switch_.GetStateShutdown());
+//	} else if (btn_state == hal::Button::BUTTON_PRESSED
+//			&& rpi_power_state == hal::Button::BUTTON_RELEASED) {
+//		power_switch_.SetState(power_switch_.GetStateShutdown());
+//	} else if (btn_state == hal::Button::BUTTON_RELEASED
+//			&& rpi_power_state == hal::Button::BUTTON_PRESSED) {
+//		power_switch_.SetState(power_switch_.GetStateShutdown());
+//	} else if (btn_state == hal::Button::BUTTON_PRESSED
+//			&& rpi_power_state == hal::Button::BUTTON_PRESSED) {
+//		power_switch_.SetState(power_switch_.GetStateOn());
 //	}
 }
 
-void PowerswitchStateShutdown::onEnter(Powerswitch &powerSwitch) {
-  powerSwitch.setLEDPattern(this->ledPattern);
-  powerSwitch.setSwitch(hal::LED::LED_LOW);
-  powerSwitch.setShutdownSignal(Powerswitch::SHUTDOWN_TRUE);
+void PowerswitchStateShutdown::OnEnter(Powerswitch &power_switch) {
+  power_switch.SetLedPattern(this->led_pattern_);
+  power_switch.SetSwitch(hal::Led::LED_LOW);
+  power_switch.SetShutdownSignal(Powerswitch::SHUTDOWN_TRUE);
 }
 
-void PowerswitchStateShutdown::step(Powerswitch &powerSwitch,
-                                    hal::Button::ButtonState_e btnState,
-                                    hal::Button::ButtonState_e rpiPowerState) {
+void PowerswitchStateShutdown::Step(Powerswitch &power_switch,
+                                    hal::Button::ButtonState btn_state,
+                                    hal::Button::ButtonState rpi_power_state) {
 
-  if (rpiPowerState == hal::Button::BUTTON_RELEASED) {
-    powerSwitch.setState(powerSwitch.getStateOff());
+  if (rpi_power_state == hal::Button::BUTTON_RELEASED) {
+    power_switch.SetState(power_switch.GetStateOff());
   }
 
-//	if (btnState == hal::Button::BUTTON_RELEASED
-//			&& rpiPowerState == hal::Button::BUTTON_RELEASED) {
-//		powerSwitch.setState(powerSwitch.getStateOff());
-//	} else if (btnState == hal::Button::BUTTON_PRESSED
-//			&& rpiPowerState == hal::Button::BUTTON_RELEASED) {
-//		powerSwitch.setState(powerSwitch.getStateOff());
-//	} else if (btnState == hal::Button::BUTTON_RELEASED
-//			&& rpiPowerState == hal::Button::BUTTON_PRESSED) {
-//		powerSwitch.setState(powerSwitch.getStateShutdown());
-//	} else if (btnState == hal::Button::BUTTON_PRESSED
-//			&& rpiPowerState == hal::Button::BUTTON_PRESSED) {
-//		powerSwitch.setState(powerSwitch.getStateShutdown());
+//	if (btn_state == hal::Button::BUTTON_RELEASED
+//			&& rpi_power_state == hal::Button::BUTTON_RELEASED) {
+//		power_switch_.SetState(power_switch_.GetStateOff());
+//	} else if (btn_state == hal::Button::BUTTON_PRESSED
+//			&& rpi_power_state == hal::Button::BUTTON_RELEASED) {
+//		power_switch_.SetState(power_switch_.GetStateOff());
+//	} else if (btn_state == hal::Button::BUTTON_RELEASED
+//			&& rpi_power_state == hal::Button::BUTTON_PRESSED) {
+//		power_switch_.SetState(power_switch_.GetStateShutdown());
+//	} else if (btn_state == hal::Button::BUTTON_PRESSED
+//			&& rpi_power_state == hal::Button::BUTTON_PRESSED) {
+//		power_switch_.SetState(power_switch_.GetStateShutdown());
 //	}
 }
 

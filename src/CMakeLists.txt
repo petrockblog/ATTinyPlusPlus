@@ -13,7 +13,7 @@ cmake_minimum_required(VERSION 2.8)
 
 ### TOOLCHAIN SETUP AREA #################################################
 # Set any variables used in the toolchain prior project() call. In that
-# case they are already set and used.
+# case they are already Set and used.
 ##########################################################################
 
 ##########################################################################
@@ -24,7 +24,7 @@ set(AVR_PROGRAMMER stk500v2)
 set(AVR_UPLOADTOOL_PORT /dev/tty.SLAB_USBtoUART)
 
 ##########################################################################
-# AVR and fuses needs to be set
+# AVR and fuses needs to be Set
 ##########################################################################
 set(AVR_MCU attiny85)
 set(AVR_H_FUSE 0xdf)
@@ -53,7 +53,7 @@ message(STATUS "Current L_FUSE is set to: ${AVR_L_FUSE}")
 message(STATUS "Current E_FUSE is set to: ${AVR_E_FUSE}")
 
 ##########################################################################
-# set build type
+# Set build type
 ##########################################################################
 if(NOT CMAKE_BUILD_TYPE)
    set(CMAKE_BUILD_TYPE Release)
@@ -98,7 +98,7 @@ message(STATUS "Set CMAKE_SYSTEM_INCLUDE_PATH to ${CMAKE_SYSTEM_INCLUDE_PATH}")
 message(STATUS "Set CMAKE_SYSTEM_LIBRARY_PATH to ${CMAKE_SYSTEM_LIBRARY_PATH}")
 
 ##########################################################################
-# set compiler options for build types
+# Set compiler options for build types
 ##########################################################################
 if(CMAKE_BUILD_TYPE MATCHES Release)
    set(CMAKE_C_FLAGS_RELEASE "-Os")

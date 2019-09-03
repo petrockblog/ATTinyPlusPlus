@@ -35,8 +35,8 @@ void ATTiny85PWM::open(uint8_t channel) {
 		reg::tccr1::bit_set(PWM1A);
 		reg::tccr1::bit_set(COM1A0);
 
-		//PLLCSR is not set so the PLL will not be used (are using system clock directly - "synchonous mode")
-		Timer::Timer1_SetOutputCompareMatchC(255); // OCR1C determines the "top" counter value if CTC1 in TCCR1 is set. Otherwise "top" is normal: 0xFF
+		//PLLCSR is not Set so the PLL will not be used (are using system clock directly - "synchonous mode")
+		Timer::Timer1_SetOutputCompareMatchC(255); // OCR1C determines the "top" counter value if CTC1 in TCCR1 is Set. Otherwise "top" is normal: 0xFF
 		Timer::Timer1_SetWaveformGenerationMode(Timer::Timer1_CTC_OCR);
 		Timer::Timer1_ClockSelect(Timer::Timer1_Prescale_Value_8);
 		break;
@@ -50,8 +50,8 @@ void ATTiny85PWM::open(uint8_t channel) {
 		reg::gtccr::bit_set(PWM1B);
 		reg::gtccr::bit_set(COM1B0);
 
-		//PLLCSR is not set so the PLL will not be used (are using system clock directly - "synchonous mode")
-		Timer::Timer1_SetOutputCompareMatchC(255); // OCR1C determines the "top" counter value, if CTC1 in TCCR1 is set. Otherwise "top" is normal: 0xFF
+		//PLLCSR is not Set so the PLL will not be used (are using system clock directly - "synchonous mode")
+		Timer::Timer1_SetOutputCompareMatchC(255); // OCR1C determines the "top" counter value, if CTC1 in TCCR1 is Set. Otherwise "top" is normal: 0xFF
 		Timer::Timer1_SetWaveformGenerationMode(Timer::Timer1_CTC_OCR);
 		Timer::Timer1_ClockSelect(Timer::Timer1_Prescale_Value_8);
 		break;

@@ -27,8 +27,8 @@ ATTiny85DigitalIO::ATTiny85DigitalIO() :
 }
 
 void ATTiny85DigitalIO::open(uint8_t gpio) {
-	reg::portb::bit_clr(gpio);  // set output to low level
-	reg::ddrb::bit_set(gpio);  // initialize as output
+	reg::portb::bit_clr(gpio);  // Set output to low level
+	reg::ddrb::bit_set(gpio);  // Initialize as output
 	isOpen |= (1u << gpio);
 }
 

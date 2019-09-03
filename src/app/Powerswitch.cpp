@@ -5,43 +5,42 @@
  *      Author: florian
  */
 
-#include <util/delay.h>
 #include "app/Powerswitch.h"
 
 namespace app {
 
-Powerswitch::Powerswitch(hal::Button &btn, hal::Button &fromRPi, hal::LED &powerSwitch,
-                         hal::PWMLed &led, hal::LED &toRPi) :
-    currentState(stateOff), stateOff(new PowerswitchStateOff()), stateBoot(
-    new PowerswitchStateBoot()), stateOn(new PowerswitchStateOn()), stateShutdown(
-    new PowerswitchStateShutdown()), button(btn), fromRPi(fromRPi), powerSwitch(
-    powerSwitch), toRPi(toRPi), pwmLED(led) {
-  setState(stateOff);
+Powerswitch::Powerswitch(hal::Button &btn, hal::Button &from_r_pi, hal::Led &power_switch,
+                         hal::PWMLed &led, hal::Led &to_r_pi) :
+    current_state_(nullptr), state_off_(new PowerswitchStateOff()), state_boot_(
+    new PowerswitchStateBoot()), state_on_(new PowerswitchStateOn()), state_shutdown_(
+    new PowerswitchStateShutdown()), button_(btn), from_r_pi_(from_r_pi), power_switch_(
+    power_switch), to_r_pi_(to_r_pi), pwm_led_(led) {
+  SetState(state_off_);
 }
 
 Powerswitch::~Powerswitch() = default;
 
-void Powerswitch::update() {
-  if (currentState != nullptr) {
-    currentState->step(*this, button.getButtonState(), fromRPi.getButtonState());
+void Powerswitch::Update() {
+  if (current_state_ != nullptr) {
+    current_state_->Step(*this, button_.GetButtonState(), from_r_pi_.GetButtonState());
   }
 }
 
-void Powerswitch::setSwitch(hal::LED::LEDLevel_e level) {
-  powerSwitch.set(level);
+void Powerswitch::SetSwitch(hal::Led::LedLevel level) {
+  power_switch_.Set(level);
 }
 
-void Powerswitch::setShutdownSignal(shutdown_e doShutdown) {
-  if (doShutdown == SHUTDOWN_TRUE) {
-    toRPi.set(hal::LED::LED_HIGH);
+void Powerswitch::SetShutdownSignal(Shutdown do_shutdown) {
+  if (do_shutdown == SHUTDOWN_TRUE) {
+    to_r_pi_.Set(hal::Led::LED_HIGH);
   } else {
-    toRPi.set(hal::LED::LED_LOW);
+    to_r_pi_.Set(hal::Led::LED_LOW);
   }
 }
 
-void Powerswitch::setState(PowerswitchState *newState) {
-  currentState = newState;
-  currentState->onEnter(*this);
+void Powerswitch::SetState(PowerswitchState *new_state) {
+  current_state_ = new_state;
+  current_state_->OnEnter(*this);
 }
 
 } /* namespace app */

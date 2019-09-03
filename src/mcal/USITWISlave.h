@@ -124,17 +124,17 @@ private:
 	inline void set_usi_to_send_ack() {
 		/* prepare ACK */
 		reg::usidr::reg_set(0);
-		/* set SDA as output */
+		/* Set SDA as output */
 		reg::ddrb::reg_or(1 << PB0);
 		/* clear all interrupt flags, except Start Cond */
 		reg::usisr::reg_set(
 				(0 << USISIF) | (1 << USIOIF) | (1 << USIPF) | (1 << USIDC) |
-				/* set USI counter to shift 1 bit */
+				/* Set USI counter to shift 1 bit */
 				(0x0E << USICNT0));
 	}
 
 	inline void set_usi_to_read_ack() {
-		/* set SDA as input */
+		/* Set SDA as input */
 		reg::ddrb::reg_and(~(1 << PB0));
 
 		/* prepare ACK */
@@ -142,19 +142,19 @@ private:
 		/* clear all interrupt flags, except Start Cond */
 		reg::usisr::reg_set(
 				(0 << USISIF) | (1 << USIOIF) | (1 << USIPF) | (1 << USIDC) |
-				/* set USI counter to shift 1 bit */
+				/* Set USI counter to shift 1 bit */
 				(0x0E << USICNT0));
 	}
 
 	inline void set_usi_to_twi_start_condition_mode() {
 		reg::usicr::reg_set(/* enable Start Condition Interrupt, disable Overflow Interrupt */
 		(1 << USISIE) | (0 << USIOIE) |
-		/* set USI in Two-wire mode, no USI Counter overflow hold */
+		/* Set USI in Two-wire mode, no USI Counter overflow hold */
 		(1 << USIWM1) | (0 << USIWM0) |
 		/* Shift Register Clock Source = External, positive edge */
 		/* 4-Bit Counter Source = external, both edges */
 		(1 << USICS1) | (0 << USICS0) | (0 << USICLK) |
-		/* no toggle clock-port pin */
+		/* no Toggle clock-port pin */
 		(0 << USITC));
 		reg::usisr::reg_set(
 				/* clear all interrupt flags, except Start Cond */
@@ -163,22 +163,22 @@ private:
 	}
 
 	inline void set_usi_to_send_data() {
-		/* set SDA as output */
+		/* Set SDA as output */
 		reg::ddrb::reg_or(1 << PB0);
 		/* clear all interrupt flags, except Start Cond */
 		reg::usisr::reg_set(
 				(0 << USISIF) | (1 << USIOIF) | (1 << USIPF) | (1 << USIDC) |
-				/* set USI to shift out 8 bits */
+				/* Set USI to shift out 8 bits */
 				(0x0 << USICNT0));
 	}
 
 	inline void set_usi_to_read_data() {
-		/* set SDA as input */
+		/* Set SDA as input */
 		reg::ddrb::reg_and(~(1 << PB0));
 		/* clear all interrupt flags, except Start Cond */
 		reg::usisr::reg_set(
 				(0 << USISIF) | (1 << USIOIF) | (1 << USIPF) | (1 << USIDC) |
-				/* set USI to shift out 8 bits */
+				/* Set USI to shift out 8 bits */
 				(0x0 << USICNT0));
 	}
 

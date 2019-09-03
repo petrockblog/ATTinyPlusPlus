@@ -1,32 +1,32 @@
 /*
- * LogicLED.cpp
+ * LogicLed.cpp
  *
  *  Created on: 25.10.2014
  *      Author: florian
  */
 
-#include "hal/LogicLED.h"
+#include "hal/logicLED.h"
 
 namespace hal {
 
-LogicLED::LogicLED(uint8_t channel, mcal::DigitalIO &digital_io) :
-		LED(channel), dio(digital_io) {
+LogicLed::LogicLed(uint8_t channel, mcal::DigitalIO &digital_io) :
+    Led(channel), dio(digital_io) {
 	digital_io.open(channel);
 	digital_io.control(channel, mcal::DigitalIO::DIOCMD_DIR_OUT);
 	digital_io.write(channel, mcal::DigitalIO::DIOLEVEL_LOW);
 }
 
 
-void LogicLED::set(LED::LEDLevel_e level) {
+void LogicLed::Set(Led::LedLevel level) {
 	if (level == LED_LOW) {
-		dio.write(channel, mcal::DigitalIO::DIOLEVEL_LOW);
+		dio.write(channel_, mcal::DigitalIO::DIOLEVEL_LOW);
 	} else {
-		dio.write(channel, mcal::DigitalIO::DIOLEVEL_HIGH);
+		dio.write(channel_, mcal::DigitalIO::DIOLEVEL_HIGH);
 	}
 }
 
-void LogicLED::toggle() {
-	dio.toggle(channel);
+void LogicLed::Toggle() {
+	dio.toggle(channel_);
 }
 
 } /* namespace hal */

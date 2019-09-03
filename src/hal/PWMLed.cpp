@@ -10,106 +10,106 @@
 namespace hal {
 
 //PWMLed::PWMLed(uint8_t channel_, mcal::PWM& pwm_) :
-//		channel_(channel_), pwm_(pwm_), amplitude_(0), delayTime_(0), rampupTime_(0), currentState_(
+//		channel_(channel_), pwm_(pwm_), amplitude_(0), delay_time_(0), rampup_time_(0), current_state_(
 //				0), slope_(0) {
-//	initialize();
+//	Initialize();
 //}
 
 PWMLed::PWMLed(uint8_t channel, mcal::PWM& pwm, uint8_t amplitude,
-		uint16_t delayTime, uint16_t rampupTime) :
-    channel_(channel), pwm_(pwm), amplitude_(amplitude), delayTime_(delayTime), rampupTime_(
-				rampupTime), currentState_(0), slope_(0) {
-	initialize();
+               uint16_t delay_time, uint16_t rampup_time) :
+    channel_(channel), pwm_(pwm), amplitude_(amplitude), delay_time_(delay_time), rampup_time_(
+    rampup_time), current_state_(0), slope_(0) {
+  Initialize();
 }
 
 //PWMLed::PWMLed(uint8_t channel_, mcal::PWM& pwm_, PWMLEDParams_s& params) :
-//		channel_(channel_), pwm_(pwm_), amplitude_(params.amplitude_), delayTime_(
-//				params.delayTime_), rampupTime_(params.rampupTime_), currentState_(
+//		channel_(channel_), pwm_(pwm_), amplitude_(params.amplitude_), delay_time_(
+//				params.delay_time_), rampup_time_(params.rampup_time_), current_state_(
 //				0), slope_(0) {
-//	initialize();
+//	Initialize();
 //}
 
-void PWMLed::initialize() {
+void PWMLed::Initialize() {
 	pwm_.open(channel_);
-	updateSlope();
+  UpdateSlope();
 }
 
 //void PWMLed::setAmplitude(uint8_t amplitude_) {
 //	if (this->amplitude_ != amplitude_) {
 //		this->amplitude_ = amplitude_;
-//		updateSlope();
+//		UpdateSlope();
 //	}
 //}
 //
-//void PWMLed::setDelayTime(uint16_t delayTime_) {
-//	if (this->delayTime_ != delayTime_) {
-//		this->delayTime_ = delayTime_;
-//		updateSlope();
+//void PWMLed::setDelayTime(uint16_t delay_time_) {
+//	if (this->delay_time_ != delay_time_) {
+//		this->delay_time_ = delay_time_;
+//		UpdateSlope();
 //	}
 //}
 //
-//void PWMLed::setRampupTime(uint16_t rampupTime_) {
-//	if (this->rampupTime_ != rampupTime_) {
-//		this->rampupTime_ = rampupTime_;
-//		updateSlope();
+//void PWMLed::setRampupTime(uint16_t rampup_time_) {
+//	if (this->rampup_time_ != rampup_time_) {
+//		this->rampup_time_ = rampup_time_;
+//		UpdateSlope();
 //	}
 //}
 
-void PWMLed::setConfiguration(const PWMLEDParams_s& params) {
+void PWMLed::SetConfiguration(const PWMLEDParams_s& params) {
 	if ((this->amplitude_ != params.amplitude)
-			|| (this->delayTime_ != params.delayTime)
-			|| (this->rampupTime_ != params.rampupTime)) {
+			|| (this->delay_time_ != params.delayTime)
+			|| (this->rampup_time_ != params.rampupTime)) {
 		this->amplitude_ = params.amplitude;
-		this->delayTime_ = params.delayTime;
-		this->rampupTime_ = params.rampupTime;
-		updateSlope();
+		this->delay_time_ = params.delayTime;
+		this->rampup_time_ = params.rampupTime;
+      UpdateSlope();
 	}
 }
 
-void PWMLed::update() {
-//	fixedpt newLevel = 0;
-  uint8_t newLevel = 0u;
+void PWMLed::Update() {
+//	fixedpt new_level = 0;
+  uint8_t new_level = 0u;
 
-  currentState_ = (currentState_ + 1) % (delayTime_ + rampupTime_ + rampupTime_);
+  current_state_ = (current_state_ + 1) % (delay_time_ + rampup_time_ + rampup_time_);
 
 	if (0 == slope_) {
-//		newLevel = fixedpt_fromint(amplitude_);
-      newLevel = amplitude_;
+//		new_level = fixedpt_fromint(amplitude_);
+      new_level = amplitude_;
 	} else {
-		if (currentState_ < delayTime_) {
+		if (current_state_ < delay_time_) {
 			pwm_.write(channel_, 0);
-		} else if ((currentState_ >= delayTime_)
-				&& (currentState_ < delayTime_ + rampupTime_)) {
-//			newLevel = fixedpt_mul(slope_,
-//					fixedpt_fromint(currentState_ - delayTime_));
-          newLevel = slope_ * (currentState_ - delayTime_);
+		} else if ((current_state_ >= delay_time_)
+				&& (current_state_ < delay_time_ + rampup_time_)) {
+//			new_level = fixedpt_mul(slope_,
+//					fixedpt_fromint(current_state_ - delay_time_));
+          new_level = slope_ * (current_state_ - delay_time_);
 		} else {
-//			newLevel = fixedpt_fromint(amplitude_);
-//			newLevel =
-//					fixedpt_add(newLevel,
-//							fixedpt_mul(-slope_, fixedpt_fromint(currentState_ - delayTime_ - rampupTime_)));
-          newLevel = amplitude_ + (-slope_ * (currentState_ - delayTime_ - rampupTime_));
+//			new_level = fixedpt_fromint(amplitude_);
+//			new_level =
+//					fixedpt_add(new_level,
+//							fixedpt_mul(-slope_, fixedpt_fromint(current_state_ - delay_time_ - rampup_time_)));
+          new_level = amplitude_ + (-slope_ * (current_state_ - delay_time_ - rampup_time_));
 		}
 	}
-//	if (newLevel < 0) {
-//		newLevel = 0;
-//	} else if (newLevel > fixedpt_fromint(255)) {
-//		newLevel = fixedpt_fromint(255);
+//	if (new_level < 0) {
+//		new_level = 0;
+//	} else if (new_level > fixedpt_fromint(255)) {
+//		new_level = fixedpt_fromint(255);
 //	}
-//	pwm_.write(channel_, (uint8_t) fixedpt_toint(newLevel));
-  pwm_.write(channel_, newLevel);
+//	pwm_.write(channel_, (uint8_t) fixedpt_toint(new_level));
+  pwm_.write(channel_, new_level);
 
 }
 
-void PWMLed::updateSlope() {
-	if (rampupTime_ > 0) {
+void PWMLed::UpdateSlope() {
+	if (rampup_time_ > 0) {
 //		slope_ = fixedpt_div(fixedpt_fromint(amplitude_),
-//				fixedpt_fromint(rampupTime_));
-      slope_ = amplitude_ / rampupTime_;
+//				fixedpt_fromint(rampup_time_));
+      slope_ = amplitude_ / rampup_time_;
 	} else {
       slope_ = 0;
 	}
-  currentState_ = 0;
+  current_state_ = 0;
 }
 
 } /* namespace hal */

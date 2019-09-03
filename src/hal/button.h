@@ -5,8 +5,8 @@
  *      Author: florian
  */
 
-#ifndef BUTTON_H_
-#define BUTTON_H_
+#ifndef ATTINYPLUSPLUS_SRC_HAL_BUTTON_H_
+#define ATTINYPLUSPLUS_SRC_HAL_BUTTON_H_
 
 #include "lib/STL/cstdint.h"
 #include "mcal/systemtick.h"
@@ -16,13 +16,13 @@ namespace hal {
 class Button {
 public:
 
-	enum ButtonState_e {
+	enum ButtonState {
 		BUTTON_PRESSED, BUTTON_RELEASED
 	};
 
-	struct ButtonInfos_s {
-		ButtonState_e state;
-		mcal::Systemtick::systick_t eventTime;
+	struct ButtonInfos {
+		ButtonState state_;
+		mcal::Systemtick::systick_t event_time_;
 	};
 
 	explicit Button(uint8_t channel) :
@@ -31,18 +31,18 @@ public:
 
 	virtual ~Button() = default;
 
-	virtual ButtonInfos_s getButtonInfos() const = 0;
-	virtual ButtonState_e getButtonState() const = 0;
-	virtual bool isPressed() const = 0;
-	virtual void updateState() = 0;
-	virtual mcal::Systemtick::systick_t getLastEventTick() const = 0;
+	virtual ButtonInfos GetButtonInfos() const = 0;
+	virtual ButtonState GetButtonState() const = 0;
+	virtual bool IsPressed() const = 0;
+	virtual void UpdateState() = 0;
+	virtual mcal::Systemtick::systick_t GetLastEventTick() const = 0;
 
 protected:
 	uint8_t channel_;
-	ButtonInfos_s infos_;
+	ButtonInfos infos_;
 
 };
 
 }
 
-#endif /* BUTTON_H_ */
+#endif /*ATTINYPLUSPLUS_SRC_HAL_BUTTON_H_*/

@@ -10,7 +10,7 @@
 ##########################################################################
 
 ##########################################################################
-# The toolchain requires some variables set.
+# The toolchain requires some variables Set.
 #
 # AVR_MCU (default: atmega8)
 #     the type of AVR the application is built for
@@ -150,7 +150,7 @@ function(add_avr_executable EXECUTABLE_NAME)
       message(FATAL_ERROR "No source files given for ${EXECUTABLE_NAME}.")
    endif(NOT ARGN)
 
-   # set file names
+   # Set file names
    set(elf_file ${EXECUTABLE_NAME}${MCU_TYPE_FOR_FILENAME}.elf)
    set(hex_file ${EXECUTABLE_NAME}${MCU_TYPE_FOR_FILENAME}.hex)
    set(map_file ${EXECUTABLE_NAME}${MCU_TYPE_FOR_FILENAME}.map)
@@ -241,7 +241,7 @@ function(add_avr_executable EXECUTABLE_NAME)
       COMMENT "Get fuses from ${AVR_MCU}"
    )
 
-   # set fuses
+   # Set fuses
    add_custom_target(
       set_fuses
       ${AVR_UPLOADTOOL} -p ${AVR_MCU} -c ${AVR_PROGRAMMER} -P ${AVR_UPLOADTOOL_PORT}
@@ -259,7 +259,7 @@ function(add_avr_executable EXECUTABLE_NAME)
          COMMENT "Write calibration status of internal oscillator to ${AVR_MCU}_calib.tmp."
    )
 
-   # set oscillator calibration
+   # Set oscillator calibration
    add_custom_target(
       set_calibration
       ${AVR_UPLOADTOOL} -p ${AVR_MCU} -c ${AVR_PROGRAMMER} -P ${AVR_UPLOADTOOL_PORT}

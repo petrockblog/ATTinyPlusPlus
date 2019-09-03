@@ -5,11 +5,11 @@
  *      Author: florian
  */
 
-#ifndef POWERSWITCH_H_
-#define POWERSWITCH_H_
+#ifndef ATTINYPLUSPLUS_SRC_APP_POWERSWITCH_H_
+#define ATTINYPLUSPLUS_SRC_APP_POWERSWITCH_H_
 
 #include "hal/button.h"
-#include "hal/LED.h"
+#include "hal/Led.h"
 #include "hal/PWMLed.h"
 #include "app/PowerswitchState.h"
 
@@ -28,56 +28,56 @@ class Powerswitch {
   friend class PowerswitchStateOn;
   friend class PowerswitchStateShutdown;
 
-  enum shutdown_e {
+  enum Shutdown {
     SHUTDOWN_TRUE, SHUTDOWN_FALSE
   };
 
-  Powerswitch(hal::Button &btn, hal::Button &fromRPi, hal::LED &powerSwitch,
-              hal::PWMLed &led, hal::LED &toRPi);
+  Powerswitch(hal::Button &btn, hal::Button &from_r_pi, hal::Led &power_switch,
+              hal::PWMLed &led, hal::Led &to_r_pi);
   virtual ~Powerswitch();
 
-  void update();
+  void Update();
 
  private:
 
-  PowerswitchState *currentState;
+  PowerswitchState *current_state_;
 
-  PowerswitchStateOff *stateOff;
-  PowerswitchStateBoot *stateBoot;
-  PowerswitchStateOn *stateOn;
-  PowerswitchStateShutdown *stateShutdown;
+  PowerswitchStateOff *state_off_;
+  PowerswitchStateBoot *state_boot_;
+  PowerswitchStateOn *state_on_;
+  PowerswitchStateShutdown *state_shutdown_;
 
-  hal::Button &button;
-  hal::Button &fromRPi;
-  hal::LED &powerSwitch;
-  hal::LED &toRPi;
-  hal::PWMLed &pwmLED;
+  hal::Button &button_;
+  hal::Button &from_r_pi_;
+  hal::Led &power_switch_;
+  hal::Led &to_r_pi_;
+  hal::PWMLed &pwm_led_;
 
-  void setSwitch(hal::LED::LEDLevel_e level);
-  void setShutdownSignal(shutdown_e doShutdown);
-  void setState(PowerswitchState *newState);
-  void setLEDPattern(const hal::PWMLed::PWMLEDParams_s &pattern) {
-    pwmLED.setConfiguration(pattern);
+  void SetSwitch(hal::Led::LedLevel level);
+  void SetShutdownSignal(Shutdown do_shutdown);
+  void SetState(PowerswitchState *new_state);
+  void SetLedPattern(const hal::PWMLed::PWMLEDParams_s &pattern) {
+    pwm_led_.SetConfiguration(pattern);
   }
 
-  inline PowerswitchStateOff *getStateOff() {
-    return stateOff;
+  inline PowerswitchStateOff *GetStateOff() {
+    return state_off_;
   }
 
-  inline PowerswitchStateBoot *getStateBoot() {
-    return stateBoot;
+  inline PowerswitchStateBoot *GetStateBoot() {
+    return state_boot_;
   }
 
-  inline PowerswitchStateOn *getStateOn() {
-    return stateOn;
+  inline PowerswitchStateOn *GetStateOn() {
+    return state_on_;
   }
 
-  inline PowerswitchStateShutdown *getStateShutdown() {
-    return stateShutdown;
+  inline PowerswitchStateShutdown *GetStateShutdown() {
+    return state_shutdown_;
   }
 
 };
 
 } /* namespace app */
 
-#endif /* POWERSWITCH_H_ */
+#endif /*ATTINYPLUSPLUS_SRC_APP_POWERSWITCH_H_*/

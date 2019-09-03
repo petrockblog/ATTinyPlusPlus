@@ -104,7 +104,7 @@ public:
 		Timer1_CTC_OCR = 1,
 		Timer1_Fast_PWM_FF = Timer1_CTC_OCR | _Timer1_Enable_PWM_Mask
 				| _Timer1_Set_OCRnC_To_FF_Mask
-	/* todo The following requires a function to set the match+clear value (OCR1C).  A similar function needs to be provided for Timer0.  And, both need to be tested.
+	/* todo The following requires a function to Set the match+clear value (OCR1C).  A similar function needs to be provided for Timer0.  And, both need to be tested.
 	 ,
 	 Timer1_Fast_PWM_OCR               = Timer1_CTC_OCR | _Timer1_Enable_PWM_Mask
 	 */
@@ -114,7 +114,7 @@ public:
 	typedef uint8_t timer1_tcnt_t;
 
 	__attribute__((always_inline)) inline static void Timer0_SetToPowerup(void) {
-		// Stop the clock, set waveform generation to normal, and set output mode to normal
+		// Stop the clock, set waveform generation to normal, and Set output mode to normal
 		reg::tccr0b::reg_set(
 				(0 << FOC0A) | (0 << FOC0B) | (0 << WGM02) | (0 << CS02)
 						| (0 << CS01) | (0 << CS00));

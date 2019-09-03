@@ -10,7 +10,6 @@
 
 #include "lib/STL/cstdint.h"
 #include "mcal/pwm.h"
-//#include "lib/fixedptc.h"
 
 namespace hal {
 
@@ -22,30 +21,25 @@ public:
 		uint16_t rampupTime;
 	};
 
-//	PWMLed(uint8_t channel_, mcal::PWM& pwm_);
 	PWMLed(uint8_t channel, mcal::PWM& pwm, uint8_t amplitude,
-			uint16_t delayTime, uint16_t rampupTime);
-//	PWMLed(uint8_t channel_, mcal::PWM& pwm_, PWMLEDParams_s& params);
+           uint16_t delay_time, uint16_t rampup_time);
 	virtual ~PWMLed() = default;
 
-//	void setAmplitude(uint8_t amplitude_);
-//	void setDelayTime(uint16_t delayTime_);
-//	void setRampupTime(uint16_t rampupTime_);
-	void setConfiguration(const PWMLEDParams_s& params);
-	void update();
+	void SetConfiguration(const PWMLEDParams_s& params);
+	void Update();
 
 protected:
 	uint8_t channel_;
 	mcal::PWM& pwm_;
 	uint8_t amplitude_;
-	uint16_t delayTime_;
-	uint16_t rampupTime_;
+	uint16_t delay_time_;
+	uint16_t rampup_time_;
 
-	uint16_t currentState_;
+	uint16_t current_state_;
     uint8_t slope_;
 
-	void initialize();
-	void updateSlope();
+	void Initialize();
+	void UpdateSlope();
 };
 
 } /* namespace hal */

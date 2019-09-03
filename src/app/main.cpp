@@ -6,54 +6,52 @@
 #include "app/Powerswitch.h"
 
 namespace {
-const mcal::Systemtick::systick_t LOOPDELAY_MS = 1;  // was 15
+const mcal::Systemtick::systick_t kLoopdelayMs = 1;  // was 15
 }
 
 int main() {
 
-  // initialize system tick (with 1 ms period)
+  // Initialize system tick (with 1 ms period)
   mcal::Systemtick &systick = mcal::ATTiny85Systemtick::getInstance();
   systick.start();
 
   mcal::DigitalIO &gpio = mcal::ATTiny85DigitalIO::getInstance();
 
-  hal::MomentaryButton fromRPi = hal::MomentaryButton(3u, gpio,
-                                                      hal::MomentaryButton::ACTIVELEVEL_HIGH);
-  hal::MomentaryButton powerButton = hal::MomentaryButton(0u, gpio,
-                                                          hal::MomentaryButton::ACTIVELEVEL_LOW);
-  hal::LogicLED mosfetswitch = hal::LogicLED(4u, gpio);
-  hal::LogicLED toRPi = hal::LogicLED(2u, gpio);
+  hal::MomentaryButton from_r_pi = hal::MomentaryButton(3u, gpio,
+                                                        hal::MomentaryButton::ACTIVELEVEL_HIGH);
+  hal::MomentaryButton power_button = hal::MomentaryButton(0u, gpio,
+                                                           hal::MomentaryButton::ACTIVELEVEL_LOW);
+  hal::LogicLed mosfetswitch = hal::LogicLed(4u, gpio);
+  hal::LogicLed to_r_pi = hal::LogicLed(2u, gpio);
 
   mcal::PWM &pwm = mcal::ATTiny85PWM::getInstance();
   // PWM channel_ 2 uses PB4
-  hal::PWMLed pwmLed = hal::PWMLed(1u, pwm, 0u, 0u, 0u);
+  hal::PWMLed pwm_led = hal::PWMLed(1u, pwm, 0u, 0u, 0u);
 
-  app::Powerswitch powerswitch = app::Powerswitch(powerButton,
-                                                  fromRPi,
+  app::Powerswitch powerswitch = app::Powerswitch(power_button,
+                                                  from_r_pi,
                                                   mosfetswitch,
-                                                  pwmLed,
-                                                  toRPi);
+                                                  pwm_led,
+                                                  to_r_pi);
 
   while (true) {
     mcal::Systemtick::systick_t start = systick.getTick();
 
-    // update input button states every 1 ms.
-    powerButton.updateState();
-    fromRPi.updateState();
+    // Update input button_ states every 1 ms.
+    power_button.UpdateState();
+    from_r_pi.UpdateState();
 
-    // update application component
-    powerswitch.update();
+    // Update application component
+    powerswitch.Update();
 
     if ((start % 15u) == 0) {
-      // update PWM output every 15 ms
-      pwmLed.update();
+      // Update PWM output every 15 ms
+      pwm_led.Update();
     }
 
     // delay to keep a constant loop rate
-    while (systick.getTick() - start < LOOPDELAY_MS) {
+    while (systick.getTick() - start < kLoopdelayMs) {
     }
   }
-
-  return 0;  // never reached
 }
 
