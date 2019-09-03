@@ -30,8 +30,8 @@ public:
 	void UpdateState() override ;
 
 private:
-  static constexpr unsigned int kButtonReleaseStable = 0x8000;
-  static constexpr int kButtonPressStable = 0x7FFF;
+  static const uint32_t kButtonReleaseStable = 0x80000000;
+  static const uint32_t kButtonPressStable =   0x7FFFFFFF;
 
 	mcal::DigitalIO &gpio;
 	mcal::DigitalIO::DIOLevel_e logic_high_;

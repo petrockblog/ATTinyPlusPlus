@@ -11,7 +11,7 @@ namespace hal {
 
 MomentaryButton::MomentaryButton(uint8_t channel, mcal::DigitalIO &gpio,
                                  activelevel_e pullup) :
-    hal::Button(channel), gpio(gpio), input_history_(0u) {
+    hal::Button(channel), gpio(gpio), input_history_(kButtonReleaseStable) {
   gpio.open(channel);
   gpio.control(channel, mcal::DigitalIO::DIOCMD_DIR_IN);
   if (pullup == MomentaryButton::ACTIVELEVEL_LOW) {
@@ -40,9 +40,9 @@ void MomentaryButton::UpdateState() {
   const mcal::DigitalIO::DIOLevel_e currentButtonLevel = gpio.read(channel_);
   input_history_ = (input_history_ << 1u);
   if (currentButtonLevel == logic_high_) {
-    input_history_ |= 0x0001u;
+    input_history_ |= static_cast<uint32_t>(1u);
   } else {
-    input_history_  &= (~0x0001u);
+    input_history_  &= (~static_cast<uint32_t>(1u));
   }
 
 //  const mcal::Systemtick::systick_t currentTickCount =
