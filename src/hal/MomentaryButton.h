@@ -25,11 +25,9 @@ public:
 	MomentaryButton(uint8_t channel, mcal::DigitalIO& gpio,
 			activelevel_e pullup);
 
-	Button::ButtonInfos GetButtonInfos() const override;
 	ButtonState GetButtonState() const override;
 	bool IsPressed() const override;
 	void UpdateState() override ;
-//	mcal::Systemtick::systick_t GetLastEventTick() const override;
 
 private:
   static constexpr unsigned int kButtonReleaseStable = 0x8000;
