@@ -105,9 +105,15 @@ void PowerswitchStateOn::Step(Powerswitch &power_switch,
                               hal::Button::ButtonState btn_state,
                               hal::Button::ButtonState rpi_power_state) {
 
-  if ((btn_state == hal::Button::BUTTON_RELEASED) || (rpi_power_state == hal::Button::BUTTON_RELEASED)) {
-    power_switch.SetState(power_switch.GetStateShutdown());
-  }
+	if (power_switch.GetUsingMomentaryPowerButton()) {
+	  if ((btn_state == hal::Button::BUTTON_PRESSED) || (rpi_power_state == hal::Button::BUTTON_RELEASED)) {
+		  power_switch.SetState(power_switch.GetStateShutdown());
+	  }
+	} else {
+	  if ((btn_state == hal::Button::BUTTON_RELEASED) || (rpi_power_state == hal::Button::BUTTON_RELEASED)) {
+		power_switch.SetState(power_switch.GetStateShutdown());
+	  }
+	}
 
 //	if (btn_state == hal::Button::BUTTON_RELEASED
 //			&& rpi_power_state == hal::Button::BUTTON_RELEASED) {
@@ -134,7 +140,11 @@ void PowerswitchStateShutdown::Step(Powerswitch &power_switch,
                                     hal::Button::ButtonState btn_state,
                                     hal::Button::ButtonState rpi_power_state) {
 
-  if (rpi_power_state == hal::Button::BUTTON_RELEASED) {
+  const mcal::Systemtick::systick_t currentTick = mcal::ATTiny85Systemtick::getInstance().getTick();
+  const mcal::Systemtick::systick_t timeInState = (currentTick - on_enter_tick_);
+  const mcal::Systemtick::systick_t MINSTATEDELAY_TICKS = 2500u;
+
+  if ((rpi_power_state == hal::Button::BUTTON_RELEASED) && (timeInState >= MINSTATEDELAY_TICKS)) {
     power_switch.SetState(power_switch.GetStateOff());
   }
 
