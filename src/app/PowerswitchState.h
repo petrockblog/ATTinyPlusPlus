@@ -78,13 +78,16 @@ class PowerswitchStateOff : public PowerswitchState {
 class PowerswitchStateBoot : public PowerswitchState {
  public:
   PowerswitchStateBoot() :
-      PowerswitchState(kPatternBoot) {
+      PowerswitchState(kPatternBoot),
+      on_enter_tick_(0u) {
   }
   void Step(Powerswitch &power_switch,
             hal::Button::ButtonState btn_state,
             hal::Button::ButtonState rpi_power_state) override;
   ~PowerswitchStateBoot() override = default;
   void OnEnter(Powerswitch &power_switch) override;
+   private:
+   mcal::Systemtick::systick_t on_enter_tick_;
 };
 
 class PowerswitchStateOn : public PowerswitchState {

@@ -58,6 +58,7 @@ void PowerswitchStateOff::Step(Powerswitch &power_switch,
 }
 
 void PowerswitchStateBoot::OnEnter(Powerswitch &power_switch) {
+  on_enter_tick_ = mcal::ATTiny85Systemtick::getInstance().getTick();
   power_switch.SetLedPattern(this->led_pattern_);
   power_switch.SetSwitch(hal::Led::LED_LOW);
   power_switch.SetShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
@@ -67,8 +68,16 @@ void PowerswitchStateBoot::Step(Powerswitch &power_switch,
                                 hal::Button::ButtonState btn_state,
                                 hal::Button::ButtonState rpi_power_state) {
 
-  if (rpi_power_state == hal::Button::BUTTON_PRESSED) {
+  const mcal::Systemtick::systick_t currentTick = mcal::ATTiny85Systemtick::getInstance().getTick();
+  const mcal::Systemtick::systick_t timeInState = (currentTick - on_enter_tick_);
+  const mcal::Systemtick::systick_t MINSTATEDELAY_TICKS = 2500u;
+  
+  if ((rpi_power_state == hal::Button::BUTTON_PRESSED) && (timeInState >= MINSTATEDELAY_TICKS)){
     power_switch.SetState(power_switch.GetStateOn());
+  }
+  
+  if ((btn_state == hal::Button::BUTTON_RELEASED) && (timeInState < MINSTATEDELAY_TICKS)) {
+	  power_switch.SetUsingMomentaryPowerButton(true);
   }
 
 //	if (btn_state == hal::Button::BUTTON_RELEASED
