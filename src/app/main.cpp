@@ -15,34 +15,33 @@ int main() {
   mcal::Systemtick &systick = mcal::ATTiny85Systemtick::getInstance();
   systick.start();
 
-  mcal::DigitalIO &gpio = mcal::ATTiny85DigitalIO::getInstance();
+  mcal::DigitalIO &digital_io = mcal::ATTiny85DigitalIO::getInstance();
 
-  hal::MomentaryButton from_r_pi = hal::MomentaryButton(3u, gpio,
-                                                        hal::MomentaryButton::ACTIVELEVEL_HIGH);
-  hal::MomentaryButton power_button = hal::MomentaryButton(0u, gpio,
+  hal::MomentaryButton from_rpi = hal::MomentaryButton(3u, digital_io,
+                                                       hal::MomentaryButton::ACTIVELEVEL_HIGH);
+  hal::MomentaryButton power_button = hal::MomentaryButton(0u, digital_io,
                                                            hal::MomentaryButton::ACTIVELEVEL_LOW);
-  hal::LogicLed mosfetswitch = hal::LogicLed(4u, gpio);
-  hal::LogicLed to_r_pi = hal::LogicLed(2u, gpio);
+  hal::LogicLed mosfetswitch = hal::LogicLed(4u, digital_io);
+  hal::LogicLed to_rpi = hal::LogicLed(2u, digital_io);
 
   mcal::PWM &pwm = mcal::ATTiny85PWM::getInstance();
-  // PWM channel_ 2 uses PB4
-  hal::PWMLed pwm_led = hal::PWMLed(1u, pwm, 0u, 0u, 0u);
+  hal::PWMLed pwm_led = hal::PWMLed(1u, pwm, 0u, 0u, 0u);  // PWM channel_ 2 uses PB4
 
   app::Powerswitch powerswitch = app::Powerswitch(power_button,
-                                                  from_r_pi,
+                                                  from_rpi,
                                                   mosfetswitch,
                                                   pwm_led,
-                                                  to_r_pi);
+                                                  to_rpi);
 
   while (true) {
     mcal::Systemtick::systick_t start = systick.getTick();
 
     // Update input button_ states every 1 ms.
     power_button.UpdateState();
-    from_r_pi.UpdateState();
+    from_rpi.UpdateState();
 
     // Update application component
-    powerswitch.Update();
+//    powerswitch.Update();
 
     if ((start % 15u) == 0) {
       // Update PWM output every 15 ms
