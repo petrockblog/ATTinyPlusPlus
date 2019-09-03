@@ -30,15 +30,13 @@ public:
 		DIOCMD_PULLUP_DISABLE
 	} DIOCmd_e;
 
-	virtual ~DigitalIO() {
-	}
+	virtual ~DigitalIO() = default;
 
 	virtual void open(uint8_t gpio) = 0;
 	virtual DIOLevel_e read(uint8_t gpio) = 0;
 	virtual void write(uint8_t gpio, DIOLevel_e level) = 0;
 	virtual void toggle(uint8_t gpio) = 0;
-	virtual void control(uint8_t gpio, DIOCmd_e cmd,
-			void* params = nullptr) = 0;
+	virtual void control(uint8_t gpio, DIOCmd_e cmd, void* params = nullptr) = 0;
 
 };
 

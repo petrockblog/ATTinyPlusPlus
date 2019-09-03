@@ -9,7 +9,7 @@
 
 namespace mcal {
 
-ATTiny85DigitalIO::PCHandler ATTiny85DigitalIO::pinchange_handler = NULL;
+ATTiny85DigitalIO::PCHandler ATTiny85DigitalIO::pinchange_handler = nullptr;
 uint8_t ATTiny85DigitalIO::isOpen = 0;
 
 ATTiny85DigitalIO::PinChangeInterrupt::PinChangeInterrupt(int interruptNumber,
@@ -29,7 +29,7 @@ ATTiny85DigitalIO::ATTiny85DigitalIO() :
 void ATTiny85DigitalIO::open(uint8_t gpio) {
 	reg::portb::bit_clr(gpio);  // set output to low level
 	reg::ddrb::bit_set(gpio);  // initialize as output
-	isOpen |= (1 << gpio);
+	isOpen |= (1u << gpio);
 }
 
 ATTiny85DigitalIO::DIOLevel_e ATTiny85DigitalIO::read(uint8_t gpio) {
@@ -41,20 +41,20 @@ ATTiny85DigitalIO::DIOLevel_e ATTiny85DigitalIO::read(uint8_t gpio) {
 }
 
 void ATTiny85DigitalIO::write(uint8_t gpio, DIOLevel_e level) {
-	if ((isOpen & (1 << gpio)) > 0) {
+	if ((isOpen & (1u << gpio)) > 0) {
 		level == DIOLEVEL_HIGH ?
 				reg::portb::bit_set(gpio) : reg::portb::bit_clr(gpio);
 	}
 }
 
 void ATTiny85DigitalIO::toggle(uint8_t gpio) {
-	if ((isOpen & (1 << gpio)) > 0) {
+	if ((isOpen & (1u << gpio)) > 0) {
 		reg::portb::bit_not(gpio);
 	}
 }
 
 void ATTiny85DigitalIO::control(uint8_t gpio, DIOCmd_e cmd, void* params) {
-	if ((isOpen & (1 << gpio)) > 0) {
+	if ((isOpen & (1u << gpio)) > 0) {
 
 		switch (cmd) {
 		case DIOCMD_DIR_IN:

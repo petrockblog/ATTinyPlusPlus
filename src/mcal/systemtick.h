@@ -23,8 +23,7 @@ class Systemtick {
   virtual systick_t getTick() const = 0;
   virtual systick_t getTickPeriod() const = 0;
 
-  virtual ~Systemtick() {
-  }
+  virtual ~Systemtick() = default;
 
 };
 

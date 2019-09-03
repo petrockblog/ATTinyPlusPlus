@@ -23,14 +23,14 @@ public:
 		return systick;
 	}
 
-	virtual void start();
-	virtual void stop();
+	void start() override;
+	void stop() override;
 
-	inline virtual systick_t getTick() const {
+	inline systick_t getTick() const override {
 		return tickcount;
 	}
 
-	virtual systick_t getTickPeriod() const;
+	systick_t getTickPeriod() const override;
 
 private:
 
@@ -40,7 +40,7 @@ private:
 
 	class TimerInterrupt: public Interrupt {
 		ATTiny85Systemtick *ownerTimer;
-		void serviceRoutine();
+		void serviceRoutine() override;
 
 	public:
 		TimerInterrupt(int interruptNumber, ATTiny85Systemtick *ownerTimer);

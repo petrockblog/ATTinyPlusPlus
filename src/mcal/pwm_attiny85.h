@@ -19,8 +19,8 @@ namespace mcal {
 class ATTiny85PWM: public PWM {
 public:
 
-	virtual void open(uint8_t channel);
-	virtual void write(uint8_t channel, uint8_t value);
+	void open(uint8_t channel) override;
+	void write(uint8_t channel, uint8_t value) override;
 
 	static ATTiny85PWM& getInstance() {
 		static ATTiny85PWM instance;

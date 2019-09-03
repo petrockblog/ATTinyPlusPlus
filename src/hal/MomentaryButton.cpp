@@ -42,7 +42,7 @@ void MomentaryButton::updateState() {
   // every millisecond.
 
   const mcal::DigitalIO::DIOLevel_e currentButtonLevel = gpio.read(channel_);
-  inputHistory_ = (inputHistory_ << 1);
+  inputHistory_ = (inputHistory_ << 1u);
   if (currentButtonLevel == logicHigh_) {
     inputHistory_ |= 0x1;
   }

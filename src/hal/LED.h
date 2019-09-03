@@ -21,15 +21,14 @@ public:
 		LED_LOW, LED_HIGH
 	} LEDLevel_e;
 
-	LED(uint8_t channel) :
+	explicit LED(uint8_t channel) :
 			channel(channel) {
 	}
 
-	virtual ~LED() {
-	}
+	virtual ~LED() = default;
 
 	virtual void set(LEDLevel_e level) = 0;
-	virtual void toggle(void) = 0;
+	virtual void toggle() = 0;
 
 protected:
 	uint8_t channel;

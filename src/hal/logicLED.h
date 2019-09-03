@@ -16,10 +16,10 @@ namespace hal {
 class LogicLED: public LED {
 
 public:
-	LogicLED(uint8_t channel, mcal::DigitalIO &gpio);
+	LogicLED(uint8_t channel, mcal::DigitalIO &digital_io);
 
-	virtual void set(LEDLevel_e level);
-	virtual void toggle(void);
+	void set(LEDLevel_e level) override;
+	void toggle() override;
 
 private:
 	mcal::DigitalIO &dio;

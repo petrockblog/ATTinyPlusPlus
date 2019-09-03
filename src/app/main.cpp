@@ -1,6 +1,3 @@
-#include <util/delay.h>
-
-#include "mcal/mcal.h"
 #include "mcal/digitalio_attiny85.h"
 #include "hal/logicLED.h"
 #include "mcal/systemtick_attiny85.h"

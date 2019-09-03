@@ -19,8 +19,7 @@ Powerswitch::Powerswitch(hal::Button &btn, hal::Button &fromRPi, hal::LED &power
   setState(stateOff);
 }
 
-Powerswitch::~Powerswitch() {
-}
+Powerswitch::~Powerswitch() = default;
 
 void Powerswitch::update() {
   if (currentState != nullptr) {

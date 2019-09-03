@@ -25,12 +25,11 @@ public:
 		mcal::Systemtick::systick_t eventTime;
 	};
 
-	Button(uint8_t channel) :
+	explicit Button(uint8_t channel) :
         channel_(channel), infos_({BUTTON_RELEASED, 0 }) {
 	}
 
-	virtual ~Button() {
-	}
+	virtual ~Button() = default;
 
 	virtual ButtonInfos_s getButtonInfos() const = 0;
 	virtual ButtonState_e getButtonState() const = 0;

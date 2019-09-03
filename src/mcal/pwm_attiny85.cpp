@@ -9,8 +9,7 @@
 
 namespace mcal {
 
-ATTiny85PWM::ATTiny85PWM() {
-}
+ATTiny85PWM::ATTiny85PWM() = default;
 
 void ATTiny85PWM::open(uint8_t channel) {
 	cli();
@@ -18,7 +17,7 @@ void ATTiny85PWM::open(uint8_t channel) {
 	switch (channel) {
 	case 0: // PB0
 		dio.open(0);
-		dio.control(0, DigitalIO::DIOCMD_DIR_OUT, 0);
+		dio.control(0, DigitalIO::DIOCMD_DIR_OUT, nullptr);
 
 		Timer::Timer0_SetToPowerup();
 		Timer::Timer0_ClockSelect(Timer::Timer0_Prescale_Value_8);
@@ -28,7 +27,7 @@ void ATTiny85PWM::open(uint8_t channel) {
 		break;
 	case 1: // PB1
 		dio.open(1);
-		dio.control(1, DigitalIO::DIOCMD_DIR_OUT, 0);
+		dio.control(1, DigitalIO::DIOCMD_DIR_OUT, nullptr);
 
 		//setup timer1 with PWM. Will be using both A and B compare outputs.
 		// both compares will be the same but only B will have dead time applied
@@ -43,7 +42,7 @@ void ATTiny85PWM::open(uint8_t channel) {
 		break;
 	case 4: // PB4
 		dio.open(4);
-		dio.control(4, DigitalIO::DIOCMD_DIR_OUT, 0);
+		dio.control(4, DigitalIO::DIOCMD_DIR_OUT, nullptr);
 
 		//setup timer1 with PWM. Will be using both A and B compare outputs.
 		// both compares will be the same but only B will have dead time applied

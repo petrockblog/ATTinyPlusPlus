@@ -9,7 +9,7 @@
 
 namespace mcal {
 
-Interrupt *Interrupt::owner[] = { 0 };
+Interrupt *Interrupt::owner[] = { nullptr };
 
 void Interrupt::handler1() {
 	if (owner[0])

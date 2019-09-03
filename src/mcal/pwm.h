@@ -12,8 +12,7 @@ namespace mcal {
 
 class PWM {
 public:
-	virtual ~PWM() {
-	}
+	virtual ~PWM() = default;
 
 	virtual void open(uint8_t channel) = 0;
 	virtual void write(uint8_t channel, uint8_t value) = 0;

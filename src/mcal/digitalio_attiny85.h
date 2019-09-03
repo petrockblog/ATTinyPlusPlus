@@ -21,19 +21,18 @@ class ATTiny85DigitalIO: public DigitalIO {
 
 public:
 
-	virtual void open(uint8_t gpio);
-	virtual DIOLevel_e read(uint8_t gpio);
-	virtual void write(uint8_t gpio, DIOLevel_e level);
-	virtual void toggle(uint8_t gpio);
-	virtual void control(uint8_t gpio, DIOCmd_e cmd, void* params = nullptr);
+	void open(uint8_t gpio);
+	DIOLevel_e read(uint8_t gpio) override;
+	void write(uint8_t gpio, DIOLevel_e level) override;
+	virtual void toggle(uint8_t gpio) override;
+	virtual void control(uint8_t gpio, DIOCmd_e cmd, void* params = nullptr) override;
 
 	static ATTiny85DigitalIO& getInstance() {
 		static ATTiny85DigitalIO instance = ATTiny85DigitalIO();
 		return instance;
 	}
 
-	~ATTiny85DigitalIO() {
-	}
+	~ATTiny85DigitalIO() = default;
 
 private:
 
@@ -41,12 +40,12 @@ private:
 
 	static std::uint8_t isOpen;
 
-	typedef void (*PCHandler)(void);
+	typedef void (*PCHandler)();
 	static PCHandler pinchange_handler;
 
 	class PinChangeInterrupt: public Interrupt {
 		ATTiny85DigitalIO *ownerGPIO;
-		void serviceRoutine();
+		void serviceRoutine() override;
 
 	public:
 		PinChangeInterrupt(int interruptNumber, ATTiny85DigitalIO *ownerGPIO);
