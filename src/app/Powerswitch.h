@@ -22,59 +22,59 @@ class PowerswitchStateOn;
 class PowerswitchStateShutdown;
 
 class Powerswitch {
-public:
-	friend class PowerswitchStateOff;
-	friend class PowerswitchStateBoot;
-	friend class PowerswitchStateOn;
-	friend class PowerswitchStateShutdown;
+ public:
+  friend class PowerswitchStateOff;
+  friend class PowerswitchStateBoot;
+  friend class PowerswitchStateOn;
+  friend class PowerswitchStateShutdown;
 
-	enum shutdown_e {
-		SHUTDOWN_TRUE, SHUTDOWN_FALSE
-	};
+  enum shutdown_e {
+    SHUTDOWN_TRUE, SHUTDOWN_FALSE
+  };
 
-	Powerswitch(hal::Button &btn, hal::Button &fromRPi, hal::LED& powerSwitch,
-			hal::PWMLed &led, hal::LED &toRPi);
-	virtual ~Powerswitch();
+  Powerswitch(hal::Button &btn, hal::Button &fromRPi, hal::LED &powerSwitch,
+              hal::PWMLed &led, hal::LED &toRPi);
+  virtual ~Powerswitch();
 
-	void update();
+  void update();
 
-private:
+ private:
 
-	PowerswitchState* currentState;
+  PowerswitchState *currentState;
 
-	PowerswitchStateOff *stateOff;
-	PowerswitchStateBoot *stateBoot;
-	PowerswitchStateOn *stateOn;
-	PowerswitchStateShutdown *stateShutdown;
+  PowerswitchStateOff *stateOff;
+  PowerswitchStateBoot *stateBoot;
+  PowerswitchStateOn *stateOn;
+  PowerswitchStateShutdown *stateShutdown;
 
-	hal::Button &button;
-	hal::Button &fromRPi;
-	hal::LED &powerSwitch;
-	hal::LED &toRPi;
-	hal::PWMLed &pwmLED;
+  hal::Button &button;
+  hal::Button &fromRPi;
+  hal::LED &powerSwitch;
+  hal::LED &toRPi;
+  hal::PWMLed &pwmLED;
 
-	void setSwitch(hal::LED::LEDLevel_e level);
-	void setShutdownSignal(shutdown_e doShutdown);
-	void setState(PowerswitchState *newState);
-	void setLEDPattern(const hal::PWMLed::PWMLEDParams_s& pattern) {
-		pwmLED.setConfiguration(pattern);
-	}
+  void setSwitch(hal::LED::LEDLevel_e level);
+  void setShutdownSignal(shutdown_e doShutdown);
+  void setState(PowerswitchState *newState);
+  void setLEDPattern(const hal::PWMLed::PWMLEDParams_s &pattern) {
+    pwmLED.setConfiguration(pattern);
+  }
 
-	inline PowerswitchStateOff* getStateOff() {
-		return stateOff;
-	}
+  inline PowerswitchStateOff *getStateOff() {
+    return stateOff;
+  }
 
-	inline PowerswitchStateBoot* getStateBoot() {
-		return stateBoot;
-	}
+  inline PowerswitchStateBoot *getStateBoot() {
+    return stateBoot;
+  }
 
-	inline PowerswitchStateOn* getStateOn() {
-		return stateOn;
-	}
+  inline PowerswitchStateOn *getStateOn() {
+    return stateOn;
+  }
 
-	inline PowerswitchStateShutdown* getStateShutdown() {
-		return stateShutdown;
-	}
+  inline PowerswitchStateShutdown *getStateShutdown() {
+    return stateShutdown;
+  }
 
 };
 
