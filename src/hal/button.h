@@ -22,20 +22,17 @@ public:
 
 	struct ButtonInfos {
 		ButtonState state_;
-		mcal::Systemtick::systick_t event_time_;
 	};
 
 	explicit Button(uint8_t channel) :
-        channel_(channel), infos_({BUTTON_RELEASED, 0 }) {
+        channel_(channel), infos_({BUTTON_RELEASED }) {
 	}
 
 	virtual ~Button() = default;
 
-	virtual ButtonInfos GetButtonInfos() const = 0;
 	virtual ButtonState GetButtonState() const = 0;
 	virtual bool IsPressed() const = 0;
 	virtual void UpdateState() = 0;
-//	virtual mcal::Systemtick::systick_t GetLastEventTick() const = 0;
 
 protected:
 	uint8_t channel_;
