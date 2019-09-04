@@ -5,41 +5,51 @@
  *      Author: florian
  */
 
-#ifndef MOMENTARYBUTTON_H_
-#define MOMENTARYBUTTON_H_
+#ifndef ATTINYPLUSPLUS_SRC_HAL_MOMENTARYBUTTON_H_
+#define ATTINYPLUSPLUS_SRC_HAL_MOMENTARYBUTTON_H_
 
 #include <stdint.h>
-#include "hal/button.h"
 #include "mcal/digitalio.h"
 #include "mcal/systemtick_attiny85.h"
 
 namespace hal {
 
-class MomentaryButton: public Button {
-public:
+class MomentaryButton {
+ public:
 
-	enum activelevel_e {
-		ACTIVELEVEL_LOW, ACTIVELEVEL_HIGH
-	};
+  enum ButtonState {
+    BUTTON_PRESSED, BUTTON_RELEASED
+  };
 
-	MomentaryButton(uint8_t channel, mcal::DigitalIO& gpio,
-			activelevel_e pullup);
+  struct ButtonInfos {
+    ButtonState state_;
+    uint32_t ticks_in_current_state_;
+  };
 
-	ButtonState GetButtonState() const override;
-	bool IsPressed() const override;
-	void UpdateState() override ;
+  enum Activelevel {
+    ACTIVELEVEL_LOW, ACTIVELEVEL_HIGH
+  };
 
-private:
+  MomentaryButton(uint8_t channel, mcal::DigitalIO &gpio,
+                  Activelevel pullup);
+
+  void UpdateState();
+  const ButtonInfos& GetButtonInfos() const;
+
+ private:
   static const uint32_t kButtonReleaseStable = 0x80000000;
-  static const uint32_t kButtonPressStable =   0x7FFFFFFF;
+  static const uint32_t kButtonPressStable = 0x7FFFFFFF;
 
-	mcal::DigitalIO &gpio;
-	mcal::DigitalIO::DIOLevel_e logic_high_;
-	mcal::DigitalIO::DIOLevel_e logic_low_;
-	std::uint32_t input_history_;
+  uint8_t channel_;
+  ButtonInfos infos_;
+
+  mcal::DigitalIO &gpio_;
+  mcal::DigitalIO::DIOLevel_e logic_high_;
+  mcal::DigitalIO::DIOLevel_e logic_low_;
+  uint32_t input_history_;
 
 };
 
 } /* namespace hal */
 
-#endif /* MOMENTARYBUTTON_H_ */
+#endif /*ATTINYPLUSPLUS_SRC_HAL_MOMENTARYBUTTON_H_*/

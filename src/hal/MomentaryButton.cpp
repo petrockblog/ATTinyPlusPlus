@@ -10,8 +10,8 @@
 namespace hal {
 
 MomentaryButton::MomentaryButton(uint8_t channel, mcal::DigitalIO &gpio,
-                                 activelevel_e pullup) :
-    hal::Button(channel), gpio(gpio), input_history_(kButtonReleaseStable) {
+                                 Activelevel pullup) :
+    channel_(channel), infos_({BUTTON_RELEASED, 0u }), gpio_(gpio), input_history_(kButtonReleaseStable) {
   gpio.open(channel);
   gpio.control(channel, mcal::DigitalIO::DIOCMD_DIR_IN);
   if (pullup == MomentaryButton::ACTIVELEVEL_LOW) {
@@ -25,35 +25,29 @@ MomentaryButton::MomentaryButton(uint8_t channel, mcal::DigitalIO &gpio,
   }
 }
 
-Button::ButtonState MomentaryButton::GetButtonState() const {
-  return infos_.state_;
-}
-
-bool MomentaryButton::IsPressed() const {
-  return infos_.state_ == BUTTON_PRESSED;
-}
-
 void MomentaryButton::UpdateState() {
   // the debouncing logic in this method implements a debounce time of 31 ms assuming that this method is called once
   // every millisecond.
 
-  const mcal::DigitalIO::DIOLevel_e currentButtonLevel = gpio.read(channel_);
+  const mcal::DigitalIO::DIOLevel_e kCurrentButtonLevel = gpio_.read(channel_);
   input_history_ = (input_history_ << 1u);
-  if (currentButtonLevel == logic_high_) {
+  if (kCurrentButtonLevel == logic_high_) {
     input_history_ |= static_cast<uint32_t>(1u);
   } else {
     input_history_  &= (~static_cast<uint32_t>(1u));
   }
 
-//  const mcal::Systemtick::systick_t currentTickCount =
-//      mcal::ATTiny85Systemtick::getInstance().getTick();
   if (input_history_ == kButtonReleaseStable) {
     infos_.state_ = BUTTON_RELEASED;
-//    infos_.event_time_ = currentTickCount;
+    infos_.ticks_in_current_state_ = 0u;
   } else if (input_history_ == kButtonPressStable) {
     infos_.state_ = BUTTON_PRESSED;
- //   infos_.event_time_ = currentTickCount;
+    infos_.ticks_in_current_state_ = 0u;
   }
+  infos_.ticks_in_current_state_ += 1u;
+}
+const MomentaryButton::ButtonInfos &MomentaryButton::GetButtonInfos() const {
+  return infos_;
 }
 
 } /* namespace hal */

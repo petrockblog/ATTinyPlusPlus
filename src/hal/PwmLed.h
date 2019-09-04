@@ -1,31 +1,31 @@
 /*
- * PWMLed.h
+ * PwmLed.h
  *
  *  Created on: 08.11.2014
  *      Author: florian
  */
 
-#ifndef PWMLED_H_
-#define PWMLED_H_
+#ifndef ATTINYPLUSPLUS_SRC_HAL_PWMLED_H_
+#define ATTINYPLUSPLUS_SRC_HAL_PWMLED_H_
 
 #include "lib/STL/cstdint.h"
 #include "mcal/pwm.h"
 
 namespace hal {
 
-class PWMLed {
+class PwmLed {
 public:
-	struct PWMLEDParams_s{
+	struct PwmledParams{
 		uint8_t amplitude;
 		uint16_t delayTime;
 		uint16_t rampupTime;
 	};
 
-	PWMLed(uint8_t channel, mcal::PWM& pwm, uint8_t amplitude,
+	PwmLed(uint8_t channel, mcal::PWM& pwm, uint8_t amplitude,
            uint16_t delay_time, uint16_t rampup_time);
-	virtual ~PWMLed() = default;
+	virtual ~PwmLed() = default;
 
-	void SetConfiguration(const PWMLEDParams_s& params);
+	void SetConfiguration(const PwmledParams& params);
 	void Update();
 
 protected:
@@ -44,4 +44,4 @@ protected:
 
 } /* namespace hal */
 
-#endif /* PWMLED_H_ */
+#endif /*ATTINYPLUSPLUS_SRC_HAL_PWMLED_H_*/

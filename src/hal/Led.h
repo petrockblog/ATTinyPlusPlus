@@ -28,7 +28,6 @@ public:
 	virtual ~Led() = default;
 
 	virtual void Set(LedLevel level) = 0;
-	virtual void Toggle() = 0;
 
 protected:
 	uint8_t channel_;

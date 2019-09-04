@@ -1,27 +1,27 @@
 /*
- * PWMLed.cpp
+ * PwmLed.cpp
  *
  *  Created on: 08.11.2014
  *      Author: florian
  */
 
-#include "hal/PWMLed.h"
+#include "hal/PwmLed.h"
 
 namespace hal {
 
-PWMLed::PWMLed(uint8_t channel, mcal::PWM& pwm, uint8_t amplitude,
+PwmLed::PwmLed(uint8_t channel, mcal::PWM& pwm, uint8_t amplitude,
                uint16_t delay_time, uint16_t rampup_time) :
     channel_(channel), pwm_(pwm), amplitude_(amplitude), delay_time_(delay_time), rampup_time_(
     rampup_time), current_state_(0), slope_(0) {
   Initialize();
 }
 
-void PWMLed::Initialize() {
+void PwmLed::Initialize() {
 	pwm_.open(channel_);
   UpdateSlope();
 }
 
-void PWMLed::SetConfiguration(const PWMLEDParams_s& params) {
+void PwmLed::SetConfiguration(const PwmledParams& params) {
 	if ((this->amplitude_ != params.amplitude)
 			|| (this->delay_time_ != params.delayTime)
 			|| (this->rampup_time_ != params.rampupTime)) {
@@ -32,7 +32,7 @@ void PWMLed::SetConfiguration(const PWMLEDParams_s& params) {
 	}
 }
 
-void PWMLed::Update() {
+void PwmLed::Update() {
   uint8_t new_level = 0u;
 
   current_state_ = (current_state_ + 1) % (delay_time_ + rampup_time_ + rampup_time_);
@@ -53,7 +53,7 @@ void PWMLed::Update() {
 
 }
 
-void PWMLed::UpdateSlope() {
+void PwmLed::UpdateSlope() {
 	if (rampup_time_ > 0) {
       slope_ = amplitude_ / rampup_time_;
 	} else {

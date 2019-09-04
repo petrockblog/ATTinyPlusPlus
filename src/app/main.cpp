@@ -25,7 +25,7 @@ int main() {
   hal::LogicLed to_rpi = hal::LogicLed(2u, digital_io);
 
   mcal::PWM &pwm = mcal::ATTiny85PWM::getInstance();
-  hal::PWMLed pwm_led = hal::PWMLed(1u, pwm, 0u, 0u, 0u);  // PWM channel_ 2 uses PB4
+  hal::PwmLed pwm_led = hal::PwmLed(1u, pwm, 0u, 0u, 0u);  // PWM channel_ 2 uses PB4
 
   app::Powerswitch powerswitch = app::Powerswitch(power_button,
                                                   from_rpi_button,

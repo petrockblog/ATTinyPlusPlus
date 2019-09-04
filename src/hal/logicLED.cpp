@@ -25,8 +25,4 @@ void LogicLed::Set(Led::LedLevel level) {
 	}
 }
 
-void LogicLed::Toggle() {
-	dio.toggle(channel_);
-}
-
 } /* namespace hal */

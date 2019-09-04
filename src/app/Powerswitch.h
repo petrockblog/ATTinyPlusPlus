@@ -8,9 +8,9 @@
 #ifndef ATTINYPLUSPLUS_SRC_APP_POWERSWITCH_H_
 #define ATTINYPLUSPLUS_SRC_APP_POWERSWITCH_H_
 
-#include "hal/button.h"
+#include "hal/MomentaryButton.h"
 #include "hal/Led.h"
-#include "hal/PWMLed.h"
+#include "hal/PwmLed.h"
 #include "app/PowerswitchState.h"
 
 namespace app {
@@ -32,8 +32,8 @@ class Powerswitch {
     SHUTDOWN_TRUE, SHUTDOWN_FALSE
   };
 
-  Powerswitch(hal::Button &btn, hal::Button &from_r_pi, hal::Led &power_switch,
-              hal::PWMLed &led, hal::Led &to_r_pi);
+  Powerswitch(hal::MomentaryButton &btn, hal::MomentaryButton &from_rpi, hal::Led &power_switch,
+              hal::PwmLed &led, hal::Led &to_rpi);
   virtual ~Powerswitch();
 
   void Update();
@@ -47,17 +47,27 @@ class Powerswitch {
   PowerswitchStateOn *state_on_;
   PowerswitchStateShutdown *state_shutdown_;
 
-  hal::Button &button_;
-  hal::Button &from_r_pi_;
+  hal::MomentaryButton &button_;
+  hal::MomentaryButton &from_rpi_;
   hal::Led &power_switch_;
-  hal::Led &to_r_pi_;
-  hal::PWMLed &pwm_led_;
+  hal::Led &to_rpi_;
+  hal::PwmLed &pwm_led_;
+
+  bool using_momentary_power_button_;
+  mcal::Systemtick::systick_t on_state_enter_tick_;
+
+  mcal::Systemtick::systick_t GetTicksInState();
 
   void SetSwitch(hal::Led::LedLevel level);
   void SetShutdownSignal(Shutdown do_shutdown);
   void SetState(PowerswitchState *new_state);
-  void SetLedPattern(const hal::PWMLed::PWMLEDParams_s &pattern) {
-    pwm_led_.SetConfiguration(pattern);
+  void SetLedPattern(const hal::PwmLed::PwmledParams &pattern);
+
+  bool IsUsingMomentaryPowerButton() const {
+    return using_momentary_power_button_;
+  }
+  void SetUsingMomentaryPowerButton(bool using_momentary_power_button) {
+    using_momentary_power_button_ = using_momentary_power_button;
   }
 
   inline PowerswitchStateOff *GetStateOff() {

@@ -19,7 +19,6 @@ public:
 	LogicLed(uint8_t channel, mcal::DigitalIO &digital_io);
 
 	void Set(LedLevel level) override;
-	void Toggle() override;
 
 private:
 	mcal::DigitalIO &dio;

@@ -8,17 +8,18 @@
 #ifndef ATTINYPLUSPLUS_SRC_APP_POWERSWITCHSTATE_H_
 #define ATTINYPLUSPLUS_SRC_APP_POWERSWITCHSTATE_H_
 
-#include "hal/button.h"
-#include "hal/PWMLed.h"
+#include "hal/PwmLed.h"
 #include "app/Powerswitch.h"
 #include "mcal/systemtick_attiny85.h"
 
 namespace app {
 
-constexpr hal::PWMLed::PWMLEDParams_s kPatternOff = {0, 0, 0};
-constexpr hal::PWMLed::PWMLEDParams_s kPatternBoot = {120, 20, 60};
-constexpr hal::PWMLed::PWMLEDParams_s kPatternOn = {120, 0, 0};
-constexpr hal::PWMLed::PWMLEDParams_s kPatternShutdown = {120, 10, 30};
+constexpr hal::PwmLed::PwmledParams kPatternOff = {0, 0, 0};
+constexpr hal::PwmLed::PwmledParams kPatternBoot = {120, 20, 60};
+constexpr hal::PwmLed::PwmledParams kPatternOn = {120, 0, 0};
+constexpr hal::PwmLed::PwmledParams kPatternShutdown = {120, 10, 30};
+
+using ConstButtonRef = const hal::MomentaryButton::ButtonInfos&;
 
 class Powerswitch;
 
@@ -51,43 +52,36 @@ class PowerswitchState {
  public:
   virtual ~PowerswitchState() = default;
   virtual void Step(Powerswitch &power_switch,
-                    hal::Button::ButtonState btn_state,
-                    hal::Button::ButtonState rpi_power_state) = 0;
+                    ConstButtonRef btn_infos,
+                    ConstButtonRef rpi_power_state) = 0;
   virtual void OnEnter(Powerswitch &power_switch) = 0;
  protected:
-  explicit PowerswitchState(hal::PWMLed::PWMLEDParams_s pattern);
-  const hal::PWMLed::PWMLEDParams_s led_pattern_;
+  explicit PowerswitchState(hal::PwmLed::PwmledParams pattern);
+  const hal::PwmLed::PwmledParams led_pattern_;
 };
 
 class PowerswitchStateOff : public PowerswitchState {
  public:
   PowerswitchStateOff() :
-      PowerswitchState(kPatternOff),
-      on_enter_tick_(0u) {
+      PowerswitchState(kPatternOff) {
   }
   void OnEnter(Powerswitch &power_switch) override;
   void Step(Powerswitch &power_switch,
-            hal::Button::ButtonState btn_state,
-            hal::Button::ButtonState rpi_power_state) override;
+            ConstButtonRef btn_infos,
+            ConstButtonRef rpi_power_infos) override;
   ~PowerswitchStateOff() override = default;
-
- private:
-  mcal::Systemtick::systick_t on_enter_tick_;
 };
 
 class PowerswitchStateBoot : public PowerswitchState {
  public:
   PowerswitchStateBoot() :
-      PowerswitchState(kPatternBoot),
-      on_enter_tick_(0u) {
+      PowerswitchState(kPatternBoot) {
   }
   void Step(Powerswitch &power_switch,
-            hal::Button::ButtonState btn_state,
-            hal::Button::ButtonState rpi_power_state) override;
+            ConstButtonRef btn_infos,
+            ConstButtonRef rpi_power_infos) override;
   ~PowerswitchStateBoot() override = default;
   void OnEnter(Powerswitch &power_switch) override;
-   private:
-   mcal::Systemtick::systick_t on_enter_tick_;
 };
 
 class PowerswitchStateOn : public PowerswitchState {
@@ -96,8 +90,8 @@ class PowerswitchStateOn : public PowerswitchState {
       PowerswitchState(kPatternOn) {
   }
   void Step(Powerswitch &power_switch,
-            hal::Button::ButtonState btn_state,
-            hal::Button::ButtonState rpi_power_state) override;
+            ConstButtonRef btn_infos,
+            ConstButtonRef rpi_power_infos) override;
   ~PowerswitchStateOn() override = default;
   void OnEnter(Powerswitch &power_switch) override;
 };
@@ -105,15 +99,13 @@ class PowerswitchStateOn : public PowerswitchState {
 class PowerswitchStateShutdown : public PowerswitchState {
  public:
   PowerswitchStateShutdown() :
-      PowerswitchState(kPatternShutdown), on_enter_tick_(0u) {
+      PowerswitchState(kPatternShutdown) {
   }
   void Step(Powerswitch &power_switch,
-            hal::Button::ButtonState btn_state,
-            hal::Button::ButtonState rpi_power_state) override;
+            ConstButtonRef btn_infos,
+            ConstButtonRef rpi_power_infos) override;
   ~PowerswitchStateShutdown() override = default;
   void OnEnter(Powerswitch &power_switch) override;
-   private:
-   mcal::Systemtick::systick_t on_enter_tick_;
 };
 
 } /* namespace app */
