@@ -63,13 +63,15 @@ class PowerswitchState {
 class PowerswitchStateOff : public PowerswitchState {
  public:
   PowerswitchStateOff() :
-      PowerswitchState(kPatternOff) {
+      PowerswitchState(kPatternOff), buttonWasReleasedOnce_(false) {
   }
   void OnEnter(Powerswitch &power_switch) override;
   void Step(Powerswitch &power_switch,
             ConstButtonRef btn_infos,
             ConstButtonRef rpi_power_infos) override;
   ~PowerswitchStateOff() override = default;
+  private:
+  bool buttonWasReleasedOnce_;
 };
 
 class PowerswitchStateBoot : public PowerswitchState {

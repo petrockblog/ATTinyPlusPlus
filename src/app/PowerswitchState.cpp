@@ -17,15 +17,23 @@ void PowerswitchStateOff::OnEnter(Powerswitch &power_switch) {
   power_switch.SetLedPattern(this->led_pattern_);
   power_switch.SetSwitch(hal::Led::LED_HIGH);
   power_switch.SetShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
+  buttonWasReleasedOnce_ = false;
+  power_switch.SetUsingMomentaryPowerButton(false);
 }
 
 void PowerswitchStateOff::Step(Powerswitch &power_switch,
                                ConstButtonRef btn_infos,
                                ConstButtonRef rpi_power_infos) {
-
-  if ((btn_infos.state_ == hal::MomentaryButton::BUTTON_PRESSED) || (rpi_power_infos.state_ == hal::MomentaryButton::BUTTON_PRESSED)) {
-    power_switch.SetState(power_switch.GetStateBoot());
-  }
+	
+	if (btn_infos.state_ == hal::MomentaryButton::BUTTON_RELEASED) {
+		buttonWasReleasedOnce_ = true;
+	}
+	
+	if (buttonWasReleasedOnce_) {
+	  if ((btn_infos.state_ == hal::MomentaryButton::BUTTON_PRESSED) || (rpi_power_infos.state_ == hal::MomentaryButton::BUTTON_PRESSED)) {
+		power_switch.SetState(power_switch.GetStateBoot());
+	  }
+	}
 }
 
 void PowerswitchStateBoot::OnEnter(Powerswitch &power_switch) {
@@ -46,10 +54,12 @@ void PowerswitchStateBoot::Step(Powerswitch &power_switch,
   
   if ((btn_infos.state_ == hal::MomentaryButton::BUTTON_RELEASED) && (kTimeInState < kMinstatedelayTicks)) {
 	  power_switch.SetUsingMomentaryPowerButton(true);
-  }
+  } 
 
-  if ((btn_infos.state_ == hal::MomentaryButton::BUTTON_PRESSED) && (kTimeInState > 5000u)) {
-    power_switch.SetState(power_switch.GetStateOff());
+  if (power_switch.IsUsingMomentaryPowerButton()) {
+	  if ((btn_infos.state_ == hal::MomentaryButton::BUTTON_PRESSED) && (btn_infos.ticks_in_current_state_ > 5000u)) {
+		  power_switch.SetState(power_switch.GetStateOff());
+	  }
   }
 }
 
@@ -91,9 +101,9 @@ void PowerswitchStateShutdown::Step(Powerswitch &power_switch,
   }
 
   if (power_switch.IsUsingMomentaryPowerButton()) {
-    if ((btn_infos.state_ == hal::MomentaryButton::BUTTON_PRESSED) && (power_switch.GetTicksInState() > 5000u)) {
-      power_switch.SetState(power_switch.GetStateOff());
-    }
+	  if ((btn_infos.state_ == hal::MomentaryButton::BUTTON_PRESSED) && (btn_infos.ticks_in_current_state_ > 5000u)) {
+		  power_switch.SetState(power_switch.GetStateOff());
+	  }
   }
 
 }
