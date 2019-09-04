@@ -29,6 +29,7 @@ void Powerswitch::Update() {
 
 void Powerswitch::SetSwitch(hal::Led::LedLevel level) {
   power_switch_.Set(level);
+  from_rpi_.UpdateState();
 }
 
 void Powerswitch::SetShutdownSignal(Shutdown do_shutdown) {
