@@ -15,7 +15,7 @@ PowerswitchState::PowerswitchState(hal::PwmLed::PwmledParams pattern) :
 
 void PowerswitchStateOff::OnEnter(Powerswitch &power_switch) {
   power_switch.SetLedPattern(this->led_pattern_);
-  power_switch.SetSwitch(hal::Led::LED_HIGH);
+  power_switch.SetSwitch(hal::Led::LED_LOW);
   power_switch.SetShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
   buttonWasReleasedOnce_ = false;
 }
@@ -37,7 +37,7 @@ void PowerswitchStateOff::Step(Powerswitch &power_switch,
 
 void PowerswitchStateBoot::OnEnter(Powerswitch &power_switch) {
   power_switch.SetLedPattern(this->led_pattern_);
-  power_switch.SetSwitch(hal::Led::LED_LOW);
+  power_switch.SetSwitch(hal::Led::LED_HIGH);
   power_switch.SetShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
 }
 
@@ -64,7 +64,7 @@ void PowerswitchStateBoot::Step(Powerswitch &power_switch,
 
 void PowerswitchStateOn::OnEnter(Powerswitch &power_switch) {
   power_switch.SetLedPattern(this->led_pattern_);
-  power_switch.SetSwitch(hal::Led::LED_LOW);
+  power_switch.SetSwitch(hal::Led::LED_HIGH);
   power_switch.SetShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
 }
 
@@ -85,7 +85,7 @@ void PowerswitchStateOn::Step(Powerswitch &power_switch,
 
 void PowerswitchStateShutdown::OnEnter(Powerswitch &power_switch) {
   power_switch.SetLedPattern(this->led_pattern_);
-  power_switch.SetSwitch(hal::Led::LED_LOW);
+  power_switch.SetSwitch(hal::Led::LED_HIGH);
   power_switch.SetShutdownSignal(Powerswitch::SHUTDOWN_TRUE);
 }
 
