@@ -18,7 +18,6 @@ void PowerswitchStateOff::OnEnter(Powerswitch &power_switch) {
   power_switch.SetSwitch(hal::Led::LED_HIGH);
   power_switch.SetShutdownSignal(Powerswitch::SHUTDOWN_FALSE);
   buttonWasReleasedOnce_ = false;
-  power_switch.SetUsingMomentaryPowerButton(false);
 }
 
 void PowerswitchStateOff::Step(Powerswitch &power_switch,
@@ -29,7 +28,7 @@ void PowerswitchStateOff::Step(Powerswitch &power_switch,
 		buttonWasReleasedOnce_ = true;
 	}
 	
-	if (buttonWasReleasedOnce_) {
+	if ((power_switch.IsUsingMomentaryPowerButton() && buttonWasReleasedOnce_) || !power_switch.IsUsingMomentaryPowerButton()) {
 	  if ((btn_infos.state_ == hal::MomentaryButton::BUTTON_PRESSED) || (rpi_power_infos.state_ == hal::MomentaryButton::BUTTON_PRESSED)) {
 		power_switch.SetState(power_switch.GetStateBoot());
 	  }
