@@ -22,6 +22,7 @@ cmake_minimum_required(VERSION 2.8)
 set(AVR_UPLOADTOOL avrdude)
 set(AVR_PROGRAMMER stk500v2)
 set(AVR_UPLOADTOOL_PORT /dev/tty.SLAB_USBtoUART)
+set(AVR_FIND_ROOT_PATH /usr/local/bin/avr-gcc)
 
 ##########################################################################
 # AVR and fuses needs to be Set
@@ -81,6 +82,8 @@ else(DEFINED ENV{AVR_FIND_ROOT_PATH})
       set(CMAKE_FIND_ROOT_PATH "/usr/local/CrossPack-AVR")
     elseif(EXISTS "/tools/avr-toolchain")
       set(CMAKE_FIND_ROOT_PATH "/tools/avr-toolchain")
+    elseif(EXISTS "/usr/local/bin/avr-gcc")
+      set(CMAKE_FIND_ROOT_PATH "/usr/local/bin/")
     else(EXISTS "/opt/local/avr")
       message(FATAL_ERROR "Please set AVR_FIND_ROOT_PATH in your environment.")
     endif(EXISTS "/opt/local/avr")
