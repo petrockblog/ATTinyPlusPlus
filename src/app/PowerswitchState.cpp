@@ -93,16 +93,22 @@ void PowerswitchStateShutdown::Step(Powerswitch &power_switch,
                                     ConstButtonRef btn_infos,
                                     ConstButtonRef rpi_power_infos) {
 
-  const mcal::Systemtick::systick_t kMinstatedelayTicks = 2500u;
+  const mcal::Systemtick::systick_t kMinstatedelayTicks = 2500u;   // 2.5 seconds
+  const mcal::Systemtick::systick_t kForcedOffPress     = 5000u;   // 5 seconds for forced-off button press
+  const mcal::Systemtick::systick_t kMaxstatedelayTicks = 30000u;  // 30 seconds until power is shut off automatically
 
   if ((rpi_power_infos.state_ == hal::MomentaryButton::BUTTON_RELEASED) && (power_switch.GetTicksInState() >= kMinstatedelayTicks)) {
     power_switch.SetState(power_switch.GetStateOff());
   }
 
   if (power_switch.IsUsingMomentaryPowerButton()) {
-	  if ((btn_infos.state_ == hal::MomentaryButton::BUTTON_PRESSED) && (btn_infos.ticks_in_current_state_ > 5000u)) {
+	  if ((btn_infos.state_ == hal::MomentaryButton::BUTTON_PRESSED) && (btn_infos.ticks_in_current_state_ > kForcedOffPress)) {
 		  power_switch.SetState(power_switch.GetStateOff());
 	  }
+  }
+
+  if (!power_switch.IsUsingMomentaryPowerButton() && (power_switch.GetTicksInState() >= kMaxstatedelayTicks)) {
+    power_switch.SetState(power_switch.GetStateOff());
   }
 
 }
