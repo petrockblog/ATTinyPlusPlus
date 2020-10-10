@@ -23,16 +23,25 @@ void PowerswitchStateOff::OnEnter(Powerswitch &power_switch) {
 void PowerswitchStateOff::Step(Powerswitch &power_switch,
                                ConstButtonRef btn_infos,
                                ConstButtonRef rpi_power_infos) {
-	
+
+    const mcal::Systemtick::systick_t kMinstatedelayTicks = 2500u;
+    const mcal::Systemtick::systick_t kTimeInState = power_switch.GetTicksInState();
+
 	if (btn_infos.state_ == hal::MomentaryButton::BUTTON_RELEASED) {
 		buttonWasReleasedOnce_ = true;
 	}
-	
-	if ((power_switch.IsUsingMomentaryPowerButton() && buttonWasReleasedOnce_) || !power_switch.IsUsingMomentaryPowerButton()) {
-	  if ((btn_infos.state_ == hal::MomentaryButton::BUTTON_PRESSED) || (rpi_power_infos.state_ == hal::MomentaryButton::BUTTON_PRESSED)) {
-		power_switch.SetState(power_switch.GetStateBoot());
-	  }
-	}
+
+  const bool kHasMinStateTimePassed = kTimeInState >= kMinstatedelayTicks;
+  if (kHasMinStateTimePassed) {
+      if ((power_switch.IsUsingMomentaryPowerButton() && buttonWasReleasedOnce_)
+          || !power_switch.IsUsingMomentaryPowerButton()) {
+        const bool kIsPowerButtonPressed = btn_infos.state_ == hal::MomentaryButton::BUTTON_PRESSED;
+        const bool kIsPowerSignalObserved = rpi_power_infos.state_ == hal::MomentaryButton::BUTTON_PRESSED;
+        if (kIsPowerButtonPressed || kIsPowerSignalObserved) {
+          power_switch.SetState(power_switch.GetStateBoot());
+        }
+      }
+    }
 }
 
 void PowerswitchStateBoot::OnEnter(Powerswitch &power_switch) {
